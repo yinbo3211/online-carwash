@@ -1,0 +1,35 @@
+.order-create { padding-bottom: 180rpx; }
+.tier-row { position: relative; border: 2rpx solid #E4E9F2; border-radius: 12rpx; padding: 20rpx 120rpx 20rpx 20rpx; margin-bottom: 14rpx; }
+.tier-row.on { border-color: #1668E3; background: #EAF2FE; }
+.tier-main { display: flex; align-items: center; gap: 12rpx; }
+.tier-name { font-size: 30rpx; font-weight: 600; }
+.tier-sub { color: #6B778C; font-size: 24rpx; margin-top: 8rpx; }
+.tier-row .price { position: absolute; right: 20rpx; top: 28rpx; font-size: 34rpx; }
+
+.seg { display: flex; background: #F1F4F9; border-radius: 12rpx; padding: 6rpx; }
+.seg-item { flex: 1; text-align: center; padding: 18rpx 0; border-radius: 10rpx; font-size: 26rpx; color: #6B778C; }
+.seg-item.on { background: #fff; color: #1668E3; font-weight: 600; box-shadow: 0 2rpx 8rpx rgba(18,24,56,.08); }
+.seg-disabled { opacity: .45; }
+.seg-price { font-size: 24rpx; margin-left: 6rpx; }
+.hint { font-size: 22rpx; color: #8A4B08; background: #FFF4E0; padding: 12rpx 16rpx; border-radius: 8rpx; margin-top: 14rpx; }
+
+.addon-row { display: flex; align-items: center; gap: 16rpx; padding: 20rpx 0; border-bottom: 2rpx solid #F1F4F9; font-size: 28rpx; }
+.addon-row.on { color: #1668E3; }
+.check { width: 36rpx; height: 36rpx; border: 2rpx solid #CBD3E0; border-radius: 8rpx; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 24rpx; flex-shrink: 0; }
+.check.checked { background: #1668E3; border-color: #1668E3; }
+.addon-price { font-size: 26rpx; }
+
+.ins-row { display: flex; align-items: center; gap: 16rpx; padding: 16rpx 0; }
+.ins-row.on { color: #1668E3; }
+.ins-locked { background: #F7F9FC; border-radius: 10rpx; padding: 20rpx; }
+.ins-icon { font-size: 36rpx; filter: grayscale(.3); }
+.ins-name { font-size: 28rpx; font-weight: 600; margin-bottom: 6rpx; }
+.ins-price { font-size: 30rpx; flex-shrink: 0; }
+.ins-locked .ins-price { color: #6B778C; }
+.coupon-price { font-size: 28rpx; }
+
+.summary .row { padding: 8rpx 0; }
+.total { font-size: 30rpx; font-weight: 600; }
+.total-price { font-size: 44rpx; }
+.paybar { position: fixed; left: 0; right: 0; bottom: 0; background: #fff; box-shadow: 0 -4rpx 16rpx rgba(18,24,56,.08); padding: 16rpx 24rpx; display: flex; align-items: center; gap: 24rpx; z-index: 20; }
+.paybar-left { min-width: 140rpx; }

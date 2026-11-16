@@ -1,0 +1,39 @@
+{
+  "pages": [
+    "pages/user/index",
+    "pages/worker/hall",
+    "pages/store/workbench",
+    "pages/user/order-create",
+    "pages/user/order-progress",
+    "pages/user/pay-success",
+    "pages/worker/evidence",
+    "pages/worker/exam",
+    "pages/worker/income",
+    "pages/store/review"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#1668E3",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "线上洗车平台",
+    "backgroundColor": "#F7F9FC",
+    "backgroundTextStyle": "light",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#97A3B6",
+    "selectedColor": "#1668E3",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/user/index", "text": "车主服务" },
+      { "pagePath": "pages/worker/hall", "text": "抢单大厅" },
+      { "pagePath": "pages/store/workbench", "text": "门店工作台" }
+    ]
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "uploadFile": 30000
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

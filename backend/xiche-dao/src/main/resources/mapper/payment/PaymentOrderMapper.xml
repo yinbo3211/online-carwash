@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.payment.dao.PaymentOrderMapper">
+    <resultMap id="BaseResultMap" type="com.xiche.payment.entity.PaymentOrder">
+        <id column="id" property="id"/>
+        <result column="payment_no" property="paymentNo"/>
+        <result column="order_id" property="orderId"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="user_id" property="userId"/>
+        <result column="amount" property="amount"/>
+        <result column="gateway" property="gateway"/>
+        <result column="status" property="status"/>
+        <result column="success_message" property="successMessage"/>
+        <result column="success_color" property="successColor"/>
+        <result column="env_flag" property="envFlag"/>
+        <result column="idempotent_key" property="idempotentKey"/>
+        <result column="paid_at" property="paidAt"/>
+    </resultMap>
+
+    <sql id="Columns">
+        id, payment_no, order_id, order_no, user_id, amount, gateway, status,
+        success_message, success_color, env_flag, idempotent_key, paid_at
+    </sql>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_payment_order WHERE id = #{id} AND deleted_at IS NULL
+    </select>
+
+    <select id="selectByOrderNo" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_payment_order
+        WHERE order_no = #{orderNo} AND deleted_at IS NULL ORDER BY id DESC LIMIT 1
+    </select>
+
+    <select id="selectByIdempotentKey" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_payment_order
+        WHERE idempotent_key = #{idempotentKey} AND deleted_at IS NULL LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.xiche.payment.entity.PaymentOrder" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_payment_order (payment_no, order_id, order_no, user_id, amount, gateway,
+                                     status, env_flag, idempotent_key, created_at, updated_at)
+        VALUES (#{paymentNo}, #{orderId}, #{orderNo}, #{userId}, #{amount}, #{gateway},
+                #{status}, #{envFlag}, #{idempotentKey}, NOW(), NOW())
+    </insert>
+
+    <update id="updateSuccess">
+        UPDATE t_payment_order SET status = #{status}, success_message = #{message},
+               success_color = #{color}, paid_at = NOW(), updated_at = NOW()
+        WHERE id = #{id} AND deleted_at IS NULL
+    </update>
+</mapper>

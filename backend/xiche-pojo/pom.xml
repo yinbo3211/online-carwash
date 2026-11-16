@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.xiche</groupId>
+        <artifactId>xiche-platform</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>xiche-pojo</artifactId>
+    <packaging>jar</packaging>
+    <name>xiche-pojo</name>
+    <description>实体层：按 14 个业务域分包的 POJO / Entity</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.xiche</groupId>
+            <artifactId>xiche-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+</project>

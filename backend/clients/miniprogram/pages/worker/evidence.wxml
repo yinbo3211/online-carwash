@@ -1,0 +1,39 @@
+<!-- 洗车工端 · 取还车证据上传（E1-E4，完成上一步才解锁下一步） -->
+<view class="page worker-evidence">
+  <view class="sim-banner">
+    <text class="sim-icon">⚠</text>
+    <text>测试环境 · 模拟支付 · 不产生真实资金收付</text>
+  </view>
+
+  <view class="container">
+    <view class="card">
+      <view class="card-title"><text>任务证据</text><text class="muted">{{orderNo}}</text></view>
+      <view class="watermark-hint">📷 所有照片须现场拍摄并自动叠加订单号水印，禁止使用相册旧图</view>
+    </view>
+
+    <view class="card stage-card {{item.unlocked ? '' : 'locked'}}" wx:for="{{stages}}" wx:key="key">
+      <view class="row between">
+        <view>
+          <view class="stage-title">{{item.title}}</view>
+          <view class="muted">{{item.desc}}</view>
+        </view>
+        <text class="tag {{item.done ? 'tag-success' : (item.unlocked ? 'tag-primary' : 'tag-gray')}}">
+          {{item.done ? '已完成' : (item.unlocked ? '进行中' : '未解锁')}}
+        </text>
+      </view>
+
+      <view class="thumb-grid mt-16">
+        <view class="thumb" wx:for="{{item.photos}}" wx:for-item="p" wx:key="*this">{{p}}</view>
+      </view>
+
+      <view class="btn-row mt-16" wx:if="{{item.unlocked}}">
+        <button class="btn btn-primary btn-sm" data-index="{{index}}" bindtap="onShoot">现场拍摄</button>
+        <button class="btn btn-ghost btn-sm btn-album" data-index="{{index}}" bindtap="onAlbumTip">从相册选择</button>
+        <button class="btn btn-ghost btn-sm" wx:if="{{item.photos.length}}" data-index="{{index}}" bindtap="onDone">完成本步</button>
+      </view>
+      <view class="lock-mask mt-16" wx:else>
+        <text>🔒 请先完成上一步 {{stages[index-1].title}}</text>
+      </view>
+    </view>
+  </view>
+</view>

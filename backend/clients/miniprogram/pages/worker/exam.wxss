@@ -1,0 +1,10 @@
+.worker-exam { padding-bottom: 60rpx; }
+.exam-head { background: linear-gradient(135deg, #EAF2FE, #E6F7F7); }
+.q-title { font-size: 28rpx; font-weight: 600; margin-bottom: 16rpx; }
+.option { display: flex; align-items: center; gap: 16rpx; padding: 16rpx; border: 2rpx solid #E4E9F2; border-radius: 8rpx; margin-bottom: 12rpx; font-size: 26rpx; }
+.option.on { border-color: #1668E3; background: #EAF2FE; }
+.radio { width: 32rpx; height: 32rpx; border: 2rpx solid #CBD3E0; border-radius: 50%; flex-shrink: 0; }
+.radio.checked { border: 8rpx solid #1668E3; }
+.result-score { font-size: 64rpx; font-weight: 700; text-align: center; }
+.result-pass { color: #0E9F9F; }
+.result-fail { color: #E5484D; }

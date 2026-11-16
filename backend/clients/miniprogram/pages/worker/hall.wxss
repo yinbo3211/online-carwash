@@ -1,0 +1,12 @@
+.worker-hall { padding-bottom: 40rpx; }
+.cert-tags { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.cert-item { display: flex; align-items: center; gap: 8rpx; background: #F1F4F9; border-radius: 8rpx; padding: 10rpx 14rpx; opacity: .7; }
+.cert-item.passed { background: #E8F7EF; opacity: 1; }
+.cert-code { font-weight: 700; color: #4A5568; }
+.cert-name { font-size: 22rpx; color: #6B778C; }
+.order-card { border: 2rpx solid #E4E9F2; border-radius: 12rpx; padding: 24rpx; margin-bottom: 18rpx; }
+.order-no { font-size: 28rpx; font-weight: 700; }
+.order-meta { font-size: 24rpx; color: #6B778C; margin-top: 10rpx; }
+.task-fee { font-size: 34rpx; }
+.lock-icon { font-size: 40rpx; margin-right: 12rpx; }
+.lock-title { font-size: 26rpx; font-weight: 600; color: #4A5568; }

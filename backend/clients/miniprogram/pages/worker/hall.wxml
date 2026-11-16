@@ -1,0 +1,51 @@
+<!-- 洗车工端 · 抢单大厅（含 C3 认证锁定卡） -->
+<view class="page worker-hall">
+  <view class="sim-banner">
+    <text class="sim-icon">⚠</text>
+    <text>测试环境 · 模拟支付 · 不产生真实资金收付</text>
+  </view>
+
+  <view class="container">
+    <view class="card cert-bar">
+      <view class="card-title"><text>我的资质</text><text class="muted">未通过对应认证的订单置灰锁定</text></view>
+      <view class="cert-tags">
+        <view class="cert-item {{item.passed ? 'passed' : ''}}" wx:for="{{certs}}" wx:key="key">
+          <text class="cert-code">{{item.key}}</text>
+          <text class="cert-name">{{item.name}}</text>
+          <text class="tag {{item.passed ? 'tag-success' : 'tag-gray'}}">{{item.passed ? '已通过' : '未通过'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title"><text>抢单大厅</text><text class="muted">刷新于 {{refreshText}}</text></view>
+      <view class="order-card {{item.locked ? 'locked' : ''}}" wx:for="{{tasks}}" wx:key="orderNo">
+        <view class="row between">
+          <text class="order-no">{{item.orderNo}}</text>
+          <text class="tag {{item.locked ? 'tag-gray' : 'tag-primary'}}">{{item.locked ? '资质不足' : '可抢'}}</text>
+        </view>
+        <view class="order-meta">{{item.serviceName}} · {{item.modeText}} · {{item.address}}</view>
+        <view class="row between mt-16">
+          <view>
+            <text class="price task-fee">{{item.feeText}}</text>
+            <text class="muted"> 洗车工分成（示例）</text>
+          </view>
+          <text class="muted" wx:if="{{!item.locked}}">倒计时 {{item.countdown}}s</text>
+        </view>
+
+        <!-- 认证不足：置灰 + 锁图标 + 去补认证 -->
+        <view class="lock-mask mt-16" wx:if="{{item.locked}}">
+          <view class="row">
+            <text class="lock-icon">🔒</text>
+            <view>
+              <view class="lock-title">需 {{item.requiredCert}} 认证方可抢单</view>
+              <view class="muted">当前订单已置灰锁定</view>
+            </view>
+          </view>
+          <button class="btn btn-ghost btn-sm" data-cert="{{item.requiredCert}}" bindtap="goCert">去补认证</button>
+        </view>
+        <button class="btn btn-primary btn-block mt-16" wx:else data-order="{{item.orderNo}}" bindtap="onGrab">立即抢单</button>
+      </view>
+    </view>
+  </view>
+</view>

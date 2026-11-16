@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="线上洗车平台 v6.0 四端高保真交互原型：用户端、洗车工端、门店端、后台管理端。V1测试版，模拟支付不产生真实资金收付。">
+<title>线上洗车平台 v6.0 · 四端交互原型</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<!-- ============ 四端切换器 ============ -->
+<header class="top-switcher" role="tablist" aria-label="四端切换">
+  <div class="brand-mark">🚿 线上洗车平台 <span class="ver">v6.0 原型 · V1测试版</span></div>
+  <nav class="switch-tabs" aria-label="选择端">
+    <button class="switch-tab is-active" role="tab" aria-selected="true" data-switch-app="user" aria-label="切换到用户端">用户端</button>
+    <button class="switch-tab" role="tab" aria-selected="false" data-switch-app="worker" aria-label="切换到洗车工端">洗车工端</button>
+    <button class="switch-tab" role="tab" aria-selected="false" data-switch-app="store" aria-label="切换到门店端">门店端</button>
+    <button class="switch-tab" role="tab" aria-selected="false" data-switch-app="admin" aria-label="切换到后台管理端">后台管理端</button>
+  </nav>
+</header>
+
+<main class="stage">
+
+  <!-- ================================================================
+       用户端（蓝 #1668E3）
+       ================================================================ -->
+  <section class="app-shell app-user is-active" id="app-user" data-app="user" aria-label="用户端">
+    <div class="phone">
+      <div class="phone-statusbar" aria-hidden="true"><span>9:41</span><span class="status-icons">●●● ▰</span></div>
+      <div class="phone-screen">
+
+        <!-- 用户端 1：首页 -->
+        <section class="page is-active" data-page="user-home" aria-label="用户端首页">
+          <div class="sim-banner" role="status"><span class="sim-ico" aria-hidden="true">⚠️</span><span>测试环境 · 模拟支付 · 不产生真实资金收付</span></div>
+          <div class="page-header">
+            <span class="page-title">🏠 洗车啦</span>
+            <button class="header-action" data-go="user-mine" aria-label="查看我的权益">我的权益 ›</button>
+          </div>
+          <div class="banner">
+            <h3>品质洗车 · 上门取送</h3>
+            <p>全流程留证 · 明码标价 · 测试价</p>
+            <span class="tag tag-warning" style="margin-top:10px;display:inline-block">V1 测试版</span>
+          </div>
+          <div class="quick-grid">
+            <button class="quick-item" data-action="select-tier" data-tier="basic" aria-label="选择外观洗档位"><span class="qi-ico" aria-hidden="true">🚿</span><span class="qi-name">外观洗</span><span class="qi-price">¥83 起</span></button>
+            <button class="quick-item" data-action="select-tier" data-tier="standard" aria-label="选择标准洗档位"><span class="qi-ico" aria-hidden="true">✨</span><span class="qi-name">标准洗</span><span class="qi-price">¥133 荐</span></button>
+            <button class="quick-item" data-action="select-tier" data-tier="premium" aria-label="选择精细洗档位"><span class="qi-ico" aria-hidden="true">🧴</span><span class="qi-name">精细洗</span><span class="qi-price">¥243</span></button>
+          </div>
+          <div class="sec-title">三档服务 <span class="sub">价格透明 · 无隐形消费</span></div>
+          <div class="card tight">
+            <div class="card-row"><span>🚗 外观洗 <span class="tag tag-neutral">基础</span></span><span class="num" style="font-weight:700">¥83</span></div>
+            <div class="divider"></div>
+            <div class="card-row"><span>✨ 标准洗 <span class="tag tag-info">推荐</span></span><span class="num" style="font-weight:700">¥133</span></div>
+            <div class="divider"></div>
+            <div class="card-row"><span>🧴 精细洗 <span class="tag tag-accent">深度</span></span><span class="num" style="font-weight:700">¥243</span></div>
+          </div>
+          <div class="sec-title">进行中订单 <button class="header-action" data-go="user-progress" aria-label="查看全部订单">查看全部 ›</button></div>
+          <div class="progress-hero">
+            <div class="card">
+              <div class="card-row"><span><b>标准洗 · 上门取送</b></span><span class="tag tag-warning">待验收</span></div>
+              <p class="mini muted" style="margin:6px 0 10px">订单号 WC20260616-0083 · 洗车工 陈师傅</p>
+              <div class="stepper" aria-label="订单进度">
+                <div class="stepper-h">
+                  <div class="step is-done"><span class="step-dot">✓</span><span class="step-label">待支付</span></div>
+                  <div class="step is-done"><span class="step-dot">✓</span><span class="step-label">待接单</span></div>
+                  <div class="step is-done"><span class="step-dot">✓</span><span class="step-label">已接单</span></div>
+                  <div class="step is-done"><span class="step-dot">✓</span><span class="step-label">取车中</span></div>
+                  <div class="step is-done"><span class="step-dot">✓</span><span class="step-label">洗车中</span></div>
+                  <div class="step is-done"><span class="step-dot">✓</span><span class="step-label">配送中</span></div>
+                  <div class="step is-current step-warn"><span class="step-dot">7</span><span class="step-label">待验收</span></div>
+                  <div class="step"><span class="step-dot">8</span><span class="step-label">完成</span></div>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-block" data-go="user-progress" aria-label="查看订单进度详情">查看进度</button>
+            </div>
+          </div>
+          <div class="card tight">
+            <div class="card-row"><span><b>上次服务</b><br><span class="mini muted">精细洗 · 6月2日 · 已评价</span></span><button class="btn btn-sm btn-primary" data-action="reorder" aria-label="再来一单：精细洗">再来一单</button></div>
+          </div>
+        </section>
+
+        <!-- 用户端 2：服务档位选择 -->
+        <section class="page" data-page="user-tiers" aria-label="服务档位选择页">
+          <div class="sim-banner" role="status"><span class="sim-ico" aria-hidden="true">⚠️</span><span>测试环境 · 模拟支付 · 不产生真实资金收付</span></div>
+          <div class="page-header">
+            <button class="back-btn" data-go="user-home" aria-label="返回首页">‹</button>
+            <span class="page-title">选择服务档位</span>
+          </div>
+          <div class="step-indicator" aria-label="下单步骤">
+            <span class="si is-on"><b>1</b>选档位</span><span class="si-line"></span>
+            <span class="si"><b>2</b>取车信息</span><span class="si-line"></span>
+            <span class="si"><b>3</b>确认支付</span><span class="si-line"></span>
+            <span class="si"><b>4</b>完成</span>
+          </div>
+          <div class="sec-title">选择洗车档位 <span class="sub">单选 · 点击卡片切换</span></div>
+          <button class="tier-card" data-action="select-tier" data-tier="basic" aria-label="选择外观洗，83元">
+            <span class="tier-head"><span><span class="tier-name">🚗 外观洗</span><span class="tier-desc">车身冲洗 + 泡沫 + 擦干</span></span><span class="price">¥83</span></span>
+            <span class="tier-features"><span>高压冲洗</span><span>中性泡沫</span><span>玻璃清洁</span></span>
+          </button>
+          <button class="tier-card is-selected" data-action="select-tier" data-tier="standard" aria-label="选择标准洗，133元，推荐">
+            <span class="recommend">推荐</span>
+            <span class="tier-head"><span><span class="tier-name">✨ 标准洗</span><span class="tier-desc">外观洗 + 轮毂 + 内饰吸尘</span></span><span class="price">¥133</span></span>
+            <span class="tier-features"><span>外观洗全部</span><span>轮毂清洁</span><span>内饰吸尘</span><span>中控擦拭</span></span>
+          </button>
+          <button class="tier-card" data-action="select-tier" data-tier="premium" aria-label="选择精细洗，243元">
+            <span class="tier-head"><span><span class="tier-name">🧴 精细洗</span><span class="tier-desc">标准洗 + 深度内饰 + 镀膜</span></span><span class="price">¥243</span></span>
+            <span class="tier-features"><span>标准洗全部</span><span>深度内饰</span><span>缝隙刷洗</span><span>漆面镀膜</span></span>
+          </button>
+          <div class="sec-title">增值项目 <span class="sub">最多选 4 项 · 已选 <span id="addon-count">0</span>/4</span></div>
+          <div class="addon-grid" id="addon-grid">
+            <button class="addon-item" data-action="toggle-addon" data-addon="wax" data-price="28" aria-label="添加增值项：打蜡，28元"><span><span class="a-name">🪩 漆面打蜡</span><br><span class="a-price">+¥28</span></span><span class="addon-check" aria-hidden="true">✓</span></button>
+            <button class="addon-item" data-action="toggle-addon" data-addon="tire" data-price="18" aria-label="添加增值项：轮胎养护，18元"><span><span class="a-name">🛞 轮胎养护</span><br><span class="a-price">+¥18</span></span><span class="addon-check" aria-hidden="true">✓</span></button>
+            <button class="addon-item" data-action="toggle-addon" data-addon="air" data-price="22" aria-label="添加增值项：空调除味，22元"><span><span class="a-name">🌬️ 空调除味</span><br><span class="a-price">+¥22</span></span><span class="addon-check" aria-hidden="true">✓</span></button>
+            <button class="addon-item" data-action="toggle-addon" data-addon="seat" data-price="38" aria-label="添加增值项：座椅蒸汽，38元"><span><span class="a-name">💺 座椅蒸汽</span><br><span class="a-price">+¥38</span></span><span class="addon-check" aria-hidden="true">✓</span></button>
+            <button class="addon-item" data-action="toggle-addon" data-addon="glass" data-price="16" aria-label="添加增值项：玻璃镀膜，16元"><span><span class="a-name">🪟 玻璃镀膜</span><br><span class="a-price">+¥16</span></span><span class="addon-check" aria-hidden="true">✓</span></button>
+            <button class="addon-item" data-action="toggle-addon" data-addon="chassis" data-price="32" aria-label="添加增值项：底盘冲洗，32元"><span><span class="a-name">🔧 底盘冲洗</span><br><span class="a-price">+¥32</span></span><span class="addon-check" aria-hidden="true">✓</span></button>
+          </div>
+          <div class="sec-title">保障服务 <span class="sub">基础强制 · 增值可选</span></div>
+          <div class="card">
+            <div class="ins-row is-locked" aria-disabled="true">
+              <span class="ins-ico" aria-hidden="true">🔒</span>
+              <span style="flex:1"><span class="ins-title">L1 基础保险</span><br><span class="ins-sub">平台强制保障 · 不可取消</span></span>
+              <span class="tag tag-neutral">已包含</span>
+            </div>
+            <div class="divider"></div>
+            <div class="ins-row">
+              <span class="ins-ico" aria-hidden="true">🛡️</span>
+              <span style="flex:1"><span class="ins-title">L2 增值保险</span><br><span class="ins-sub">划痕 / 剐蹭额外赔付 · +¥12</span></span>
+              <button class="switch" id="ins2-switch" data-action="toggle-insurance" role="switch" aria-checked="false" aria-label="L2增值保险开关"></button>
+            </div>
+          </div>
+          <div class="sticky-bar">
+            <div class="sticky-inner">
+              <span>已选 <b class="price" id="tier-total" style="font-size:24px">¥133</b></span>
+              <button class="btn btn-primary" data-go="user-pickup" aria-label="下一步：填写取车信息">下一步 ›</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 用户端 3：取车信息 -->
+        <section class="page" data-page="user-pickup" aria-label="取车信息页">
+          <div class="sim-banner" role="status"><span class="sim-ico" aria-hidden="true">⚠️</span><span>测试环境 · 模拟支付 · 不产生真实资金收付</span></div>
+          <div class="page-header">
+            <button class="back-btn" data-go="user-tiers" aria-label="返回档位选择">‹</button>
+            <span class="page-title">取车信息</span>
+          </div>
+          <div class="sec-title">取车地址 <span class="sub">默认已带入</span></div>
+          <div class="field">
+            <label class="field-label" for="pickup-address">详细地址</label>
+            <input class="field-input" id="pickup-address" type="text" value="上海市浦东新区世纪大道100号" autocomplete="off" aria-describedby="address-error">
+            <div class="field-error" id="address-error" role="alert"></div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="pickup-phone">联系手机</label>
+            <input class="field-input" id="pickup-phone" type="tel" inputmode="numeric" maxlength="11" value="13800138000" autocomplete="off" aria-describedby="phone-error">
+            <div class="field-error" id="phone-error" role="alert"></div>
+          </div>
+          <div class="sec-title">取车时段 <span class="sub">请选择 1 个时段</span></div>
+          <div class="field">
+            <div class="time-slots" id="time-slots">
+              <button class="time-slot" data-time="今天 10:00-12:00" aria-label="选择时段：今天10点到12点">今天<br>10:00-12:00</button>
+              <button class="time-slot is-on" data-time="今天 14:00-16:00" aria-label="选择时段：今天14点到16点">今天<br>14:00-16:00</button>
+              <button class="time-slot" data-time="明天 09:00-11:00" aria-label="选择时段：明天9点到11点">明天<br>09:00-11:00</button>
+            </div>
+            <div class="field-error" id="time-error" role="alert"></div>
+          </div>
+          <div class="sec-title">车辆信息 <span class="sub">输入品牌自动联想</span></div>
+          <div class="field">
+            <label class="field-label" for="car-input">车型（品牌 + 车系）</label>
+            <input class="field-input" id="car-input" type="text" placeholder="如：特斯拉 Model 3" autocomplete="off" aria-describedby="car-error">
+            <div class="car-list" id="car-list" hidden>
+              <button class="car-suggestion" data-car="特斯拉 Model 3"><span>🚘 特斯拉 Model 3</span><span class="mini muted">新能源</span></button>
+              <button class="car-suggestion" data-car="比亚迪 秦PLUS"><span>🚘 比亚迪 秦PLUS</span><span class="mini muted">新能源</span></button>
+              <button class="car-suggestion" data-car="丰田 凯美瑞"><span>🚘 丰田 凯美瑞</span><span class="mini muted">燃油</span></button>
+              <button class="car-suggestion" data-car="大众 帕萨特"><span>🚘 大众 帕萨特</span><span class="mini muted">燃油</span></button>
+            </div>
+            <div class="field-error" id="car-error" role="alert"></div>
+          </div>
+          <div class="sticky-bar">
+            <div class="sticky-inner">
+              <button class="btn btn-secondary" data-go="user-tiers" style="flex:0 0 96px" aria-label="返回上一步">上一步</button>
+              <button class="btn btn-primary" id="pickup-next" data-go="user-confirm" aria-label="下一步：确认订单">下一步 ›</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 用户端 4：确认订单 -->
+        <section class="page" data-page="user-confirm" aria-label="确认订单页">
+          <div class="sim-banner" role="status"><span class="sim-ico" aria-hidden="true">⚠️</span><span>测试环境 · 模拟支付 · 不产生真实资金收付</span></div>
+          <div class="page-header">
+            <button class="back-btn" data-go="user-pickup" aria-label="返回取车信息">‹</button>
+            <span class="page-title">确认订单</span>
+          </div>
+          <div class="summary-block" id="order-summary">
+            <button class="expand-btn" data-action="toggle-expand" aria-expanded="false" aria-label="展开订单明细"><span>订单明细</span><span class="expand-arrow">⌄</span></button>
+            <div class="expand-body" id="expand-body">
+              <div class="summary-line"><span class="muted">基础服务</span><span id="sum-base">标准洗 ¥133</span></div>
+              <div class="summary-line"><span class="muted">增值项目</span><span id="sum-addons">未选择</span></div>
+              <div class="summary-line"><span class="muted">L2 增值保险</span><span id="sum-ins">未选购</span></div>
+              <div class="summary-line"><span class="muted">取车地址</span><span id="sum-address">—</span></div>
+              <div class="summary-line"><span class="muted">取车时段</span><span id="sum-time">—</span></div>
+              <div class="summary-line"><span class="muted">车型</span><span id="sum-car">—</span></div>
+            </div>
+            <div class="summary-line"><span>服务小计</span><span class="num" id="sum-subtotal">¥133</span></div>
+            <div class="summary-line"><span>平台优惠券（自动最优）</span><span style="color:var(--color-danger)">-¥20</span></div>
+            <div class="summary-line total"><span>应付金额</span><span class="price" id="sum-total" style="font-size:28px">¥113</span></div>
+          </div>
+          <div class="coupon"><span>🎫 已自动匹配最优券：新客立减 ¥20（测试环境）</span><span>可省 ¥20</span></div>
+          <div class="card tight">
+            <div class="card-row"><span class="muted">支付方式</span><span><span class="tag tag-warning">模拟支付 · 不真实扣款</span></span></div>
+            <div class="divider"></div>
+            <div class="card-row"><span class="muted">服务保障</span><span class="mini">L1 基础保险（平台强制保障·不可取消）</span></div>
+          </div>
+          <div class="sticky-bar">
+            <div class="sticky-inner">
+              <span class="mini muted">实付<br><b class="price" id="bar-total" style="font-size:20px">¥113</b></span>
+              <button class="btn btn-primary" id="pay-btn" data-action="pay" aria-label="确认并模拟支付">确认并支付</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 用户端 5：模拟支付成功 -->
+        <section class="page" data-page="user-paysuccess" aria-label="模拟支付成功页">
+          <div class="sim-banner" role="status"><span class="sim-ico" aria-hidden="true">⚠️</span><span>测试环境 · 模拟支付 · 不产生真实资金收付</span></div>
+          <div class="page-header"><span class="page-title">支付结果</span></div>
+          <div class="success-hero">
+            <div class="success-icon" aria-hidden="true">✓</div>
+            <h2 class="success-title">模拟支付成功</h2>
+            <p class="success-desc">模拟支付成功 · 测试数据，不产生真实资金收付</p>
+            <p class="mini muted" style="margin-top:14px">订单号 WC20260616-0083 · 模拟金额 <span class="num" id="paid-amount">¥113</span></p>
+          </div>
+          <div class="success-actions">
+            <button class="btn btn-primary" data-go="user-progress" aria-label="查看订单进度">查看进度</button>
+            <button class="btn btn-secondary" data-go="user-home" aria-label="返回首页">返回首页</button>
+          </div>
+          <p class="mini muted" style="text-align:center;margin-top:18px">本页为橙色模拟成功态（#F5901B），非真实资金交易</p>
+        </section>
+
+        <!-- 用户端 6：订单进度详情 -->
+        <section class="page" data-page="user-progress" aria-label="订单进度详情页">
+          <div class="sim-banner" role="status"><span class="sim-ico" aria-hidden="true">⚠️</span><span>测试环境 · 模拟支付 · 不产生真实资金收付</span></div>
+          <div class="page-header">
+            <button class="back-btn" data-go="user-home" aria-label="返回首页">‹</button>
+            <span class="page-title">订单进度</span>
+            <button class="header-action" data-action="aftersale" aria-label="申请售后">申请售后</button>
+          </div>
+          <div class="card">
+            <div class="card-row"><span><b>标准洗 · 上门取送</b></span><span class="tag tag-warning" id="progress-status">待验收</span></div>
+            <p class="mini muted" style="margin-top:4px">订单号 WC20260616-0083 · 洗车工 陈师傅（C3已认证）</p>
+          </div>
+          <div class="card">
+            <div class="sec-title" style="padding:0 0 6px">服务进度 <span class="sub" id="progress-hint">当前节点高亮 + 脉冲</span></div>
+            <div class="stepper" id="user-stepper" aria-label="八步订单进度">
+              <div class="stepper-h">
+                <div class="step is-done step-warn"><span class="step-dot" aria-label="已完成">✓</span><span class="step-label">待支付</span></div>
+                <div class="step is-done step-warn"><span class="step-dot" aria-label="已完成">✓</span><span class="step-label">待接单</span></div>
+                <div class="step is-done step-accent"><span class="step-dot" aria-label="已完成">✓</span><span class="step-label">已接单</span></div>
+                <div class="step is-done step-accent"><span class="step-dot" aria-label="已完成">✓</span><span class="step-label">取车中</span></div>
+                <div class="step is-done step-accent"><span class="step-dot" aria-label="已完成">✓</span><span class="step-label">洗车中</span></div>
+                <div class="step is-done step-accent"><span class="step-dot" aria-label="已完成">✓</span><span class="step-label">配送中</span></div>
+                <div class="step is-current step-warn"><span class="step-dot">7</span><span class="step-label">待验收</span></div>
+                <div class="step step-success"><span class="step-dot">8</span><span class="step-label">完成</span></div>
+              </div>
+            </div>
+            <p class="mini muted" style="padding:0 6px">颜色说明：待支付/待验收=警告色，取车/洗车/配送=青色，完成=成功色，售后=危险色</p>
+          </div>
+          <div class="card">
+            <div class="sec-title" style="padding:0 0 8px">服务证据 <span class="sub">E1-E4 现场水印留证</span></div>
+            <div class="evidence-grid">
+              <div><div class="thumb"><span class="thumb-emoji" aria-hidden="true">🚙</span><span class="wm">10:24 · GPS · 0083</span></div><div class="thumb-label">E1 接车外观</div></div>
+              <div><div class="thumb"><span class="thumb-emoji" aria-hidden="true">🛞</span><span class="wm">10:31 · GPS · 0083</span></div><div class="thumb-label">E2 轮毂细节</div></div>
+              <div><div class="thumb"><span class="thumb-emoji" aria-hidden="true">🪑</span><span class="wm">10:42 · GPS · 0083</span></div><div class="thumb-label">E3 内饰清洁</div></div>
+              <div><div class="thumb"><span class="thumb-emoji" aria-hidden="true">📋</span><span class="wm">11:06 · GPS · 0083</span></div><div class="thumb-label">E4 交车确认</div></div>
+            </div>
+          </div>
+          <div class="card tight">
+            <div class="card-row"><span class="muted">服务费用（模拟）</span><span class="num">¥113.00</span></div>
+            <div class="card-row" style="margin-top:6px"><span class="muted">订单状态</span><span id="progress-status-text">待你确认验收</span></div>
+          </div>
+          <button class="aftersale-entry" data-action="aftersale" aria-label="申请售后">🛠️ 遇到问题？申请售后 <span>›</span></button>
+          <div class="sticky-bar">
+            <div class="sticky-inner">
+              <button class="btn btn-secondary" style="flex:0 0 92px" data-go="user-home" aria-label="返回首页">首页</button>
+              <button class="btn btn-primary" id="progress-cta" data-action="confirm-accept" aria-label="确认验收">确认验收</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 用户端 7：我的（辅助页） -->
+        <section class="page" data-page="user-mine" aria-label="我的页面">
+          <div class="page-header">
+            <button class="back-btn" data-go="user-home" aria-label="返回首页">‹</button>
+            <span class="page-title">我的</span>
+          </div>
+          <div class="card" style="margin-top:14px">
+            <div class="card-row"><span><b>👤 测试用户</b><br><span class="mini muted">138****8000 · V1 测试账号</span></span><span class="badge badge-ok">✓ 已实名认证</span></div>
+          </div>
+          <div class="card tight">
+            <div class="card-row"><span>🎫 优惠券</span><span class="mini muted">2 张可用（自动最优）</span></div>
+            <div class="divider"></div>
+            <div class="card-row"><span>🛡️ 保障</span><span class="mini">L1 平台强制保障 · 不可取消</span></div>
+            <div class="divider"></div>
+            <div class="card-row"><span>⚠️ 环境</span><span class="tag tag-warning">V1 测试版</span></div>
+          </div>
+          <p class="mini muted" style="text-align:center;margin-top:20px">所有支付均为模拟，不产生真实资金收付</p>
+        </section>
+
+        <!-- 用户端底部 Tab -->
+        <nav class="tabbar" aria-label="用户端底部导航">
+          <button class="tab-item is-active" data-tab="user-home" data-go="user-home" aria-label="首页"><span class="tab-icon" aria-hidden="true">🏠</span><span class="tab-label">首页</span></button>
+          <button class="tab-item" data-tab="user-tiers" data-go="user-tiers" aria-label="下单"><span class="tab-icon" aria-hidden="true">🚿</span><span class="tab-label">下单</span></button>
+          <button class="tab-item" data-tab="user-progress" data-go="user-progress" aria-label="订单"><span class="tab-icon" aria-hidden="true">📋</span><span class="tab-label">订单</span></button>
+          <button class="tab-item" data-tab="user-mine" data-go="user-mine" aria-label="我的"><span class="tab-icon" aria-hidden="true">👤</span><span class="tab-label">我的</span></button>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       洗车工端（青 #0E9F9F）
+       ================================================================ -->
+  <section class="app-shell app-worker" id="app-worker" data-app="worker" aria-label="洗车工端">
+    <div class="phone">
+      <div class="phone-statusbar" aria-hidden="true"><span>9:41</span><span class="status-icons">●●● ▰</span></div>
+      <div class="phone-screen">
+
+        <!-- 洗车工 1：抢单大厅 -->
+        <section class="page is-active" data-page="worker-hall" aria-label="抢单大厅">
+          <div class="sim-banner" role="status"><span class="sim-ico" aria-hidden="true">⚠️</span><span>测试环境 · 模拟支付 · 不产生真实资金收付</span></div>
+          <div class="page-header worker-header">
+            <span class="page-title">🛠️ 抢单大厅</span>
+            <button class="header-action" style="color:#fff" data-action="filter-toggle" aria-label="筛选订单">筛选 ⚙</button>
+          </div>
+          <div class="filter-bar" id="filter-bar">
+            <button class="chip is-on" data-action="filter" data-filter="all" aria-label="排序：全部">全部</button>
+            <button class="chip" data-action="filter" data-filter="near" aria-label="排序：距离最近">距我最近</button>
+            <button class="chip" data-action="filter" data-filter="amount" aria-label="排序：金额最高">金额最高</button>
+            <button class="chip" data-action="filter" data-filter="door" aria-label="筛选：上门单">上门单</button>
+          </div>
+          <div class="sec-title">我的认证徽章 <span class="sub">四态展示</span></div>
+          <div class="badge-row" aria-label="认证状态">
+            <span class="badge badge-ok">✓ C1 基础洗护 · 已认证</span>
+            <span class="badge badge-ok">✓ C2 精细内饰 · 已认证</span>
+            <span class="badge badge-ing"><i class="spinner" aria-hidden="true"></i> C3 精细 · 考试中</span>
+            <span class="badge badge-lock">🔒 D/O 深度镀膜 · 未解锁</span>
+            <span class="badge badge-expired">❗ 旧版 certification · 已过期</span>
+          </div>
+          <div class="sec-title">可抢订单 <span class="sub" id="order-count">共 4 单</span></div>
+
+          <article class="order-card" data-distance="1.2" data-amount="96" data-type="door">
+            <div class="card-row"><span><b>✨ 标准洗 · 上门</b></span><span class="order-amount">¥96</span></div>
+            <div class="order-meta"><span class="tag tag-accent">需求 C1</span><span class="tag tag-neutral">距 1.2km</span><span class="tag tag-info">上门单</span></div>
+            <p class="mini muted" style="margin-top:8px">上海市浦东新区世纪大道 100 号 · 今天 14:00</p>
+            <div class="card-row" style="margin-top:10px"><span class="mini muted">订单 WC20260616-0091</span><button class="btn btn-sm btn-primary" data-action="grab" data-order="WC20260616-0091" aria-label="抢单：标准洗上门单，96元">抢单</button></div>
+          </article>
+
+          <article class="order-card" data-distance="2.8" data-amount="188" data-type="store">
+            <div class="card-row"><span><b>🧴 精细洗 · 到店</b></span><span class="order-amount">¥188</span></div>
+            <div class="order-meta"><span class="tag tag-accent">需求 C2</span><span class="tag tag-neutral">距 2.8km</span><span class="tag tag-info">到店单</span></div>
+            <p class="mini muted" style="margin-top:8px">张江门店 Bay-03 · 今天 15:30</p>
+            <div class="card-row" style="margin-top:10px"><span class="mini muted">订单 WC20260616-0092</span><button class="btn btn-sm btn-primary" data-action="grab" data-order="WC20260616-0092" aria-label="抢单：精细洗到店单，188元">抢单</button></div>
+          </article>
+
+          <article class="order-card is-locked" data-distance="0.9" data-amount="236" data-type="door" aria-disabled="true">
+            <div class="lock-cover">
+              <span class="lock-ico" aria-hidden="true">🔒</span>
+              <span class="lock-title">需 C3 精细认证</span>
+              <span class="mini muted">认证不足的订单不可抢</span>
+              <button class="btn btn-sm btn-secondary" data-go="worker-learn" aria-label="去补认证：C3精细认证">去补认证</button>
+            </div>
+            <div class="card-row"><span><b>🧴 精细洗+镀膜 · 上门</b></span><span class="order-amount">¥236</span></div>
+            <div class="order-meta"><span class="tag tag-danger">需求 C3</span><span class="tag tag-neutral">距 0.9km</span><span class="tag tag-info">上门单</span></div>
+            <p class="mini muted" style="margin-top:8px">订单 WC20260616-0093 · 当前认证不足</p>
+          </article>
+
+          <article class="order-card" data-distance="4.5" data-amount="72" data-type="store">
+            <div class="card-row"><span><b>🚗 外观洗 · 到店</b></span><span class="order-amount">¥72</span></div>
+            <div class="order-meta"><span class="tag tag-accent">需求 C1</span><span class="tag tag-neutral">距 4.5km</span><span class="tag tag-info">到店单</span></div>
+            <p class="mini muted" style="margin-top:8px">世纪公园门店 Bay-01 · 明天 09:00</p>
+            <div class="card-row" style="margin-top:10px"><span class="mini muted">订单 WC20260616-0094</span><button class="btn btn-sm btn-primary" data-action="grab" data-order="WC20260616-0094" aria-label="抢单：外观洗到店单，72元">抢单</button></div>
+          </article>
+        </section>
+
+        <!-- 洗车工 2：抢单倒计时 -->
+        <section class="page" data-page="worker-grab" aria-label="抢单确认页">
+          <div class="sim-banner" role="status"><span class="sim-ico" aria-hidden="true">⚠️</span><span>测试环境 · 模拟支付 · 不产生真实资金收付</span></div>
+          <div class="page-header">
+            <button class="back-btn" data-go="worker-hall" aria-label="返回抢单大厅">‹</button>
+            <span class="page-title">抢单确认</span>
+          </div>
+          <div class="countdown" id="grab-countdown">
+            <div class="countdown-num" id="grab-num" aria-live="polite">90</div>
+            <div class="countdown-label">秒内确认接单，超时将自动指派给其他洗车工</div>
+          </div>
+          <div class="card">
+            <div class="card-row"><span><b id="grab-title">✨ 标准洗 · 上门</b></span><span class="order-amount" id="grab-amount">¥96</span></div>
+            <div class="divider"></div>
+            <div class="summary-line"><span class="muted">订单号</span><span id="grab-order">WC20260616-0091</span></div>
+            <div class="summary-line"><span class="muted">取车地址</span><span>浦东新区世纪大道 100 号</span></div>
+            <div class="summary-line"><span class="muted">所需认证</span><span class="badge badge-ok">✓ C1 已认证</span></div>
+            <div class="summary-line"><span class="muted">预估距离</span><span class="num">1.2 km</span></div>
+          </div>
+          <div class="success-actions">
+            <button class="btn btn-primary" id="grab-accept" data-action="accept-grab" aria-label="立即接单并进入任务执行">立即接单</button>
+            <button class="btn btn-secondary" data-go="worker-hall" aria-label="放弃本次抢单">放弃</button>
+          </div>
+          <p class="mini muted" style="text-align:center;margin-top:16px">倒计时由 setInterval 驱动，真实跳动；到 0 自动提示超时指派</p>
+        </section>
+
+        <!-- 洗车工 3：任务执行 -->
+        <section class="page" data-page="worker-task" aria-label="任务执行详情页">
+          <div class="page-header">
+            <button class="back-btn" data-go="worker-hall" aria-label="返回抢单大厅">‹</button>
+            <span class="page-title">任务执行 · WC20260616-0091</span>
+          </div>
+          <div class="e-stepper" id="worker-estepper" aria-label="任务步骤 E1 到 E4">
+            <div class="e-step is-current" data-estep="0"><span class="e-step-dot">E1</span><span class="e-step-label">接车预检</span></div>
+            <div class="e-step is-locked" data-estep="1"><span class="e-step-dot">🔒</span><span class="e-step-label">外观清洗</span></div>
+            <div class="e-step is-locked" data-estep="2"><span class="e-step-dot">🔒</span><span class="e-step-label">内饰清洁</span></div>
+            <div class="e-step is-locked" data-estep="3"><span class="e-step-dot">🔒</span><span class="e-step-label">交车确认</span></div>
+          </div>
+          <div class="card">
+            <div class="card-row"><span><b id="task-step-title">E1 接车预检</b></span><span class="tag tag-accent" id="task-step-tag">进行中</span></div>
+            <p class="mini muted" style="margin:8px 0 12px" id="task-step-desc">核对车辆外观、里程与随身物品，拍摄接车证据。</p>
+            <div class="checklist" style="margin:0;padding:0">
+              <div class="check-item is-checked"><span class="ci-box">✓</span><span>到达取车地点并联系用户</span></div>
+              <div class="check-item"><span class="ci-box">✓</span><span>完成环车检查（E1 证据）</span></div>
+            </div>
+            <div class="sticky-inner" style="margin-top:12px">
+              <button class="btn btn-secondary" data-go="worker-evidence" aria-label="前往证据上传页">上传证据</button>
+              <button class="btn btn-primary" id="task-next" data-action="complete-step" aria-label="完成当前步骤">完成本步骤 ›</button>
+            </div>
+          </div>
+          <div class="card tight">
+            <div class="card-row"><span class="muted">顺序解锁规则</span><span class="mini">完成 E1 才能开始 E2</span></div>
+            <div class="card-row" style="margin-top:6px"><span class="muted">认证要求</span><span class="badge badge-ok">✓ C1 已认证</span></div>
+          </div>
+        </section>
+
+        <!-- 洗车工 4：证据上传 -->
+        <section class="page" data-page="worker-evidence" aria-label="证据上传页">
+          <div class="page-header">
+            <button class="back-btn" data-go="worker-task" aria-label="返回任务执行">‹</button>
+            <span class="page-title">现场证据上传</span>
+          </div>
+          <div class="camera-view" id="camera-view" aria-label="相机取景框">
+            <div class="camera-floor" aria-hidden="true"></div>
+            <span class="focus-corner fc-tl" aria-hidden="true"></span>
+            <span class="focus-corner fc-tr" aria-hidden="true"></span>
+            <span class="focus-corner fc-bl" aria-hidden="true"></span>
+            <span class="focus-corner fc-br" aria-hidden="true"></span>
+            <span class="camera-hint">请将车辆置于对焦框内</span>
+            <div class="watermark-bar"><span id="wm-time">10:24:36</span><span>GPS 31.23°N 121.47°E</span><span>WC…0091</span></div>
+          </div>
+          <div class="camera-tools">
+            <button class="album-btn" data-action="album-disabled" aria-label="相册入口：仅支持现场拍摄"><span class="album-ico" aria-hidden="true">🖼️</span><span>相册<br>（灰显）</span></button>
+            <button class="shutter" data-action="shutter" aria-label="拍摄当前必拍项"></button>
+            <button class="album-btn" data-action="shutter" aria-label="拍摄当前必拍项"><span class="album-ico" aria-hidden="true">📷</span><span>现场<br>拍摄</span></button>
+          </div>
+          <div class="sec-title">必拍清单 <span class="sub">按 E1→E4 顺序打勾</span></div>
+          <div class="checklist" id="evidence-checklist">
+            <div class="check-item" data-check="E1"><span class="ci-box">✓</span><span>E1 接车外观全景</span><span class="mini muted" style="margin-left:auto">待拍</span></div>
+            <div class="check-item" data-check="E2"><span class="ci-box">✓</span><span>E2 轮毂与轮胎细节</span><span class="mini muted" style="margin-left:auto">待拍</span></div>
+            <div class="check-item" data-check="E3"><span class="ci-box">✓</span><span>E3 内饰清洁结果</span><span class="mini muted" style="margin-left:auto">待拍</span></div>
+            <div class="check-item" data-check="E4"><span class="ci-box">✓</span><span>E4 交车确认合影</span><span class="mini muted" style="margin-left:auto">待拍</span></div>
+          </div>
+          <p class="mini muted" style="text-align:center">相册入口灰显：仅支持现场拍摄，防止旧图复用</p>
+          <div class="sticky-bar">
+            <div class="sticky-inner">
+              <button class="btn btn-primary" id="evidence-submit" data-action="evidence-submit" disabled aria-label="确认上传证据">确认上传</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 洗车工 5：学习认证 -->
+        <section class="page" data-page="worker-learn" aria-label="学习认证页">
+          <div class="page-header">
+            <button class="back-btn" data-go="worker-hall" aria-label="返回抢单大厅">‹</button>
+            <span class="page-title">学习与认证</span>
+          </div>
+          <div class="badge-row" aria-label="我的认证徽章">
+            <span class="badge badge-ok">✓ C1 已认证</span>
+            <span class="badge badge-ok">✓ C2 已认证</span>
+            <span class="badge badge-ing"><i class="spinner" aria-hidden="true"></i> C3 考试中</span>
+            <span class="badge badge-lock">🔒 D/O 未解锁</span>
+            <span class="badge badge-expired">❗ 旧证已过期</span>
+          </div>
+          <div class="course-card">
+            <div class="course-head"><span class="course-name">C1 基础洗护</span><span class="badge badge-ok">✓ 已认证</span></div>
+            <p class="course-desc">车身冲洗、泡沫、擦干标准作业 · 12 课时</p>
+            <div class="course-progress"><i style="width:100%"></i></div>
+          </div>
+          <div class="course-card">
+            <div class="course-head"><span class="course-name">C2 精细内饰</span><span class="badge badge-ok">✓ 已认证</span></div>
+            <p class="course-desc">内饰吸尘、缝隙刷洗、中控养护 · 16 课时</p>
+            <div class="course-progress"><i style="width:100%"></i></div>
+          </div>
+          <div class="course-card">
+            <div class="course-head"><span class="course-name">C3 精细认证</span><span class="badge badge-ing"><i class="spinner" aria-hidden="true"></i> 考试中</span></div>
+            <p class="course-desc">深度清洁与漆面处理 · 20 课时 · 在线考试 80 分及格</p>
+            <div class="course-progress"><i style="width:100%"></i></div>
+            <button class="btn btn-sm btn-primary" style="margin-top:12px" data-go="worker-exam" aria-label="进入C3在线考试">进入在线考试</button>
+          </div>
+          <div class="course-card is-locked" aria-disabled="true">
+            <div class="course-head"><span class="course-name">D 深度镀膜</span><span class="badge badge-lock">🔒 未解锁</span></div>
+            <p class="course-desc">需先通过 C3 精细认证方可解锁</p>
+            <div class="course-progress"><i style="width:12%"></i></div>
+          </div>
+          <div class="course-card is-locked" aria-disabled="true">
+            <div class="course-head"><span class="course-name">O 臭氧除味</span><span class="badge badge-lock">🔒 未解锁</span></div>
+            <p class="course-desc">需完成 D 课程方可解锁</p>
+            <div class="course-progress"><i style="width:0%"></i></div>
+          </div>
+          <div class="course-card">
+            <div class="course-head"><span class="course-name">旧版认证（2025）</span><span class="badge badge-expired">❗ 已过期</span></div>
+            <p class="course-desc">请重新参加 C3 精细认证以恢复高阶接单权限</p>
+          </div>
+        </section>
+
+        <!-- 洗车工 6：在线考试 -->
+        <section class="page" data-page="worker-exam" aria-label="在线考试页">
+          <div class="page-header">
+            <button class="back-btn" data-go="worker-learn" aria-label="返回学习认证">‹</button>
+            <span class="page-title">C3 精细认证 · 在线考试</span>
+          </div>
+          <div class="exam-timer"><span>⏱️ 剩余时间</span><span class="timer-num" id="exam-timer" aria-live="off">10:00</span></div>
+          <div class="exam-q">
+            <span class="q-index" id="exam-index">第 1 / 20 题</span>
+            <p class="q-text" id="exam-text">加载中…</p>
+            <div id="exam-options"></div>
+          </div>
+          <div class="answer-sheet">
+            <div class="card-row" style="margin-bottom:8px"><span class="mini muted">答题卡（点击题号跳转）</span><span class="mini" id="exam-answered">已答 0 / 20</span></div>
+            <div class="sheet-grid" id="answer-sheet"></div>
+          </div>
+          <div class="success-actions">
+            <button class="btn btn-secondary" id="exam-prev" data-action="exam-prev" aria-label="上一题">上一题</button>
+            <button class="btn btn-primary" id="exam-next" data-action="exam-next" aria-label="下一题">下一题 ›</button>
+          </div>
+          <div class="sticky-bar" style="margin-top:10px">
+            <div class="sticky-inner"><button class="btn btn-danger" id="exam-submit" data-action="exam-submit" aria-label="交卷">交卷（二次确认）</button></div>
+          </div>
+        </section>
+
+        <!-- 洗车工 7：考试结果 -->
+        <section class="page" data-page="worker-examresult" aria-label="考试结果页">
+          <div class="page-header">
+            <button class="back-btn" data-go="worker-learn" aria-label="返回学习认证">‹</button>
+            <span class="page-title">考试结果</span>
+          </div>
+          <div class="exam-result">
+            <div class="exam-score" id="exam-score">0</div>
+            <p class="mini muted">得分 / 100 · 及格线 80 分</p>
+            <div class="exam-pass ok" id="exam-pass">通过</div>
+            <p class="mini muted" id="exam-result-desc">考试通过，C3 精细认证已解锁。</p>
+          </div>
+          <div class="success-actions">
+            <button class="btn btn-primary" data-action="exam-retry" aria-label="重新考试">重新考试</button>
+            <button class="btn btn-secondary" data-go="worker-learn" aria-label="返回学习认证">返回</button>
+          </div>
+        </section>
+
+        <!-- 洗车工 8：收入 -->
+        <section class="page" data-page="worker-income" aria-label="收入页">
+          <div class="sim-banner" role="status"><span class="sim-ico" aria-hidden="true">⚠️</span><span>测试环境 · 模拟支付 · 不产生真实资金收付</span></div>
+          <div class="page-header"><span class="page-title">💰 收入与钱包</span></div>
+          <div class="wallet-card">
+            <span class="w-label">可提现余额（模拟）</span>
+            <div class="w-amount">¥1,286.40</div>
+            <span class="wallet-state" id="wallet-state">● 正常 · 可提现</span>
+          </div>
+          <div class="wallet-states" id="wallet-states">
+            <button class="ws is-active" data-action="wallet-state" data-state="normal" aria-label="钱包状态：正常可提现">● 正常</button>
+            <button class="ws" data-action="wallet-state" data-state="frozen" aria-label="钱包状态：冻结中">◐ 冻结中</button>
+            <button class="ws" data-action="wallet-state" data-state="settled" aria-label="钱包状态：已结算">✓ 已结算</button>
+          </div>
+          <div class="sec-title">分项账单 <span class="sub">近 7 日（测试数据）</span></div>
+          <div class="card tight">
+            <div class="bill-item"><span>🚿 洗车服务费（8 单）</span><span class="num">+¥824.00</span></div>
+            <div class="bill-item"><span>🚗 取送补贴</span><span class="num">+¥96.00</span></div>
+            <div class="bill-item"><span>🎫 免佣卡抵扣</span><span class="num" style="color:var(--color-success)">+¥38.40</span></div>
+            <div class="bill-item"><span>🏦 平台服务费（35% 抽成）</span><span class="num" style="color:var(--color-danger)">-¥308.00</span></div>
+            <div class="bill-item"><span>🛡️ 平台代缴（L1）</span><span class="num" style="color:var(--color-danger)">-¥8.00</span></div>
+          </div>
+          <div class="fee-free">
+            <div class="card-row"><span><b>🎫 免佣卡 · 7 日卡</b><br><span class="mini">7 日内订单免平台服务费</span></span><button class="btn btn-sm btn-warn" data-action="buy-card" aria-label="模拟购买免佣卡7日卡">¥19.9 购买</button></div>
+          </div>
+          <p class="mini muted" style="text-align:center">所有金额均为测试数据，不产生真实资金收付</p>
+        </section>
+
+        <!-- 洗车工底部 Tab -->
+        <nav class="tabbar" aria-label="洗车工端底部导航">
+          <button class="tab-item is-active" data-tab="worker-hall" data-go="worker-hall" aria-label="抢单大厅"><span class="tab-icon" aria-hidden="true">📡</span><span class="tab-label">抢单</span></button>
+          <button class="tab-item" data-tab="worker-task" data-go="worker-task" aria-label="任务执行"><span class="tab-icon" aria-hidden="true">🧰</span><span class="tab-label">任务</span></button>
+          <button class="tab-item" data-tab="worker-learn" data-go="worker-learn" aria-label="学习认证"><span class="tab-icon" aria-hidden="true">📚</span><span class="tab-label">学习</span></button>
+          <button class="tab-item" data-tab="worker-income" data-go="worker-income" aria-label="收入"><span class="tab-icon" aria-hidden="true">💰</span><span class="tab-label">收入</span></button>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       门店端（靛紫 #6D5AE6）
+       ================================================================ -->
+  <section class="app-shell app-store" id="app-store" data-app="store" aria-label="门店端">
+    <div class="phone">
+      <div class="phone-statusbar" aria-hidden="true"><span>9:41</span><span class="status-icons">●●● ▰</span></div>
+      <div class="phone-screen">
+
+        <!-- 门店 1：工作台 -->
+        <section class="page is-active" data-page="store-workbench" aria-label="门店工作台">
+          <div class="page-header"><span class="page-title">🏬 门店工作台</span><button class="header-action" data-go="store-hall" aria-label="前往接单大厅">接单大厅 ›</button></div>
+          <div class="sec-title">Bay 工位状态 <span class="sub">点击卡片循环切换三态</span></div>
+          <div class="legend" aria-label="工位状态图例"><span><i style="background:var(--color-success)"></i>有空位</span><span><i style="background:var(--color-danger)"></i>已满</span><span><i style="background:var(--color-neutral-400)"></i>暂停</span></div>
+          <div class="bay-grid" id="bay-grid">
+            <button class="bay bay-free" data-bay="0" aria-label="Bay-01，当前有空位，点击切换状态"><span class="bay-name">Bay-01</span><span class="bay-status"><i class="bay-dot"></i><span class="bay-status-text">有空位</span></span></button>
+            <button class="bay bay-free" data-bay="1" aria-label="Bay-02，当前有空位，点击切换状态"><span class="bay-name">Bay-02</span><span class="bay-status"><i class="bay-dot"></i><span class="bay-status-text">有空位</span></span></button>
+            <button class="bay bay-full" data-bay="2" aria-label="Bay-03，当前已满，点击切换状态"><span class="bay-name">Bay-03</span><span class="bay-status"><i class="bay-dot"></i><span class="bay-status-text">已满</span></span></button>
+            <button class="bay bay-free" data-bay="3" aria-label="Bay-04，当前有空位，点击切换状态"><span class="bay-name">Bay-04</span><span class="bay-status"><i class="bay-dot"></i><span class="bay-status-text">有空位</span></span></button>
+            <button class="bay bay-paused" data-bay="4" aria-label="Bay-05，当前暂停，点击切换状态"><span class="bay-name">Bay-05</span><span class="bay-status"><i class="bay-dot"></i><span class="bay-status-text">暂停</span></span></button>
+            <button class="bay bay-full" data-bay="5" aria-label="Bay-06，当前已满，点击切换状态"><span class="bay-name">Bay-06</span><span class="bay-status"><i class="bay-dot"></i><span class="bay-status-text">已满</span></span></button>
+          </div>
+          <div class="sec-title">Crew 班组状态 <span class="sub">4 人在岗</span></div>
+          <div class="crew-list">
+            <div class="crew"><div class="crew-avatar" aria-hidden="true">👨‍🔧</div><div class="crew-name">陈师傅</div><div class="crew-state">C3 · 作业中</div></div>
+            <div class="crew"><div class="crew-avatar" aria-hidden="true">👩‍🔧</div><div class="crew-name">李师傅</div><div class="crew-state">C2 · 可指派</div></div>
+            <div class="crew"><div class="crew-avatar" aria-hidden="true">🧑‍🔧</div><div class="crew-name">王师傅</div><div class="crew-state">C1 · 休息</div></div>
+            <div class="crew"><div class="crew-avatar" aria-hidden="true">👨‍🔧</div><div class="crew-name">赵师傅</div><div class="crew-state">C2 · 可指派</div></div>
+          </div>
+          <div class="sec-title">当前到店任务 <span class="sub">实时同步</span></div>
+          <div class="card tight">
+            <div class="task-row"><span class="task-no">#0092</span><span style="flex:1">🧴 精细洗<br><span class="mini muted">Bay-03 · 李师傅</span></span><span class="tag tag-accent">洗车中</span></div>
+            <div class="task-row"><span class="task-no">#0094</span><span style="flex:1">🚗 外观洗<br><span class="mini muted">Bay-01 · 待指派</span></span><span class="tag tag-warning">待接单</span></div>
+          </div>
+          <div class="success-actions" style="padding-top:0">
+            <button class="btn btn-secondary" data-go="store-settlement" aria-label="查看结算账单">结算账单</button>
+            <button class="btn btn-primary" data-go="store-review" aria-label="填写五维评价">五维评价</button>
+          </div>
+        </section>
+
+        <!-- 门店 2：接单大厅 -->
+        <section class="page" data-page="store-hall" aria-label="接单大厅">
+          <div class="sim-banner" role="status"><span class="sim-ico" aria-hidden="true">⚠️</span><span>测试环境 · 模拟支付 · 不产生真实资金收付</span></div>
+          <div class="page-header">
+            <button class="back-btn" data-go="store-workbench" aria-label="返回工作台">‹</button>
+            <span class="page-title">接单大厅</span>
+          </div>
+          <div class="block-note" id="no-bay-note" hidden role="alert">⛔ 当前无空位（有空位工位为 0），接单已被拦截。请回到工作台切换工位状态后重试。</div>
+          <div class="sec-title">到店单 <span class="sub">门店自接 / 指派</span></div>
+          <article class="order-card">
+            <div class="card-row"><span><b>✨ 标准洗 · 到店</b></span><span class="order-amount">¥133</span></div>
+            <div class="order-meta"><span class="tag tag-info">到店单</span><span class="tag tag-accent">需求 C1</span><span class="tag tag-neutral">客户已到店</span></div>
+            <div class="card-row" style="margin-top:10px"><span class="mini muted">订单 WC20260616-0101</span><button class="btn btn-sm btn-primary" data-action="store-assign" data-order="WC20260616-0101" aria-label="抢单：标准洗到店单">抢单</button></div>
+          </article>
+          <article class="order-card">
+            <div class="card-row"><span><b>🧴 精细洗 · 到店</b></span><span class="order-amount">¥243</span></div>
+            <div class="order-meta"><span class="tag tag-info">到店单</span><span class="tag tag-accent">需求 C3</span><span class="tag tag-warning">预约 16:00</span></div>
+            <div class="card-row" style="margin-top:10px"><span class="mini muted">订单 WC20260616-0102</span><button class="btn btn-sm btn-secondary" data-action="store-assign" data-order="WC20260616-0102" aria-label="指派：精细洗到店单">指派给李师傅</button></div>
+          </article>
+          <div class="sec-title">上门单 <span class="sub">需指派洗车工</span></div>
+          <article class="order-card">
+            <div class="card-row"><span><b>🚗 外观洗 · 上门</b></span><span class="order-amount">¥83</span></div>
+            <div class="order-meta"><span class="tag tag-accent">上门单</span><span class="tag tag-neutral">距店 2.1km</span></div>
+            <div class="card-row" style="margin-top:10px"><span class="mini muted">订单 WC20260616-0103</span><button class="btn btn-sm btn-primary" data-action="store-assign" data-order="WC20260616-0103" aria-label="抢单：外观洗上门单">抢单</button></div>
+          </article>
+        </section>
+
+        <!-- 门店 3：结算账单 -->
+        <section class="page" data-page="store-settlement" aria-label="结算账单页">
+          <div class="sim-banner" role="status"><span class="sim-ico" aria-hidden="true">⚠️</span><span>测试环境 · 模拟支付 · 不产生真实资金收付</span></div>
+          <div class="page-header">
+            <button class="back-btn" data-go="store-workbench" aria-label="返回工作台">‹</button>
+            <span class="page-title">结算账单</span>
+          </div>
+          <div class="sec-title">三方结算 <span class="sub">门店端仅显示工位费 M 部分</span></div>
+          <div class="card tight">
+            <div class="bill-item"><span>👤 用户支付（含服务费）</span><span class="num">¥133.00</span></div>
+            <div class="bill-item"><span>🧑‍🔧 洗车工分成（40%）</span><span class="num">¥53.20</span></div>
+            <div class="bill-item"><span>🏦 平台服务费（35%）</span><span class="num">¥46.55</span></div>
+            <div class="bill-item"><span>🏬 门店工位费 M（25%）</span><span class="num" style="color:var(--color-role-store);font-weight:700">¥33.25</span></div>
+          </div>
+          <p class="mini muted" style="padding:0 16px 12px">注：门店视图按产品口径仅展示工位费 M 部分，其他分项为对账参考示意。</p>
+          <div class="sec-title">门店钱包 <span class="sub">T+1 对账</span></div>
+          <div class="wallet-card" style="background:linear-gradient(135deg,#4B3FBA,#6D5AE6)">
+            <span class="w-label">待结算（模拟）</span>
+            <div class="w-amount">¥2,418.60</div>
+            <span class="wallet-state">T+1 自动对账 · 明日 09:00</span>
+          </div>
+          <div class="card tight">
+            <div class="summary-line"><span class="muted">昨日工位费 M</span><span class="num">¥712.40</span></div>
+            <div class="summary-line"><span class="muted">今日预估</span><span class="num">¥438.20</span></div>
+            <div class="summary-line"><span class="muted">争议冻结</span><span class="num" style="color:var(--color-danger)">¥0.00</span></div>
+            <div class="summary-line total"><span>累计待结算</span><span class="num">¥2,418.60</span></div>
+          </div>
+          <button class="btn btn-secondary btn-block" data-action="reconcile" aria-label="发起T+1对账">发起 T+1 对账（模拟）</button>
+        </section>
+
+        <!-- 门店 4：五维评价 -->
+        <section class="page" data-page="store-review" aria-label="五维评价页">
+          <div class="page-header">
+            <button class="back-btn" data-go="store-workbench" aria-label="返回工作台">‹</button>
+            <span class="page-title">五维服务评价</span>
+          </div>
+          <div class="sec-title">为本次作业评分 <span class="sub">1-5 星 · 低分需填原因</span></div>
+          <div id="review-list">
+            <div class="review-dim" data-dim="tool"><div class="rd-head"><span>🧰 工具归位</span><span class="dim-score muted">未评分</span></div><div class="stars" role="group" aria-label="工具归位评分"></div><div class="reason-box"><textarea placeholder="≤2 分请填写具体原因（必填）" aria-label="工具归位低分原因"></textarea></div></div>
+            <div class="review-dim" data-dim="site"><div class="rd-head"><span>🧹 场地收拾</span><span class="dim-score muted">未评分</span></div><div class="stars" role="group" aria-label="场地收拾评分"></div><div class="reason-box"><textarea placeholder="≤2 分请填写具体原因（必填）" aria-label="场地收拾低分原因"></textarea></div></div>
+            <div class="review-dim" data-dim="device"><div class="rd-head"><span>⚙️ 设备复位</span><span class="dim-score muted">未评分</span></div><div class="stars" role="group" aria-label="设备复位评分"></div><div class="reason-box"><textarea placeholder="≤2 分请填写具体原因（必填）" aria-label="设备复位低分原因"></textarea></div></div>
+            <div class="review-dim" data-dim="duration"><div class="rd-head"><span>⏱️ 工位占用时长</span><span class="dim-score muted">未评分</span></div><div class="stars" role="group" aria-label="工位占用时长评分"></div><div class="reason-box"><textarea placeholder="≤2 分请填写具体原因（必填）" aria-label="工位占用时长低分原因"></textarea></div></div>
+            <div class="review-dim" data-dim="norm"><div class="rd-head"><span>📋 配合规范</span><span class="dim-score muted">未评分</span></div><div class="stars" role="group" aria-label="配合规范评分"></div><div class="reason-box"><textarea placeholder="≤2 分请填写具体原因（必填）" aria-label="配合规范低分原因"></textarea></div></div>
+          </div>
+          <div class="sticky-bar">
+            <div class="sticky-inner"><button class="btn btn-primary" id="review-submit" data-action="submit-review" aria-label="提交五维评价">提交评价</button></div>
+          </div>
+        </section>
+
+        <!-- 门店底部 Tab -->
+        <nav class="tabbar" aria-label="门店端底部导航">
+          <button class="tab-item is-active" data-tab="store-workbench" data-go="store-workbench" aria-label="工作台"><span class="tab-icon" aria-hidden="true">🏬</span><span class="tab-label">工作台</span></button>
+          <button class="tab-item" data-tab="store-hall" data-go="store-hall" aria-label="接单"><span class="tab-icon" aria-hidden="true">📡</span><span class="tab-label">接单</span></button>
+          <button class="tab-item" data-tab="store-settlement" data-go="store-settlement" aria-label="结算"><span class="tab-icon" aria-hidden="true">🧾</span><span class="tab-label">结算</span></button>
+          <button class="tab-item" data-tab="store-review" data-go="store-review" aria-label="评价"><span class="tab-icon" aria-hidden="true">⭐</span><span class="tab-label">评价</span></button>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       后台管理端（墨蓝 #1F2738 · 全宽桌面）
+       ================================================================ -->
+  <section class="app-shell app-admin" id="app-admin" data-app="admin" aria-label="后台管理端">
+    <div class="admin-layout">
+      <aside class="admin-side">
+        <div class="side-brand">洗车平台 · 运营后台<small>v6.0 管理端 · V1测试版</small></div>
+        <nav class="side-nav" id="admin-side-nav" aria-label="后台导航">
+          <button class="side-item is-active" data-admin-page="admin-overview" data-title="总览"><span class="si-ico" aria-hidden="true">📊</span>总览</button>
+          <button class="side-item" data-admin-page="admin-audit" data-title="审核"><span class="si-ico" aria-hidden="true">🪪</span>审核</button>
+          <button class="side-item" data-admin-page="admin-generic" data-title="治理"><span class="si-ico" aria-hidden="true">🛡️</span>治理</button>
+          <button class="side-item" data-admin-page="admin-generic" data-title="费率"><span class="si-ico" aria-hidden="true">💹</span>费率</button>
+          <button class="side-item" data-admin-page="admin-generic" data-title="保单"><span class="si-ico" aria-hidden="true">📄</span>保单</button>
+          <button class="side-item" data-admin-page="admin-generic" data-title="对账"><span class="si-ico" aria-hidden="true">🧮</span>对账</button>
+          <button class="side-item" data-admin-page="admin-rbac" data-title="RBAC 权限"><span class="si-ico" aria-hidden="true">🔐</span>RBAC 权限</button>
+        </nav>
+      </aside>
+      <div class="admin-main">
+        <header class="admin-topbar">
+          <div class="crumb">运营后台 / <b id="admin-crumb">总览</b></div>
+          <div class="admin-user"><span class="tag tag-warning">V1 测试环境 · 模拟数据</span><span>管理员</span><span class="avatar" aria-hidden="true">管</span></div>
+        </header>
+        <div class="admin-content">
+
+          <!-- 后台 1：总览看板 -->
+          <section class="admin-page is-active" data-page="admin-overview" aria-label="总览看板">
+            <h2 class="admin-page-title">运营总览</h2>
+            <p class="admin-page-sub">实时关键指标 · 测试环境模拟数据 · 数据每 30s 模拟刷新</p>
+            <div class="kpi-grid">
+              <div class="kpi"><div class="kpi-label">缓存命中率</div><div class="kpi-value">98.7%</div><div class="kpi-trend up">↑ 0.4% 较昨日</div></div>
+              <div class="kpi"><div class="kpi-label">P95 响应时间</div><div class="kpi-value">186<span style="font-size:14px">ms</span></div><div class="kpi-trend up">↓ 12ms 优化</div></div>
+              <div class="kpi"><div class="kpi-label">DB QPS</div><div class="kpi-value">2,340</div><div class="kpi-trend up">↑ 8.2% 峰值</div></div>
+              <div class="kpi"><div class="kpi-label">权限审计</div><div class="kpi-value">0</div><div class="kpi-trend up">无越权事件</div></div>
+              <div class="kpi"><div class="kpi-label">认证覆盖率</div><div class="kpi-value">86.4%</div><div class="kpi-trend down">↓ 1.1% 待补认证</div></div>
+            </div>
+            <div class="chart-grid">
+              <div class="chart-card">
+                <h4>价格趋势（近 7 日 · 元）</h4>
+                <div class="chart-bars" aria-label="价格趋势柱状图">
+                  <div class="bar-wrap"><div class="bar" style="height:42%"></div><span class="bar-label">06/10</span></div>
+                  <div class="bar-wrap"><div class="bar" style="height:55%"></div><span class="bar-label">06/11</span></div>
+                  <div class="bar-wrap"><div class="bar" style="height:48%"></div><span class="bar-label">06/12</span></div>
+                  <div class="bar-wrap"><div class="bar" style="height:68%"></div><span class="bar-label">06/13</span></div>
+                  <div class="bar-wrap"><div class="bar" style="height:74%"></div><span class="bar-label">06/14</span></div>
+                  <div class="bar-wrap"><div class="bar" style="height:61%"></div><span class="bar-label">06/15</span></div>
+                  <div class="bar-wrap"><div class="bar" style="height:83%"></div><span class="bar-label">06/16</span></div>
+                </div>
+              </div>
+              <div class="chart-card">
+                <h4>产能利用率（按小时）</h4>
+                <div class="chart-line" aria-label="产能利用率折线图占位">
+                  <i style="height:22%"></i><i style="height:34%"></i><i style="height:52%"></i><i class="hi" style="height:78%"></i><i class="hi" style="height:88%"></i><i style="height:64%"></i><i style="height:71%"></i><i class="hi" style="height:92%"></i><i style="height:58%"></i><i style="height:44%"></i><i style="height:30%"></i><i style="height:18%"></i>
+                </div>
+              </div>
+            </div>
+            <div class="chart-card" style="padding:0;overflow:hidden">
+              <div style="padding:14px 16px;border-bottom:1px solid var(--color-neutral-100)"><h4>最新订单（密集表格 · 行内操作）</h4></div>
+              <div class="data-table-wrap">
+                <table class="data-table">
+                  <thead><tr><th>订单号</th><th>档位</th><th>用户</th><th>洗车工</th><th>金额（模拟）</th><th>状态</th><th>时间</th><th>操作</th></tr></thead>
+                  <tbody>
+                    <tr><td>WC20260616-0091</td><td>标准洗</td><td>138****8000</td><td>陈师傅 C3</td><td class="num">¥96</td><td><span class="pill-status pending">待接单</span></td><td>14:02</td><td><button class="op" data-action="admin-row-op" data-op="详情">详情</button><button class="op danger" data-action="admin-row-op" data-op="冻结">冻结</button></td></tr>
+                    <tr><td>WC20260616-0092</td><td>精细洗</td><td>139****1234</td><td>李师傅 C2</td><td class="num">¥188</td><td><span class="pill-status pass">洗车中</span></td><td>13:48</td><td><button class="op" data-action="admin-row-op" data-op="详情">详情</button><button class="op danger" data-action="admin-row-op" data-op="冻结">冻结</button></td></tr>
+                    <tr><td>WC20260616-0093</td><td>精细洗+镀膜</td><td>137****6677</td><td>—</td><td class="num">¥236</td><td><span class="pill-status reject">认证不足</span></td><td>13:31</td><td><button class="op" data-action="admin-row-op" data-op="详情">详情</button><button class="op" data-action="admin-row-op" data-op="催办">催办</button></td></tr>
+                    <tr><td>WC20260616-0094</td><td>外观洗</td><td>136****9988</td><td>王师傅 C1</td><td class="num">¥72</td><td><span class="pill-status pass">已完成</span></td><td>12:56</td><td><button class="op" data-action="admin-row-op" data-op="详情">详情</button></td></tr>
+                    <tr><td>WC20260616-0095</td><td>标准洗</td><td>135****4321</td><td>赵师傅 C2</td><td class="num">¥133</td><td><span class="pill-status normal">待验收</span></td><td>12:40</td><td><button class="op" data-action="admin-row-op" data-op="详情">详情</button><button class="op danger" data-action="admin-row-op" data-op="冻结">冻结</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- 后台 2：审核页 -->
+          <section class="admin-page" data-page="admin-audit" aria-label="审核页">
+            <h2 class="admin-page-title">实名 / 驾驶证审核</h2>
+            <p class="admin-page-sub">证件预览为占位图形 · 通过 / 驳回操作将写入审计日志（模拟）</p>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead><tr><th>申请ID</th><th>姓名</th><th>类型</th><th>证件预览</th><th>提交时间</th><th>状态</th><th>操作</th></tr></thead>
+                <tbody id="audit-body">
+                  <tr data-audit-row="A-1024"><td>A-1024</td><td>陈*华</td><td>实名 + 驾驶证</td><td><div class="doc-preview" aria-label="证件预览占位">🪪</div></td><td>06-16 09:12</td><td><span class="pill-status pending">待审核</span></td><td><button class="op" data-action="audit-pass" data-row="A-1024">通过</button><button class="op danger" data-action="audit-reject" data-row="A-1024">驳回</button></td></tr>
+                  <tr data-audit-row="A-1025"><td>A-1025</td><td>李*敏</td><td>驾驶证</td><td><div class="doc-preview" aria-label="证件预览占位">📄</div></td><td>06-16 08:47</td><td><span class="pill-status pending">待审核</span></td><td><button class="op" data-action="audit-pass" data-row="A-1025">通过</button><button class="op danger" data-action="audit-reject" data-row="A-1025">驳回</button></td></tr>
+                  <tr data-audit-row="A-1026"><td>A-1026</td><td>王*强</td><td>实名 + 驾驶证</td><td><div class="doc-preview" aria-label="证件预览占位">🪪</div></td><td>06-15 17:30</td><td><span class="pill-status pass">已通过</span></td><td><button class="op" data-action="audit-pass" data-row="A-1026">查看</button></td></tr>
+                  <tr data-audit-row="A-1027"><td>A-1027</td><td>赵*磊</td><td>实名</td><td><div class="doc-preview" aria-label="证件预览占位">📄</div></td><td>06-15 15:08</td><td><span class="pill-status reject">已驳回</span></td><td><button class="op" data-action="audit-pass" data-row="A-1027">查看</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- 后台 3：RBAC 权限管理 -->
+          <section class="admin-page" data-page="admin-rbac" aria-label="RBAC权限管理页">
+            <h2 class="admin-page-title">RBAC 权限管理</h2>
+            <p class="admin-page-sub">角色-权限矩阵 · 所有变更需二次确认并记入权限审计</p>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead><tr><th>角色</th><th>角色标识</th><th>可见端</th><th>关键权限</th><th>成员数</th><th>状态</th><th>操作</th></tr></thead>
+                <tbody id="rbac-body">
+                  <tr data-role="管理员"><td>超级管理员</td><td><span class="num">ADMIN</span></td><td>后台</td><td>全部权限</td><td class="num">3</td><td><span class="pill-status pass">启用</span></td><td><button class="op" data-action="rbac-op" data-op="编辑" data-role="管理员">编辑</button></td></tr>
+                  <tr data-role="审核员"><td>审核员</td><td><span class="num">AUDITOR</span></td><td>后台-审核</td><td>实名/驾驶证审核</td><td class="num">8</td><td><span class="pill-status pass">启用</span></td><td><button class="op" data-action="rbac-op" data-op="编辑" data-role="审核员">编辑</button><button class="op danger" data-action="rbac-op" data-op="禁用" data-role="审核员">禁用</button></td></tr>
+                  <tr data-role="门店店长"><td>门店店长</td><td><span class="num">STORE_MGR</span></td><td>门店端</td><td>工位/接单/结算查看</td><td class="num">24</td><td><span class="pill-status pass">启用</span></td><td><button class="op" data-action="rbac-op" data-op="编辑" data-role="门店店长">编辑</button><button class="op danger" data-action="rbac-op" data-op="禁用" data-role="门店店长">禁用</button></td></tr>
+                  <tr data-role="洗车工"><td>洗车工</td><td><span class="num">WORKER</span></td><td>洗车工端</td><td>抢单/证据/考试/收入</td><td class="num">156</td><td><span class="pill-status pass">启用</span></td><td><button class="op" data-action="rbac-op" data-op="编辑" data-role="洗车工">编辑</button></td></tr>
+                  <tr data-role="只读观察员"><td>只读观察员</td><td><span class="num">VIEWER</span></td><td>后台-总览</td><td>只读看板</td><td class="num">5</td><td><span class="pill-status normal">受限</span></td><td><button class="op" data-action="rbac-op" data-op="编辑" data-role="只读观察员">编辑</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- 后台 4：通用页（治理/费率/保单/对账共用，标题由 JS 注入） -->
+          <section class="admin-page" data-page="admin-generic" aria-label="通用管理页">
+            <h2 class="admin-page-title" id="generic-title">治理</h2>
+            <p class="admin-page-sub" id="generic-sub">测试环境模拟数据 · 行内操作仅演示</p>
+            <div class="sim-banner" role="status" style="border-radius:8px;margin-bottom:14px"><span class="sim-ico" aria-hidden="true">⚠️</span><span>测试环境 · 模拟支付 · 不产生真实资金收付</span></div>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead><tr><th>编号</th><th>对象</th><th>类型</th><th>金额/指标（模拟）</th><th>状态</th><th>更新时间</th><th>操作</th></tr></thead>
+                <tbody id="generic-body"></tbody>
+              </table>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- 全局反馈层 -->
+<div class="toast-root" id="toast-root" role="status" aria-live="polite"></div>
+<div id="modal-root"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

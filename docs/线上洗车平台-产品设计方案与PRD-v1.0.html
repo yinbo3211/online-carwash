@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>线上洗车平台 · 产品设计方案与 PRD v1.0</title>
+<style>
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --ink:#1b2330; --ink2:#4a5568; --ink3:#7b8794;
+  --line:#e3e7ed; --brand:#0f6f62; --brand-soft:#e6f4f1; --brand2:#0b4f45;
+  --warn:#b45309; --warn-soft:#fff5e6; --danger:#b91c1c; --danger-soft:#fdecec;
+  --info:#1d4ed8; --info-soft:#eaf0ff; --ok:#15803d; --ok-soft:#e9f7ee;
+  --mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+  font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* 布局 */
+.wrap{display:flex;max-width:1500px;margin:0 auto;align-items:flex-start}
+.side{position:sticky;top:0;height:100vh;width:262px;flex:0 0 262px;overflow-y:auto;
+  background:#0d1b1a;border-right:1px solid #1d302e;padding:22px 14px 40px}
+.side::-webkit-scrollbar{width:6px}.side::-webkit-scrollbar-thumb{background:#2c4945;border-radius:3px}
+.side .logo{color:#fff;font-size:17px;font-weight:700;letter-spacing:.5px;line-height:1.4;padding:4px 10px 14px;border-bottom:1px solid #24413d;margin-bottom:12px}
+.side .logo small{display:block;color:#7fb8ae;font-size:11px;font-weight:400;letter-spacing:1px;margin-top:4px}
+.side a{display:block;color:#a9c6c1;font-size:12.5px;padding:5px 10px;border-radius:5px;line-height:1.5}
+.side a:hover{background:#18302d;color:#fff;text-decoration:none}
+.side a.lv1{color:#e4f3f0;font-weight:600;margin-top:8px;font-size:13px}
+.side .sep{height:1px;background:#24413d;margin:12px 10px}
+.side .tag{display:inline-block;background:#1d3b36;color:#8fd0c4;font-size:10px;padding:1px 6px;border-radius:3px;margin-left:4px}
+
+.main{flex:1;min-width:0;padding:0 42px 90px}
+.cover{background:linear-gradient(135deg,#0f6f62 0%,#0a4a41 55%,#0b2f3a 100%);
+  color:#fff;margin:0 -42px 34px;padding:46px 42px 38px}
+.cover .kicker{font-size:12px;letter-spacing:3px;color:#9fd8cd;text-transform:uppercase}
+.cover h1{font-size:32px;margin:12px 0 8px;letter-spacing:1px;font-weight:700}
+.cover .sub{font-size:15px;color:#c8e6e0;max-width:820px}
+.cover .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.cover .meta span{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  padding:5px 12px;border-radius:20px;font-size:12px;color:#e8f6f3}
+
+h2{font-size:21px;margin:46px 0 16px;padding-bottom:10px;border-bottom:2px solid var(--brand);
+  display:flex;align-items:center;gap:10px;scroll-margin-top:20px}
+h2 .num{background:var(--brand);color:#fff;font-size:12px;width:28px;height:28px;
+  border-radius:6px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 28px;font-family:var(--mono)}
+h3{font-size:16.5px;margin:28px 0 10px;color:var(--brand2);scroll-margin-top:20px}
+h4{font-size:14.5px;margin:20px 0 8px;color:var(--ink)}
+p{margin:9px 0}
+ul,ol{margin:8px 0 8px;padding-left:22px}
+li{margin:4px 0}
+strong{color:var(--ink);font-weight:650}
+code{font-family:var(--mono);background:#eef1f4;color:#0b4f45;padding:1px 5px;border-radius:4px;font-size:12.5px}
+.small{font-size:12.5px;color:var(--ink3)}
+.muted{color:var(--ink2)}
+
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;background:var(--surface);
+  font-size:13.2px;box-shadow:0 1px 2px rgba(20,35,50,.05);border-radius:6px;overflow:hidden}
+th{background:#eef3f2;color:#0b4f45;text-align:left;font-weight:650;padding:9px 11px;border-bottom:2px solid #d6e5e1;white-space:nowrap}
+td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even){background:#fafbfc}
+td strong{color:var(--ink)}
+.nowrap{white-space:nowrap}
+
+.callout{border-left:4px solid var(--brand);background:var(--brand-soft);padding:12px 16px;margin:14px 0;border-radius:0 6px 6px 0;font-size:13.8px}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+.callout.danger{border-color:var(--danger);background:var(--danger-soft)}
+.callout.info{border-color:var(--info);background:var(--info-soft)}
+.callout.ok{border-color:var(--ok);background:var(--ok-soft)}
+.callout .t{font-weight:700;display:block;margin-bottom:4px;color:var(--ink)}
+
+.badge{display:inline-block;font-size:11px;padding:1px 8px;border-radius:10px;font-weight:600;white-space:nowrap;line-height:1.7}
+.b-red{background:var(--danger-soft);color:var(--danger)}
+.b-org{background:var(--warn-soft);color:var(--warn)}
+.b-blue{background:var(--info-soft);color:var(--info)}
+.b-green{background:var(--ok-soft);color:var(--ok)}
+.b-gray{background:#eceff2;color:var(--ink2)}
+.b-brand{background:var(--brand-soft);color:var(--brand)}
+
+.grid{display:grid;gap:12px;margin:14px 0}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.card .h{font-weight:700;color:var(--brand2);font-size:14px;margin-bottom:6px}
+.card p{font-size:13px;margin:4px 0;color:var(--ink2)}
+
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:14px 0}
+.flow .node{background:var(--surface);border:1px solid #cfded9;border-top:3px solid var(--brand);
+  border-radius:6px;padding:9px 12px;min-width:112px;flex:1;font-size:12.8px;text-align:center;color:var(--ink2)}
+.flow .node b{display:block;color:var(--ink);font-size:13px;margin-bottom:3px}
+.flow .arw{display:flex;align-items:center;color:var(--brand);font-weight:700;font-size:16px}
+
+.arch{background:#0d1b1a;color:#cfe8e3;border-radius:8px;padding:18px 20px;margin:14px 0;font-size:13px}
+.arch .row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin:8px 0}
+.arch .box{border:1px solid #3a6a62;background:#14312c;border-radius:6px;padding:8px 14px;min-width:120px;text-align:center}
+.arch .box b{color:#8fe0cf;display:block;font-size:12px;margin-bottom:2px}
+.arch .lbl{color:#6fa79d;font-size:11px;letter-spacing:1px;text-align:center;margin-top:10px}
+.arch .line{color:#5d8f86;text-align:center;font-size:12px}
+
+.ddl{background:#0f1c22;color:#d7e8e4;border-radius:8px;padding:14px 18px;font-family:var(--mono);
+  font-size:12.3px;line-height:1.7;overflow-x:auto;white-space:pre;margin:10px 0}
+.ddl .k{color:#7fd4c0}.ddl .c{color:#79919a}
+
+.tocbox{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 20px;margin:16px 0}
+.tocbox ol{columns:2;column-gap:32px;margin:0;padding-left:20px;font-size:13.2px}
+
+.foot{margin-top:60px;padding-top:18px;border-top:1px solid var(--line);color:var(--ink3);font-size:12.5px}
+@media(max-width:1000px){.side{display:none}.main{padding:0 20px 60px}.cover{margin:0 -20px 26px;padding:32px 20px}
+ .g2,.g3,.g4{grid-template-columns:1fr}.tocbox ol{columns:1}}
+@media print{.side{display:none}.main{padding:0}.cover{margin:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="side">
+  <div class="logo">线上洗车平台<small>PRODUCT DESIGN &amp; PRD · v1.0</small></div>
+  <a class="lv1" href="#s0">摘要与结论 <span class="tag">先看</span></a>
+  <a href="#s0-1">0.1 关键待确认假设（5 项）</a>
+  <a href="#s0-2">0.2 上架三道硬门槛</a>
+  <a href="#s0-3">0.3 一页结论</a>
+  <div class="sep"></div>
+  <a class="lv1" href="#s1">一、文档信息</a>
+  <a class="lv1" href="#s2">二、背景、目标与商业模式</a>
+  <a href="#s2-1">2.1 背景与问题</a>
+  <a href="#s2-2">2.2 商业模式与抽成口径</a>
+  <a href="#s2-3">2.3 成功指标与口径</a>
+  <a class="lv1" href="#s3">三、名词与术语</a>
+  <a class="lv1" href="#s4">四、需求范围</a>
+  <a class="lv1" href="#s5">五、方案对比与选型</a>
+  <a href="#s5-1">5.1 派单模式</a>
+  <a href="#s5-2">5.2 保险方案</a>
+  <a href="#s5-3">5.3 资金结算通道</a>
+  <a href="#s5-4">5.4 推荐结论与演进</a>
+  <a class="lv1" href="#s6">六、用户角色与场景</a>
+  <a class="lv1" href="#s7">七、功能需求</a>
+  <a href="#s7-1">7.1 用户端 FR-U</a>
+  <a href="#s7-2">7.2 洗车工端 FR-W</a>
+  <a href="#s7-3">7.3 后台管理端 FR-A</a>
+  <a class="lv1" href="#s8">八、非功能需求</a>
+  <a class="lv1" href="#s9">九、业务流程与状态流转</a>
+  <a href="#s9-1">9.1 主流程</a>
+  <a href="#s9-2">9.2 订单状态机</a>
+  <a href="#s9-3">9.3 派单状态机</a>
+  <a href="#s9-4">9.4 车况证据链与刮蹭闭环</a>
+  <a href="#s9-5">9.5 洗车工准入状态机</a>
+  <a href="#s9-6">9.6 治理处置流程</a>
+  <a class="lv1" href="#s10">十、数据与埋点需求</a>
+  <a href="#s10-1">10.1 系统架构</a>
+  <a href="#s10-2">10.2 MySQL 核心表设计</a>
+  <a href="#s10-3">10.3 金额/抽成/结算口径</a>
+  <a href="#s10-4">10.4 埋点事件</a>
+  <a href="#s10-5">10.5 指标口径库</a>
+  <a class="lv1" href="#s11">十一、权限与安全</a>
+  <a class="lv1" href="#s12">十二、异常处理清单</a>
+  <a class="lv1" href="#s13">十三、上线计划与依赖</a>
+  <a href="#s13-1">13.1 上架合规资质清单</a>
+  <a href="#s13-2">13.2 依赖就绪度三档</a>
+  <a href="#s13-3">13.3 MVP 版本规划</a>
+  <a href="#s13-4">13.4 灰度 / 回滚 / 验证</a>
+  <a class="lv1" href="#s14">十四、风险与遗留问题</a>
+  <a class="lv1" href="#s15">十五、附录</a>
+  <a href="#s15-1">15.1 信息架构与页面清单</a>
+  <a href="#s15-2">15.2 关键页面原型思路</a>
+  <a href="#s15-3">15.3 需求追踪矩阵 RTM</a>
+  <a href="#s15-4">15.4 待确认清单与合规声明</a>
+</nav>
+
+<main class="main">
+
+<div class="cover">
+  <div class="kicker">Product Design Document</div>
+  <h1>线上洗车平台 · 产品设计方案与 PRD</h1>
+  <div class="sub">车主端 / 洗车工端 / 后台管理端三端一体化设计；覆盖下单派单、代驾取送车、车况证据链与保险闭环、评分治理、40% 平台抽成分账结算、实名与驾驶证准入、MySQL 持久化及真实上架合规路径。</div>
+  <div class="meta">
+    <span>版本 v1.0</span><span>2026-11-15</span><span>状态：待评审</span>
+    <span>类型：完整版 PRD（资金 / 合规 / 强监管复合场景）</span><span>作者：资深产品经理 Agent（司南）</span>
+  </div>
+</div>
+
+<!-- ============ 0 摘要 ============ -->
+<h2 id="s0"><span class="num">0</span>摘要与结论（先看这一页）</h2>
+
+<div class="callout ok">
+  <span class="t">结论：产品逻辑可以完整落地，三端闭环成立；但"真实上架"能否通过，取决于三道合规硬门槛，而不是功能开发。</span>
+  你描述的业务本质是「<strong>O2O 上门取送车洗车 + 代驾挪车服务 + 平台撮合分账</strong>」，不是单纯的洗车预约。因为洗车工会<strong>驾驶用户的机动车</strong>，平台同时踩在「代驾责任」「保险销售」「资金二清」「灵活用工税务」四条监管线上。功能可以在 1 个 MVP 内跑通，但上线前必须先解决第 0.2 节的三道门槛，否则会被应用商店 / 支付渠道 / 监管卡住。
+</div>
+
+<h3 id="s0-1">0.1 五项关键待确认假设（已按此设计，可推翻）</h3>
+<table>
+<thead><tr><th style="width:52px">#</th><th style="width:150px">歧义点</th><th>我的处理（假设）</th><th style="width:210px">若你的原意不同，影响什么</th></tr></thead>
+<tbody>
+<tr><td>A1</td><td><strong>「下单可选保险」与「每单必须有保险」并存</strong></td><td>拆成两层：<strong>L1 基础保障每单强制</strong>（平台统一投保，成本内含且在下单页明示，用户不可取消）+ <strong>L2 增值保障用户自愿勾选加购</strong>（提高保额/附加责任，单独计价）。</td><td>若你要的是「用户必须自己勾一个保险才让下单」，则改为下单页必选单选组，且需要保险销售资质，见 5.2。</td></tr>
+<tr><td>A2</td><td><strong>40% 抽成基数</strong></td><td>抽成基数 = <strong>洗车工服务收入 S</strong>；保险费属代收代付成本项，<strong>不参与抽成</strong>、不进入洗车工结算。</td><td>若对订单总额（含保费）抽成，出险时会挤占赔付预算，且保费被抽走易引发合规与客诉，强烈不建议。</td></tr>
+<tr><td>A3</td><td><strong>「自动分配 或者 抢单」</strong></td><td><strong>混合模式</strong>：新单先入抢单池 T 秒 → 超时无人抢则按权重自动指派；评分低的洗车工在抢单池降权、指派权重下调，以此实现「减少订单」。</td><td>若严格二选一，选纯抢单则「减少派单」惩罚失效（只能靠限制抢单资格）；选纯指派则开发量上升但体验可控。</td></tr>
+<tr><td>A4</td><td><strong>洗车工与平台的法律关系</strong></td><td>按<strong>灵活就业 / 个体经营者（非劳动关系）</strong>设计：平台提供信息与结算服务，签署服务合作协议，60% 为经营收入，走合规税务方案。</td><td>若认定为劳动关系，则需社保、最低工资、工伤、个税代扣代缴，40% 抽成模式与治理方式都要重做。</td></tr>
+<tr><td>A5</td><td><strong>手机验证码登录「暂缓」</strong></td><td>本期只实现 <strong>手机号注册 + 账号密码登录</strong>；验证码登录的<strong>接口契约、数据表、入口位全部预留但不接通道</strong>，前端入口置灰并提示「即将开放」。</td><td>若本期就要真发短信，需增加短信服务商、防刷限流、费用与备案，排期 +N 天。</td></tr>
+</tbody>
+</table>
+<p class="small">另：文档中标注「建议值 / 估算 / 待确认」的数值均为设计占位，<strong>非市场调研结论</strong>，上线前需由业务、法务、保险合作方与支付机构逐项核定；我不编造行业数据与调研结论。</p>
+
+<h3 id="s0-2">0.2 上架三道硬门槛（阻塞项，未解决不承诺上架排期）</h3>
+<div class="grid g3">
+  <div class="card" style="border-top:3px solid var(--danger)">
+    <div class="h">① 资金二清 <span class="badge b-red">阻塞</span></div>
+    <p>用户付款若先进平台自有账户、再由平台转给洗车工，构成<strong>无证经营支付结算（二清）</strong>。必须走<strong>持牌支付机构的分账产品 / 银行存管 / 持牌分账服务商</strong>，由支付机构按指令直接分账到平台与洗车工。</p>
+  </div>
+  <div class="card" style="border-top:3px solid var(--danger)">
+    <div class="h">② 保险出单资质 <span class="badge b-red">阻塞</span></div>
+    <p>页面上以「保险产品」形态售卖、比价、推荐需要<strong>保险兼业代理 / 经纪资质</strong>。推荐与<strong>持牌保险经纪或保险公司合作出单</strong>，平台只表述「服务已含基础保障」。同时须确认<strong>用户商业车险对非约定驾驶人是否免赔/加扣</strong>。</p>
+  </div>
+  <div class="card" style="border-top:3px solid var(--danger)">
+    <div class="h">③ 代驾责任与证据链 <span class="badge b-red">阻塞</span></div>
+    <p>驾驶他人机动车发生刮蹭、违章、事故，责任必须有闭环：<strong>用户明确授权驾驶 + 驾驶证核验 + 取/还车强制验车拍照 + 全程轨迹 + 代驾责任险 + 争议申诉</strong>。缺证据链，纠纷与赔付无法收敛。</p>
+  </div>
+</div>
+<div class="callout warn">
+  <span class="t">另一个必须正视的商业风险：40% 抽成偏高，可能压垮洗车工供给。</span>
+  我不引用未经核实的市场数据，但逻辑上：抽成直接决定洗车工实收，实收决定接单意愿与留存，留存决定「抢单池有没有人抢」。因此把抽成比例做成<strong>后台可配置 + 分城市差异化 + 费率版本快照</strong>，并把「洗车工 30 天留存 / 实收时薪 / 抢单池响应时长」列为上线后核心观测指标（RK-04）。建议上线前用小范围试点做供给测算，而不是全量硬上。
+</div>
+
+<h3 id="s0-3">0.3 一页结论</h3>
+<div class="grid g4">
+  <div class="card"><div class="h">三端定位</div><p><strong>用户端</strong>：下单 / 支付 / 保险 / 验车确认 / 评价投诉<br><strong>洗车工端</strong>：准入 / 抢单 / 取送车验车 / 异常上报 / 结算提现<br><strong>后台</strong>：审核 / 派单配置 / 治理封号 / 分账对账 / 保单 / 数据看板（<strong>上架必备</strong>）</p></div>
+  <div class="card"><div class="h">资金底线三件套</div><p>幂等键 + T+1 三方对账 + 资损告警，<strong>任何排期压缩都不可砍</strong>。金额一律 <code>DECIMAL / 分</code>，禁止浮点。</p></div>
+  <div class="card"><div class="h">登录注册</div><p>用户：手机号必填 + 密码登录；验证码登录预留不实现。<br>洗车工：手机号 + 实名 + 驾驶证（OCR + 有效期 + 准驾车型）+ 人脸活体建议。</p></div>
+  <div class="card"><div class="h">治理分级</div><p>评分降权 → 抢单冷却 → 暂停接单 → 封号。<strong>封号必须人工复核 + 证据 + 申诉通道</strong>，禁止算法直接封号。</p></div>
+</div>
+
+<div class="tocbox">
+  <strong>全文结构（15 段 PRD + 专项清单）</strong>
+  <ol>
+    <li>文档信息</li><li>背景、目标与商业模式</li><li>名词与术语定义</li><li>需求范围（含/不含）</li><li>方案对比与选型说明</li><li>用户角色与使用场景</li><li>功能需求（FR / GWT 验收）</li><li>非功能需求</li><li>业务流程与状态流转</li><li>数据与埋点需求（MySQL）</li><li>权限与安全要求</li><li>异常处理清单</li><li>上线计划、依赖与验证</li><li>风险与遗留问题</li><li>附录（原型 / RTM / 声明）</li>
+  </ol>
+</div>
+
+<!-- ============ 1 ============ -->
+<h2 id="s1"><span class="num">1</span>一、文档信息</h2>
+<table>
+<thead><tr><th>版本</th><th>日期</th><th>作者</th><th>变更内容</th><th>评审记录</th></tr></thead>
+<tbody><tr><td>v1.0</td><td>2026-11-15</td><td>资深产品经理 Agent（司南）</td><td>初稿：三端完整方案 + PRD + 合规上架路径 + MySQL 数据模型</td><td><span class="badge b-org">待评审</span></td></tr></tbody>
+</table>
+<p><strong>评审重点建议</strong>：法务（二清 / 保险 / 代驾授权 / 灵活用工）、支付机构（分账通道）、保险合作方（代驾责任险条款与保额）、财务（结算与税务）、研发（三端与状态机可行性）、客服（投诉与申诉话术）。</p>
+<p class="small">口径约定：全文状态词统一为 <strong>必须 / 应该 / 可以 / 禁止</strong>；需求编号 R-xx、功能 FR-xx、用户故事 US-xx、风险 RK-xx、数据表 t_xxx；金额单位人民币元（¥），存储用分或 DECIMAL。</p>
+
+<!-- ============ 2 ============ -->
+<h2 id="s2"><span class="num">2</span>二、背景、目标与商业模式</h2>
+<h3 id="s2-1">2.1 背景与要解决的问题</h3>
+<table>
+<thead><tr><th style="width:110px">维度</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>业务现状</td><td>车主需自行把车开到洗车店、排队等待；或找无固定保障的上门洗车，服务标准与责任边界不清。</td></tr>
+<tr><td>核心方案</td><td>车主线上下单 → 洗车工接单 → <strong>到车主指定地点取钥匙、代为驾驶至洗车点、洗完开回交还</strong> → 车主验收确认。车主全程无需到场。</td></tr>
+<tr><td>解决的痛点</td><td>车主省时；洗车工获得订单来源；平台通过撮合与履约保障抽取运营费。</td></tr>
+<tr><td>引入的新风险</td><td>驾驶他人车辆期间的刮蹭/违章/事故、车况归属争议、钥匙与车内财物安全、服务态度不可控、资金结算合规。</td></tr>
+<tr><td>本方案重点</td><td>把上述新风险用<strong>「证据链 + 保险 + 治理 + 分账」四条闭环</strong>产品化，而不是靠协议一句免责。</td></tr>
+</tbody>
+</table>
+
+<h3 id="s2-2">2.2 商业模式与抽成口径（关键，需财务/法务确认）</h3>
+<div class="callout info">
+<span class="t">订单金额构成与分账公式</span>
+<code>用户实付 P = 洗车服务费 S + 基础保障费 I_base（平台统保成本，明示） + 增值保障费 I_add（用户自愿勾选）</code><br>
+<code>平台运营费 = S × R</code>，其中 <strong>R = 40%</strong>（用户指定，做成后台可配置参数，按订单创建时的<strong>费率版本快照</strong>取值）<br>
+<code>洗车工结算 = S × (1 − R)</code>　｜　保险费 <code>I_base + I_add</code> 为<strong>代收代付成本项，全额流向保险出单方，不抽成、不进洗车工结算</strong><br>
+<code>校验恒等式：P = 平台运营费 + 洗车工结算 + I_base + I_add</code>（分账指令必须满足，差异即资损告警）
+</div>
+<table>
+<thead><tr><th>项</th><th>口径 / 规则</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>抽成对象</td><td>洗车工的服务收入 S</td><td>不含保险费、不含代收代付项；避免抽走赔付预算</td></tr>
+<tr><td>费率配置</td><td><code>sys_config.fee_rate</code> 带<strong>版本号 + 生效时间 + 操作人 + 变更留痕</strong></td><td>禁止硬编码 40%；调比例不发版；历史订单按 <code>rate_snapshot</code> 结算，禁止追溯调整</td></tr>
+<tr><td>结算周期</td><td>订单完成且用户确认/超时自动确认后，<strong>T+1 进入可提现余额</strong>（建议值，待与支付机构确认）</td><td>争议/事故订单冻结结算，转「异常处置」</td></tr>
+<tr><td>提现</td><td>洗车工实名 + 绑定本人结算账户 + 单笔/单日限额 + 幂等</td><td>需配合灵活用工税务方案（代扣代缴/委托代征），见 13.1</td></tr>
+<tr><td>退款</td><td>按订单状态分摊退：未接单全额退；已取车按服务进度与保险是否生效分摊，<strong>退款金额以服务端计算为准</strong></td><td>支持部分退款；原路退回；退款需回冲分账并冲销保单（如可）</td></tr>
+<tr><td>发票</td><td>平台就运营费向车主/洗车工开具服务费发票；洗车工就其实收按税务方案处理</td><td>口径需财务确认，禁止平台全额开票</td></tr>
+</tbody>
+</table>
+<div class="callout danger"><span class="t">红线：禁止平台代收代付再结算</span>用户资金<strong>必须</strong>由持牌支付机构按分账指令直接清算到「平台商户号 / 洗车工子商户 / 保费专户」。平台自有账户<strong>禁止</strong>沉淀并二次转账给洗车工（二清）。详见 5.3 与 11.3。</div>
+
+<h3 id="s2-3">2.3 成功指标与口径</h3>
+<table>
+<thead><tr><th>指标</th><th>定义与公式</th><th>排除项 / 口径说明</th><th>目标</th></tr></thead>
+<tbody>
+<tr><td>订单完成率</td><td>完成订单数 ÷ 支付成功订单数</td><td>分母排除未支付；用户主动取消与全额退款单单独列示，不混入分母（口径需确认）</td><td>上线后基线观测，不设臆造目标值</td></tr>
+<tr><td>接单响应时长 P50/P95</td><td>支付成功 → 洗车工接单成功</td><td>抢单池超时转自动指派<strong>计入</strong>；按城市/时段分层</td><td>建议值待试点标定</td></tr>
+<tr><td>抢单池超时率</td><td>超时转指派订单 ÷ 支付成功订单</td><td>反映供给充足度，与 40% 抽成强相关</td><td>持续下降</td></tr>
+<tr><td>车况纠纷率</td><td>还车验车争议订单 ÷ 完成订单</td><td>取车前已标注的既有划痕不计</td><td>持续下降</td></tr>
+<tr><td>责任事故率</td><td>判定为洗车工驾驶责任的事故单 ÷ 完成订单</td><td>保险报案口径；目标值<strong>待保险合作方数据确认</strong></td><td>底线监控</td></tr>
+<tr><td>投诉闭环时长 P95</td><td>投诉创建 → 处理完成</td><td>申诉重开计时是否续算需确认</td><td>建议 ≤ 建议值待定</td></tr>
+<tr><td>洗车工 30 天留存</td><td>准入后第 30 日仍接单的洗车工 ÷ 当期新准入</td><td><strong>40% 抽成可持续性的核心观测指标</strong></td><td>重点监控</td></tr>
+<tr><td>重复支付率 / 分账差异率</td><td>重复支付订单数、分账金额≠订单金额的单数</td><td>资金底线指标</td><td><strong>底线 0</strong></td></tr>
+<tr><td>对账差异挂起时长</td><td>T+1 对账差异从产生到关闭</td><td>超时告警</td><td><strong>≤ 24h</strong></td></tr>
+<tr><td>平台 Take Rate</td><td>平台运营费 ÷ 洗车工服务收入 S</td><td>口径固定为 40%，保险费不计入分母</td><td>配置值核验</td></tr>
+</tbody>
+</table>
+<p class="small">所有目标值标注「建议值 / 待确认」而非编造实测数据；上线前须由业务给出基线，上线后由 13.4 的最小数据看板回收。</p>
+
+<!-- ============ 3 ============ -->
+<h2 id="s3"><span class="num">3</span>三、名词与术语定义</h2>
+<table>
+<thead><tr><th style="width:130px">术语</th><th>定义</th></tr></thead>
+<tbody>
+<tr><td>取送车</td><td>洗车工到车主指定地点取钥匙，代为驾驶车辆至洗车作业点，完成后驾驶归还并交还钥匙的全过程。<strong>本质是代驾/挪车服务</strong>，非单纯洗车。</td></tr>
+<tr><td>车况证据链</td><td>取车前与还车时按规定角度实时拍摄的车身/轮胎/里程/内饰照片，附时间戳、GPS 水印、拍摄设备与订单号，作为划痕归属与理赔依据。</td></tr>
+<tr><td>基础保障 L1</td><td>每单强制、平台统一投保、成本内含的代驾/挪车服务责任保障，覆盖洗车工驾驶期间的车辆损失、第三者责任等。</td></tr>
+<tr><td>增值保障 L2</td><td>用户下单时自愿勾选加购的更高保额或附加责任，单独计价、单独出单。</td></tr>
+<tr><td>抢单池</td><td>支付成功后的订单在 T 秒内对符合资格的洗车工开放抢夺；超时转系统自动指派。</td></tr>
+<tr><td>派单权重</td><td>自动指派时的综合打分：距离、服务评分、当前负载、准时率、治理惩罚系数等（可配置）。</td></tr>
+<tr><td>治理降权</td><td>对服务态度差/被投诉的洗车工，降低抢单优先级与指派权重，实现「适量减少订单」，非直接封禁。</td></tr>
+<tr><td>分账指令</td><td>支付时由平台生成、交由持牌支付机构执行的资金拆分指令（平台运营费 / 洗车工结算 / 保费）。</td></tr>
+<tr><td>费率快照</td><td>订单创建时固化的抽成比例与版本，结算时以此为准，防止费率调整追溯影响历史订单。</td></tr>
+<tr><td>幂等键</td><td>业务单号 + 渠道流水号构成的唯一键，用于支付/分账/退款/提现/投保防重。</td></tr>
+<tr><td>冻结结算</td><td>订单进入异常处置（事故/投诉/车况争议）时，暂不生成可提现结算，待处置完成后释放或调整。</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 4 ============ -->
+<h2 id="s4"><span class="num">4</span>四、需求范围</h2>
+<div class="grid g2">
+<div class="card"><div class="h"><span class="badge b-green">本期包含</span> V1（MVP，可上架跑通闭环）</div>
+<ul style="font-size:13px">
+<li>用户端：手机号注册、账号密码登录、服务套餐/地址/时间下单、保险明示与增值勾选、支付、订单跟踪、取/还车验车确认、评价、投诉、协议授权</li>
+<li>洗车工端：注册准入（实名 + 驾驶证 + 协议）、抢单/接单、取车与还车强制验车拍照、行程与异常/事故上报、结算提现、评分与治理通知</li>
+<li>后台端：订单管理、洗车工审核与治理（降权/暂停/封号 + 申诉）、抽成费率配置、派单策略配置、投诉处理、保单管理、分账对账看板、管理员 RBAC、最小数据看板</li>
+<li>服务端：MySQL 持久化、订单/派单/结算状态机、持牌分账接入、保险出单接口、资金三件套、敏感信息加密与审计</li>
+</ul></div>
+<div class="card"><div class="h"><span class="badge b-gray">本期不做</span> 明确标注，记入后续版本池</div>
+<ul style="font-size:13px">
+<li><strong>手机验证码登录的真实短信通道</strong>：接口契约、数据表、前端入口位预留，本期不接通道、不实现（用户指定暂缓，A5）</li>
+<li>纯自动智能派单的精细权重模型、A/B 实验平台、图像自动定责（仅做人工复核，最多辅助比对）</li>
+<li>多城市加盟、洗车门店 SaaS、洗车工成长等级、会员订阅/储值卡、优惠券营销、发票自动开具</li>
+<li>车主端第三方账号登录、车主实名认证（车主仅需手机号 + 授权驾驶书）</li>
+<li>车联网/OBD 数据接入、车内物品清点智能识别</li>
+</ul></div>
+</div>
+<div class="callout warn"><span class="t">范围蔓延控制</span>上述「本期不做」项<strong>必须</strong>走需求变更评估表（影响范围 / 工期 / 成本 / 风险 / 干系人）后方可纳入；未评估不更新范围与排期，不纳入项记入后续版本池并给出立项前置条件。</div>
+
+<!-- ============ 5 ============ -->
+<h2 id="s5"><span class="num">5</span>五、方案对比与选型说明</h2>
+
+<h3 id="s5-1">5.1 派单模式：抢单 / 自动分配 / 混合</h3>
+<table>
+<thead><tr><th>方案</th><th>实现成本</th><th>开发复杂度</th><th>用户体验</th><th>风险</th><th>上线时间</th><th>综合评价</th></tr></thead>
+<tbody>
+<tr><td>A 纯抢单</td><td>低</td><td>低</td><td>中</td><td>中</td><td>快</td><td>冷区/低峰单可能长期无人抢，响应时长不可控；<strong>「减少订单」治理手段失效</strong>（只能限制抢单资格）</td></tr>
+<tr><td>B 纯自动分配</td><td>中</td><td>高（权重模型、负载、拒单重派）</td><td>好（可控）</td><td>中</td><td>慢</td><td>体验稳定、治理最有效，但洗车工自主性低，算法不透明易引发争议</td></tr>
+<tr><td><strong>C 混合（推荐）</strong></td><td>中</td><td>中</td><td>好</td><td>低</td><td>中</td><td><strong>推荐</strong>：抢单池 T 秒 → 超时按权重自动指派；兼顾供给积极性与履约兜底，且天然承载「评分降权」</td></tr>
+</tbody>
+</table>
+<p><strong>推荐 C</strong>，理由：用户明确要「系统自动分配<em>或者</em>洗车工抢单」，混合模式同时满足两者并规避各自短板；且「对服务态度不好的洗车工适量减少订单」在混合模式下有最自然的落点——<strong>不封禁、不清零，只在抢单池降权与指派权重打折</strong>，既达成治理又保留洗车工改正机会。</p>
+<table>
+<thead><tr><th>参数</th><th>建议值</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>抢单池时长 T</td><td>90 秒（建议值，后台可配置）</td><td>按城市/时段可差异化；超时转指派</td></tr>
+<tr><td>抢单资格</td><td>准入生效 + 驾驶证有效 + 服务城市匹配 + 未被暂停/封号 + 当前在途单 &lt; 上限</td><td>硬条件，任一不满足不可见单</td></tr>
+<tr><td>降权分档</td><td>评分档位 → 抢单延迟 N 秒 / 指派权重系数（如 1.0 / 0.7 / 0.4 / 0，建议值）</td><td>阈值与系数全部后台可配置、变更留痕</td></tr>
+<tr><td>指派权重</td><td>距离 + 评分 + 负载 + 准时率 + 治理系数（加权，可配置）</td><td>指派时<strong>快照权重</strong>留痕，供申诉时解释</td></tr>
+<tr><td>拒单</td><td>接单后主动取消计违约，计入评分与降权；每日拒单上限可配置</td><td>防止挑单</td></tr>
+</tbody>
+</table>
+
+<h3 id="s5-2">5.2 保险方案：怎么同时满足「可选」与「每单必须有」</h3>
+<table>
+<thead><tr><th>方案</th><th>做法</th><th>合规风险</th><th>用户体验</th><th>结论</th></tr></thead>
+<tbody>
+<tr><td>① 用户必选购买</td><td>下单页列出保险产品，用户必须选一款才允许支付</td><td><span class="badge b-red">高</span> 构成保险产品销售/展示，需保险兼业代理或经纪资质；且「强制搭售」易被认定不合理</td><td>差（被迫选择）</td><td>不推荐</td></tr>
+<tr><td>② 平台统保 + 用户可加购（推荐）</td><td>L1 基础保障每单强制、平台统一投保、成本明示内含；L2 增值保障用户自愿加购</td><td><span class="badge b-org">中</span> 需与<strong>持牌保险经纪/保险公司合作出单</strong>；平台文案只说「服务已含保障」，不做保险营销比价</td><td>好（默认有保障，可自主升级）</td><td><strong>推荐</strong></td></tr>
+<tr><td>③ 只买平台雇主责任险</td><td>平台自购一张年度雇主责任险，不按单出单</td><td><span class="badge b-red">高</span> 无法证明「每一单都有保险」，出险时保单与订单无法对应，理赔与纠纷难闭环</td><td>中</td><td>不推荐（不满足「每单必须」）</td></tr>
+</tbody>
+</table>
+<div class="callout info"><span class="t">推荐方案 ② 的落地要点</span>
+<ol style="margin-bottom:0">
+<li><strong>按单出单</strong>：支付成功 → 调保险合作方接口按订单投保（幂等键 = 订单号）→ 回写保单号、保额、保障起止时间；<strong>保单未成功回写则订单不得进入派单池</strong>（强校验）。</li>
+<li><strong>保障窗口</strong>：必须覆盖「取车 → 驾驶 → 洗车作业 → 归还 → 还车验车确认」全程，起止用服务端时间戳 + GPS，<strong>禁止</strong>只保洗车作业时段。</li>
+<li><strong>险种口径</strong>：需覆盖洗车工驾驶期间的<strong>车损、第三者责任、车上人员、车内财物（约定的清点范围内）</strong>；免赔额、责任上限、除外责任（如已有划痕、违法驾驶、酒驾）在下单页与协议中明示。<strong>具体险种与保额待保险合作方核定</strong>，本文不编造条款。</li>
+<li><strong>车险兼容</strong>：用户自有商业车险对「非约定驾驶人 / 未经允许的驾驶人」可能加扣免赔或拒赔，须在协议中明示，并由平台基础保障补足该缺口——这是代驾洗车最容易漏的一环。</li>
+<li><strong>增值保障</strong>：L2 单独计价、单独出单、用户主动勾选（默认不勾），<strong>禁止</strong>默认勾选或诱导勾选。</li>
+</ol></div>
+
+<h3 id="s5-3">5.3 资金结算通道（决定能否合法上架）</h3>
+<table>
+<thead><tr><th>方案</th><th>资金路径</th><th>合规性</th><th>成本/复杂度</th><th>结论</th></tr></thead>
+<tbody>
+<tr><td>① 平台代收后转账</td><td>用户 → 平台账户 → 洗车工</td><td><span class="badge b-red">不合规</span>：二清，无证经营支付结算</td><td>低</td><td><strong>禁止</strong></td></tr>
+<tr><td>② 持牌支付机构分账（推荐）</td><td>用户 → 持牌支付机构 → 按分账指令直分「平台 / 洗车工子商户 / 保费专户」</td><td><span class="badge b-green">合规</span></td><td>中（需开通分账产品、洗车工进件成为分账接收方）</td><td><strong>推荐</strong></td></tr>
+<tr><td>③ 银行存管 / 持牌分账服务商</td><td>用户 → 存管/分账账户 → 按指令清算</td><td><span class="badge b-green">合规</span></td><td>高（对接周期长）</td><td>备选，规模扩大后演进</td></tr>
+</tbody>
+</table>
+<p><strong>推荐 ②</strong>：V1 用成熟支付机构的「分账 / 服务商分账」能力，洗车工准入时同步完成<strong>分账接收方进件（实名 + 结算账户）</strong>，否则即使抢到单也无法结算。支付、分账、退款、提现、投保全部幂等；T+1 做<strong>支付渠道 × 保险出单方 × 洗车工结算</strong>三方对账。</p>
+
+<h3 id="s5-4">5.4 推荐结论与演进路径</h3>
+<div class="callout ok"><span class="t">本期推荐组合</span>
+<strong>混合派单（C）+ 平台统保/用户加购（②）+ 持牌分账（②）+ 灵活就业关系（A4）+ 账号密码登录先行（A5）</strong>。不选纯抢单（治理失效）、不选用户必选保险（资质与体验风险）、<strong>禁止</strong>平台代收代付（二清）、不选纯自动指派（V1 成本过高）。
+</div>
+<table>
+<thead><tr><th>阶段</th><th>演进内容</th><th>触发条件</th></tr></thead>
+<tbody>
+<tr><td>V1（本期）</td><td>混合派单基础版（抢单 + 超时简单权重指派 + 评分降权）、按单出单、持牌分账、三端闭环</td><td>合规阻塞项全部就绪</td></tr>
+<tr><td>V1.1</td><td>短信验证码登录（预留接口落地）、精细派单权重与 A/B、保单电子凭证推送、辅助图像比对（不定责）</td><td>V1 稳定运行 + 拿到基线数据</td></tr>
+<tr><td>V2</td><td>多城市复制、分城市差异化费率、洗车工成长体系、订阅/储值、发票自动化、银行存管升级</td><td>单城市模型验证通过、洗车工 30 天留存达标</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 6 ============ -->
+<h2 id="s6"><span class="num">6</span>六、用户角色与使用场景</h2>
+<table>
+<thead><tr><th>角色</th><th>描述（画像为基于需求的假设，非调研结论）</th><th>主要场景</th><th>能力水平</th></tr></thead>
+<tbody>
+<tr><td>车主（用户端）</td><td>有车、时间敏感、不愿亲自到店；最在意<strong>车不被刮蹭、钥匙与车内财物安全、出问题有人赔</strong></td><td>下单、授权驾驶、验车确认、评价投诉、理赔跟进</td><td>新手为主</td></tr>
+<tr><td>洗车工（洗车工端）</td><td>持有效驾驶证、按单获取服务收入的灵活就业者；在意<strong>实收金额、接单效率、责任边界清晰</strong></td><td>准入、抢单、取送车验车、异常上报、提现</td><td>需引导</td></tr>
+<tr><td>后台管理员 / 运营（后台端）</td><td>平台运营、审核、客服、财务对账人员；需要<strong>可追溯、可申诉、可配置</strong></td><td>资质审核、订单干预、治理处置、投诉仲裁、费率与派单配置、对账</td><td>熟练</td></tr>
+<tr><td>保险 / 支付 / 客服合作方</td><td>外部系统或人工，通过接口/工单参与</td><td>按单出单、分账清算、理赔与申诉协助</td><td>—</td></tr>
+</tbody>
+</table>
+
+<h3>用户故事卡（INVEST + Given/When/Then）</h3>
+<table>
+<thead><tr><th style="width:62px">编号</th><th>用户故事</th><th>验收标准（GWT）</th><th style="width:80px">优先级</th></tr></thead>
+<tbody>
+<tr><td>US-01</td><td>作为车主，我想要用手机号注册并用密码登录，以便下单且后续可找回账号</td><td>Given 未注册手机号，When 提交手机号+合规密码+图形校验，Then 账号创建成功且手机号唯一；Given 已注册，When 手机号或密码错误，Then 提示通用错误且不暴露账号是否存在；Given 连续失败达阈值，When 再次登录，Then 临时锁定</td><td><span class="badge b-red">Must</span></td></tr>
+<tr><td>US-02</td><td>作为车主，我想要下单时看到「本单已含基础保障」并可自愿加购增值保障，以便清楚知道车被开走时有保障</td><td>Given 选择套餐与地址时间，When 进入确认页，Then 展示 L1 基础保障说明（不可取消）与 L2 加购项（默认不勾、单独计价）；Given 支付成功，When 保单未回写成功，Then 订单<strong>不得</strong>进入派单池并提示</td><td><span class="badge b-red">Must</span></td></tr>
+<tr><td>US-03</td><td>作为车主，我想要在线签署驾驶授权并确认取车验车单，以便划痕责任说得清</td><td>Given 洗车工到达并上传取车验车照片，When 推送给我，Then 可查看照片/时间/GPS 并确认或标注异议；Given 超时未确认，When 到达约定时限，Then 按规则默认通过并留痕</td><td><span class="badge b-red">Must</span></td></tr>
+<tr><td>US-04</td><td>作为洗车工，我想要用实名+驾驶证完成准入后抢单，以便合法接单</td><td>Given 资料未审核通过/驾驶证过期/准驾不符，When 进入抢单池，Then 不可见单并提示原因；Given 准入生效，When 抢单成功，Then 订单绑定该洗车工并锁定</td><td><span class="badge b-red">Must</span></td></tr>
+<tr><td>US-05</td><td>作为洗车工，我想要取车与还车时按引导拍照留存，以便不被误判刮蹭责任</td><td>Given 未上传规定数量取车照片，When 点击「开始驾驶」，Then <strong>禁止</strong>进入下一状态；Given 上传完成，When 提交，Then 每张带时间戳/GPS/订单号水印且仅允许实时拍摄</td><td><span class="badge b-red">Must</span></td></tr>
+<tr><td>US-06</td><td>作为洗车工，我想要途中发生刮蹭时一键上报，以便走保险而不是私下赔</td><td>Given 行程中，When 提交事故上报+现场照片，Then 订单转「异常处置」、冻结结算、生成报案记录并通知后台与车主</td><td><span class="badge b-red">Must</span></td></tr>
+<tr><td>US-07</td><td>作为后台运营，我想要对差评/投诉洗车工分级治理，以便保护服务品质又避免误封</td><td>Given 有效投诉或评分低于阈值，When 执行处置，Then 按「警告→降权→暂停→封号」分级并留证据与操作人；Given 执行封号，When 无人工复核记录，Then <strong>禁止</strong>生效；Given 洗车工申诉，When 提交，Then 进入复核队列并暂停执行影响</td><td><span class="badge b-red">Must</span></td></tr>
+<tr><td>US-08</td><td>作为财务，我想要 T+1 三方对账与资损告警，以便资金不出错</td><td>Given 日终，When 拉取渠道/保险/结算流水，Then 逐单核对恒等式；Given 出现分账金额不符/重复支付/负金额/状态回跳，When 触发，Then ≤5 分钟告警并挂起差异单</td><td><span class="badge b-red">Must</span></td></tr>
+<tr><td>US-09</td><td>作为车主，我想要用手机验证码登录，以便免记密码</td><td><strong>本期不实现</strong>（A5）：入口置灰提示「即将开放」，接口契约已定义；V1.1 落地</td><td><span class="badge b-gray">Won't(本期)</span></td></tr>
+</tbody>
+</table>
+
+<h3>场景三层次（主 / 分支 / 异常）</h3>
+<table>
+<thead><tr><th>层次</th><th>覆盖场景</th></tr></thead>
+<tbody>
+<tr><td>主流程</td><td>下单 → 支付+投保 → 抢单/指派 → 取车验车 → 驾驶至洗车点 → 洗车 → 归还验车 → 车主确认 → 结算 → 评价</td></tr>
+<tr><td>分支流程</td><td>抢单成功 / 抢单超时转指派 / 洗车工拒单重派 / 用户加购增值保障 / 用户取消（未接单、已接单、已取车三阶段不同口径） / 部分退款 / 车主异步确认超时默认通过</td></tr>
+<tr><td>异常流程</td><td>支付成功但投保失败、支付回调丢失、重复支付、取车无钥匙/找不到车、取车发现已有划痕、途中刮蹭/事故/违章、洗车点满位、还车车主不在、车况争议、严重投诉、驾驶证过期、洗车工封号申诉、分账失败/对账差异、断网弱网、提现超额</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 7 ============ -->
+<h2 id="s7"><span class="num">7</span>七、功能需求</h2>
+<p class="small">状态词：必须 / 应该 / 可以 / 禁止。每条 FR 均可被测试用例直接引用；编号与 15.3 RTM 对应。</p>
+
+<h3 id="s7-1">7.1 用户端（FR-U）</h3>
+<table>
+<thead><tr><th style="width:66px">编号</th><th style="width:130px">需求描述</th><th>业务规则</th><th>验收标准（GWT）</th></tr></thead>
+<tbody>
+<tr><td>FR-U-01</td><td>手机号注册</td><td>手机号<strong>必须</strong>为必填且唯一；密码强度规则（长度/字符组合）服务端校验；密码 <code>argon2/bcrypt + 独立盐</code> 哈希存储，<strong>禁止</strong>明文或可逆加密；本期用图形验证码做人机校验（A5）</td><td>Given 手机号已注册，When 再次提交，Then 拒绝并提示已存在；Given 密码不合规，When 提交，Then 拒绝且给出具体修正建议</td></tr>
+<tr><td>FR-U-02</td><td>账号密码登录</td><td>手机号 + 密码；失败次数阈值锁定；JWT Access + Refresh；异地/新设备登录提醒；敏感操作二次校验</td><td>Given 凭据正确，When 登录，Then 返回令牌且记录登录日志；Given 连续失败达阈值，When 再试，Then 锁定并提示解锁方式</td></tr>
+<tr><td>FR-U-03</td><td>验证码登录（预留）</td><td>接口契约、数据表 <code>t_sms_code</code>、前端入口位<strong>必须</strong>预留；本期<strong>禁止</strong>真实下发短信；入口置灰 + 「即将开放」提示；契约含下发/校验/限流/防刷/有效期</td><td>Given 本期环境，When 点击验证码登录入口，Then 不发起任何短信请求且展示预告；Given 查看代码，When 检查，Then 接口契约与表结构存在</td></tr>
+<tr><td>FR-U-04</td><td>下单</td><td>必填：服务套餐、取车地址（含 GPS/车位说明）、预约时间窗、车辆信息（车牌/车型/颜色）；展示金额明细（S / I_base / I_add / 合计）；<strong>必须</strong>在线签署《代为驾驶授权书》与《服务协议》并留痕版本与时间</td><td>Given 缺少任一必填项，When 提交，Then 定位到具体字段并提示；Given 未勾选授权书，When 提交支付，Then <strong>禁止</strong>支付</td></tr>
+<tr><td>FR-U-05</td><td>保险展示与加购</td><td>L1 基础保障<strong>必须</strong>展示且不可取消；L2 增值保障默认不勾、单独计价；展示保障范围/免赔/除外责任的摘要与全文入口；<strong>禁止</strong>使用「全赔」「零风险」等绝对化或承诺性表述</td><td>Given 确认页，When 渲染，Then L1 项无取消控件；Given 未勾选 L2，When 计算金额，Then 合计不含 L2 费用</td></tr>
+<tr><td>FR-U-06</td><td>支付</td><td>服务端计算金额（<strong>禁止</strong>信任前端传价）；幂等键 = 订单号 + 渠道；生成分账指令；支付成功且<strong>保单回写成功</strong>才允许进入派单池；支持回调 + 主动查询双通道防状态回跳</td><td>Given 重复提交支付，When 同一幂等键，Then 仅产生一笔扣款；Given 支付成功但投保失败，When 状态推进，Then 停在「待投保」并告警/自动重试/超时退款</td></tr>
+<tr><td>FR-U-07</td><td>订单跟踪与验车确认</td><td>展示状态、洗车工信息、取/还车验车单、行程节点；取车验车单可确认或标注异议；超时规则默认通过且留痕；还车验车单确认后进入完成</td><td>Given 洗车工上传取车照片，When 推送，Then 用户可见照片与时间/GPS 水印；Given 超时，When 到点，Then 按规则默认通过并记录「超时默认」</td></tr>
+<tr><td>FR-U-08</td><td>评价与投诉</td><td>完成后可评分（态度/准时/洁净/车况）与文字评价；投诉需选类型 + 上传证据 + 可匿名选项（后台可见真实身份）；提交后生成工单并给回执与处理时限</td><td>Given 提交投诉，When 创建，Then 生成投诉单号、关联订单、进入后台队列并回执</td></tr>
+<tr><td>FR-U-09</td><td>取消与退款</td><td>按阶段差异化：未接单全额退；已接单未取车按规则；已取车按服务进度与保险是否生效分摊；退款以服务端计算为准，原路退回，支持部分退款，退款需<strong>回冲分账</strong>并冲销/标记保单</td><td>Given 已支付未接单，When 用户取消，Then 全额原路退款且分账指令撤销；Given 部分退款，When 完成，Then 金额明细与对账一致</td></tr>
+</tbody>
+</table>
+
+<h3 id="s7-2">7.2 洗车工端（FR-W）</h3>
+<table>
+<thead><tr><th style="width:66px">编号</th><th style="width:130px">需求描述</th><th>业务规则</th><th>验收标准（GWT）</th></tr></thead>
+<tbody>
+<tr><td>FR-W-01</td><td>注册与准入</td><td><strong>必须</strong>：手机号、实名认证（姓名+身份证号，对接权威核验）、驾驶证（正副页 OCR + 准驾车型 + <strong>有效期</strong>）、服务城市、结算账户进件；<strong>应该</strong>加人脸活体核验；签署服务合作协议；身份证号/驾驶证号<strong>加密存储 + 展示脱敏</strong></td><td>Given 驾驶证已过期或准驾车型不符，When 提交，Then 拒绝并说明原因；Given 实名核验不通过，When 提交，Then 不进入人工审核</td></tr>
+<tr><td>FR-W-02</td><td>证件到期治理</td><td>驾驶证到期前 N 天（建议 30 天，可配置）提醒；<strong>到期当日自动停派</strong>；定期复核；更新证件后重新审核</td><td>Given 驾驶证过期，When 进入抢单池，Then 不可见单且提示「证件已到期」</td></tr>
+<tr><td>FR-W-03</td><td>抢单 / 接单</td><td>仅符合资格者可见抢单池；抢单为<strong>原子操作 + 幂等</strong>防并发重复接单；被降权者有抢单延迟；接单后锁定订单；拒单计违约</td><td>Given 两名洗车工同时抢同一单，When 并发提交，Then 仅一人成功，其他人收到「已被接单」</td></tr>
+<tr><td>FR-W-04</td><td>取车验车</td><td>按引导拍摄规定角度照片（建议：车身六面 + 四轮 + 里程/仪表 + 内饰），<strong>仅允许实时拍摄禁止相册上传</strong>，附时间戳/GPS/订单号水印；已有划痕<strong>必须</strong>标注；未上传齐全<strong>禁止</strong>开始驾驶；钥匙交接留痕</td><td>Given 照片数量不足，When 点击开始驾驶，Then 拦截并提示缺哪几张；Given 上传相册图，When 校验，Then 拒绝</td></tr>
+<tr><td>FR-W-05</td><td>行程与作业</td><td>记录行程轨迹与时长；到达洗车点/作业开始/作业完成节点打卡；限速与异常停留提醒（体验提示，不代替合规）</td><td>Given 行程中，When 查看，Then 各节点时间与位置可追溯</td></tr>
+<tr><td>FR-W-06</td><td>异常 / 事故上报</td><td>类型：刮蹭/事故/违章/车辆故障/找不到车/无钥匙/车内财物异常；<strong>必须</strong>上传现场照片 + 说明；上报后订单转「异常处置」、<strong>冻结结算</strong>、生成报案记录、通知后台与车主；引导拨打客服电话与保险报案</td><td>Given 提交事故上报，When 成功，Then 订单状态=异常处置、结算记录状态=冻结、后台收到待办</td></tr>
+<tr><td>FR-W-07</td><td>还车验车与交还</td><td>按同角度再次拍照；系统并排展示取/还车对比供人工复核；钥匙交还留痕；推送车主确认；车主超时确认规则同 FR-U-07</td><td>Given 还车照片未齐全，When 提交完成，Then 拦截</td></tr>
+<tr><td>FR-W-08</td><td>结算与提现</td><td>展示每单<strong>金额明细</strong>（S、抽成 R、实收、保险代收项不计入）；订单完成且确认后 T+1 进可提现余额；提现实名+本人账户+限额+幂等；争议单冻结</td><td>Given 查看账单，When 计算，Then 实收 = S×(1−R) 且与后台一致；Given 重复提现请求，When 同一幂等键，Then 仅一次到账</td></tr>
+<tr><td>FR-W-09</td><td>评分与治理通知</td><td>可查看自身评分、降权/暂停状态、治理原因与申诉入口；<strong>必须</strong>能发起申诉并查看进度</td><td>Given 被降权，When 查看，Then 展示原因、依据单号、生效时间与申诉入口</td></tr>
+</tbody>
+</table>
+
+<h3 id="s7-3">7.3 后台管理端（FR-A，上架必备）</h3>
+<div class="callout info"><span class="t">为什么后台是「上架必备」而不只是内部工具</span>应用商店与支付/保险合作方审核时，需要平台证明具备<strong>资质审核、投诉处理、订单可干预、资金可对账、违规可处置</strong>的运营能力；且这些动作都涉及合规留痕。没有后台，服务不可运营、纠纷不可闭环，审核难以通过。</div>
+<table>
+<thead><tr><th style="width:66px">编号</th><th style="width:140px">模块</th><th>业务规则</th><th>验收标准（GWT）</th></tr></thead>
+<tbody>
+<tr><td>FR-A-01</td><td>管理员与 RBAC</td><td>角色：超级管理员 / 审核员 / 客服 / 财务 / 运营；按「角色→功能权限→数据权限」授权；强密码 + 建议 MFA；<strong>所有操作写审计日志</strong>（操作人/时间/对象/前后值/IP）</td><td>Given 客服角色，When 尝试改抽成费率，Then 拒绝且记录越权尝试</td></tr>
+<tr><td>FR-A-02</td><td>洗车工审核</td><td>自动校验（实名/驾证/准驾/有效期）+ 人工复核双通道；通过/驳回/补充材料；审核意见留痕；准入生效才可接单</td><td>Given 待审资料，When 人工驳回，Then 洗车工端收到具体原因并可重新提交</td></tr>
+<tr><td>FR-A-03</td><td>评分与派单治理</td><td>评分按维度聚合；配置降权阈值与系数、抢单池时长 T、指派权重；「适量减少订单」<strong>必须</strong>通过降权实现而非直接清零；所有配置变更留版本与操作人</td><td>Given 设置降权系数，When 派单，Then 指派权重快照含该系数，可追溯解释</td></tr>
+<tr><td>FR-A-04</td><td>投诉与分级处置</td><td>投诉工单：受理→取证→判定→处置→回访→归档；处置分级 <strong>警告 → 降权/限单 → 暂停接单 N 天 → 封号</strong>；严重投诉（事故逃逸、财物、人身冲突、酒驾）→ 立即冻结 + 人工复核 + 必要时报警联动；<strong>封号必须有证据 + 人工复核 + 书面告知 + 申诉通道</strong></td><td>Given 无复核记录的封号操作，When 提交，Then <strong>禁止</strong>生效；Given 洗车工申诉，When 受理，Then 生成复核任务并告知时限</td></tr>
+<tr><td>FR-A-05</td><td>费率与结算配置</td><td>抽成比例（默认 40%）可配置但<strong>必须</strong>带版本号/生效时间/操作人/变更原因；按城市差异化；历史订单按 <code>rate_snapshot</code> 结算，<strong>禁止</strong>追溯改价</td><td>Given 修改费率为新值，When 查看历史已完成订单，Then 结算金额仍按原快照不变</td></tr>
+<tr><td>FR-A-06</td><td>订单与异常干预</td><td>全量订单查询/筛选/导出（脱敏）；可干预：改派、强制取消、退款审批、事故处置、证据调阅；每个动作写审计日志</td><td>Given 订单异常处置中，When 手动改派，Then 生成新派单任务且原洗车工状态与结算相应调整</td></tr>
+<tr><td>FR-A-07</td><td>保单管理</td><td>按单查看保单号、险种、保额、保障窗口、出单状态、报案与理赔进度；<strong>出单失败订单告警</strong>并阻断派单</td><td>Given 保单未回写，When 查询，Then 该订单出现在「出单异常」列表且不在派单池</td></tr>
+<tr><td>FR-A-08</td><td>分账与对账</td><td>T+1 拉取三方流水逐单核对恒等式；差异单挂起（≤24h 超时告警）；资损告警四类；支持差异处理与轧差留痕；提现审批与限额</td><td>Given 构造一笔分账金额不符，When 日终对账，Then 生成差异单并告警，挂起不自动平账</td></tr>
+<tr><td>FR-A-09</td><td>内容与协议配置</td><td>服务协议、驾驶授权书、隐私政策、保险说明<strong>版本化管理</strong>，用户签署时记录版本号与时间；文案上线前过违禁词自查（绝对化用语 / 承诺全赔 / 夸大宣传）</td><td>Given 修改协议文案，When 发布新版本，Then 新订单签署新版本、历史订单仍可查旧版本原文</td></tr>
+<tr><td>FR-A-10</td><td>最小数据看板</td><td>V1 <strong>必须</strong>至少含：订单完成率、接单响应 P50/P95、抢单池超时率、车况纠纷率、投诉率与闭环时长、洗车工 30 天留存、对账差异率、资损告警数</td><td>Given 上线首日，When 打开看板，Then 上述指标有数且口径与 2.3 一致</td></tr>
+<tr><td>FR-A-11</td><td>客服与申诉</td><td>投诉/申诉工单 SLA 计时与超时标红；客服话术库（含事故、刮蹭、封号申诉场景）；400 电话与在线客服入口配置</td><td>Given 工单临近 SLA，When 查看列表，Then 倒计时标红并可升级</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 8 ============ -->
+<h2 id="s8"><span class="num">8</span>八、非功能需求</h2>
+<table>
+<thead><tr><th style="width:110px">类别</th><th>要求（数值为建议值，需压测/法务确认后定稿）</th></tr></thead>
+<tbody>
+<tr><td>性能</td><td>核心列表/详情接口 P95 &lt; 500ms（建议）；抢单并发下单锁 &lt; 200ms 完成且无超卖式重复接单；支付回调幂等处理；验车图片上传支持断点续传与弱网重试；分账指令与保单出单异步可重试且状态可查</td></tr>
+<tr><td>容量</td><td>容量预估需按试点城市日均单量测算（本文不编造数值）；验车照片按订单留存，需评估对象存储容量与生命周期（热 180 天 → 冷归档）</td></tr>
+<tr><td>安全</td><td>全站 HTTPS；密码/证件号加密或哈希存储，展示脱敏；敏感个人信息（身份证、驾驶证、人脸、精确位置、车况照片）<strong>单独告知同意</strong> + 最小必要 + 权限隔离 + 访问审计；接口防刷/限流；越权校验服务端强制；操作与资金日志不可篡改</td></tr>
+<tr><td>资金安全</td><td>金额一律 <code>DECIMAL(12,2)</code> 或分（BIGINT），<strong>禁止浮点</strong>；服务端计价；幂等 + 对账 + 资损监控三件套不可砍；状态单向流转防回跳</td></tr>
+<tr><td>可靠性</td><td>MySQL 主从 + 定期备份与恢复演练；关键状态变更走事务 + 幂等；支付/投保回调丢失时主动查询补偿；消息通知失败重试</td></tr>
+<tr><td>兼容</td><td>用户端 iOS / Android 主流版本 + 可选小程序；洗车工端 Android/iOS；后台 Chrome/Edge 主流版本；相机与定位权限需明示用途并在拒绝时有引导</td></tr>
+<tr><td>可访问性</td><td>关键操作支持键盘可达与读屏；文字/背景对比度满足基本可读性；金额与状态不只用颜色区分（红/绿需配文字或图标）</td></tr>
+<tr><td>合规留痕</td><td>协议签署版本、验车证据、保单、分账指令、治理动作、审计日志留存 <strong>≥ 180 天</strong>（建议，具体按法务与保险合作方要求；纠纷相关证据建议更长）</td></tr>
+<tr><td>可观测</td><td>全链路订单号贯穿日志；支付/投保/分账/派单关键节点埋点与告警；资损告警触达 ≤ 5 分钟（建议值）</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 9 ============ -->
+<h2 id="s9"><span class="num">9</span>九、业务流程与状态流转</h2>
+
+<h3 id="s9-1">9.1 主流程（端到端）</h3>
+<div class="flow">
+<div class="node"><b>1 车主下单</b>套餐/地址/时间<br>签授权书</div><div class="arw">→</div>
+<div class="node"><b>2 支付 + 投保</b>分账指令生成<br>按单出单回写</div><div class="arw">→</div>
+<div class="node"><b>3 派单</b>抢单池 T 秒<br>超时自动指派</div><div class="arw">→</div>
+<div class="node"><b>4 取车验车</b>强制拍照留痕<br>车主确认</div><div class="arw">→</div>
+<div class="node"><b>5 代驾 + 洗车</b>轨迹记录<br>节点打卡</div><div class="arw">→</div>
+<div class="node"><b>6 还车验车</b>同角度复拍<br>对比人工复核</div><div class="arw">→</div>
+<div class="node"><b>7 完成确认</b>车主确认/超时<br>解除冻结</div><div class="arw">→</div>
+<div class="node"><b>8 结算评价</b>T+1 可提现<br>评分/投诉</div>
+</div>
+<div class="callout warn"><span class="t">关键闸门（强校验，不可跳过）</span>① 保单未回写成功 → <strong>禁止</strong>进派单池；② 取车验车照片未齐全 → <strong>禁止</strong>开始驾驶；③ 还车验车未齐全 → <strong>禁止</strong>完成订单；④ 订单处于异常处置 → <strong>冻结结算</strong>；⑤ 分账指令金额 ≠ 订单金额 → <strong>告警并阻断</strong>。</div>
+
+<h3 id="s9-2">9.2 订单状态机</h3>
+<table>
+<thead><tr><th style="width:150px">状态</th><th>触发事件（进入）</th><th>允许的操作</th><th>后继状态</th></tr></thead>
+<tbody>
+<tr><td>待支付</td><td>用户提交订单</td><td>支付、取消</td><td>已支付待投保 / 已取消</td></tr>
+<tr><td>已支付待投保</td><td>支付成功</td><td>投保重试、超时自动退款</td><td>待派单 / 退款中</td></tr>
+<tr><td>待派单</td><td><strong>保单回写成功</strong></td><td>入抢单池、超时转指派</td><td>已接单 / 退款中</td></tr>
+<tr><td>已接单</td><td>抢单成功或指派成功</td><td>洗车工出发、拒单重派、用户取消（按口径）</td><td>取车中 / 待派单（重派）/ 退款中</td></tr>
+<tr><td>取车中</td><td>洗车工到达</td><td>上传取车验车、车主确认/异议</td><td>驾驶中 / 异常处置</td></tr>
+<tr><td>驾驶中 / 洗车作业中</td><td>验车齐全并开始驾驶</td><td>节点打卡、异常上报</td><td>归还中 / 异常处置</td></tr>
+<tr><td>归还中</td><td>洗车完成归还</td><td>上传还车验车、推送车主确认</td><td>已完成 / 异常处置（车况争议）</td></tr>
+<tr><td>异常处置</td><td>事故/刮蹭/投诉/车况争议/出单异常</td><td>后台取证、保险报案、定责、改派、退款审批</td><td>已完成 / 退款中 / 已关闭</td></tr>
+<tr><td>已完成</td><td>车主确认或超时默认通过</td><td>生成结算、评价、投诉</td><td>已结算（终态）</td></tr>
+<tr><td>已结算</td><td>T+1 结算完成</td><td>只读、可对账/审计</td><td>终态</td></tr>
+<tr><td>退款中 / 已退款 / 已取消</td><td>取消或退款审批通过</td><td>分账回冲、保单冲销、只读</td><td>终态</td></tr>
+</tbody>
+</table>
+<p class="small"><strong>状态单向流转、禁止回跳</strong>：支付/派单/结算相关状态变更必须由服务端事务 + 幂等键驱动；回调乱序到达时以状态机允许表判定，非法迁移直接丢弃并告警。</p>
+
+<h3 id="s9-3">9.3 派单状态机</h3>
+<table>
+<thead><tr><th>状态</th><th>触发</th><th>规则</th></tr></thead>
+<tbody>
+<tr><td>抢单池开放</td><td>保单回写成功</td><td>仅符合资格且未被暂停/封号的洗车工可见；降权者延迟可见</td></tr>
+<tr><td>已被抢 / 已指派</td><td>抢单原子成功 / 超时触发权重指派</td><td>并发仅一人成功；指派时保存<strong>权重快照</strong>；订单锁定</td></tr>
+<tr><td>已拒单 → 重派</td><td>接单后主动取消</td><td>计违约与评分扣减；重新入池或转指派；重派次数上限可配置</td></tr>
+<tr><td>派单失败</td><td>池超时且无可用洗车工</td><td>进入后台待办 + 通知车主，<strong>可以</strong>按规则自动全额退款并致歉（口径需确认）</td></tr>
+</tbody>
+</table>
+
+<h3 id="s9-4">9.4 车况证据链与刮蹭闭环（本平台最核心的差异化设计）</h3>
+<div class="flow">
+<div class="node"><b>取车前</b>六面+四轮+里程<br>已有划痕标注</div><div class="arw">→</div>
+<div class="node"><b>车主确认</b>推送验车单<br>异议/超时默认</div><div class="arw">→</div>
+<div class="node"><b>全程留痕</b>GPS 轨迹<br>节点时间戳</div><div class="arw">→</div>
+<div class="node"><b>异常上报</b>现场照片<br>一键报案</div><div class="arw">→</div>
+<div class="node"><b>还车复拍</b>同角度并排<br>人工复核</div><div class="arw">→</div>
+<div class="node"><b>定责理赔</b>L1+L2 出险<br>申诉/调解</div>
+</div>
+<table>
+<thead><tr><th>环节</th><th>规则</th><th>为什么必须</th></tr></thead>
+<tbody>
+<tr><td>授权</td><td>下单时签署《代为驾驶授权书》，明确允许洗车工在订单时段内驾驶指定车辆、行驶范围与用途限制（仅往返洗车点）</td><td>解决「未经允许驾驶」的车险免赔与法律责任问题</td></tr>
+<tr><td>取车验车</td><td>实时拍摄、水印、规定角度齐全、已有划痕逐条标注、钥匙交接留痕</td><td>划清「既有划痕」与「本次新增」，否则任何划痕都会被归咎于平台</td></tr>
+<tr><td>驾驶途中</td><td>轨迹 + 节点时间；违章由实际驾驶人承担，协议明示，平台提供查询与处理协助</td><td>违章/事故责任有依据</td></tr>
+<tr><td>事故处置</td><td>上报 → 冻结结算 → 生成报案记录 → 保险报案 → 定损 → 理赔 → 车主沟通 → 归档；严重情形报警联动</td><td>把私下赔付变成可审计的保险流程</td></tr>
+<tr><td>还车验车</td><td>同角度复拍、并排对比、人工复核（图像比对<strong>仅辅助、不自动定责</strong>）、车主确认</td><td>避免算法误判引发二次纠纷</td></tr>
+<tr><td>证据留存</td><td>照片/轨迹/保单/报案号/验车确认记录全链路关联订单号，留存 ≥180 天（建议按法务要求延长）</td><td>纠纷、理赔、监管核查可追溯</td></tr>
+<tr><td>车内财物</td><td>协议明示「贵重物品请自行取走」；取车内饰拍照留范围；疑似财物异常单独上报流程</td><td>降低财物争议；不做诱导性或扩大责任承诺</td></tr>
+</tbody>
+</table>
+
+<h3 id="s9-5">9.5 洗车工准入状态机</h3>
+<p><code>资料提交 → 自动核验（实名 / 驾驶证 OCR / 准驾车型 / 有效期 / 分账进件）→ 人工复核 → 协议签署 → 准入生效（可接单）→〔到期提醒 / 到期停派 / 暂停 / 封号 / 申诉复核〕</code></p>
+<p class="small">任一核验不通过 → 驳回并给出<strong>具体原因</strong>与重新提交入口；驾驶证到期、准驾不符、被暂停/封号时，即使已生效也<strong>立即停止派单</strong>。</p>
+
+<h3 id="s9-6">9.6 服务态度治理与封号处置流程</h3>
+<table>
+<thead><tr><th>触发</th><th>处置</th><th>生效方式</th><th>救济</th></tr></thead>
+<tbody>
+<tr><td>评分低于阈值 / 一般投诉成立</td><td>警告 + <strong>派单降权</strong>（抢单延迟、指派权重打折）</td><td>自动按配置生效，<strong>留权重快照</strong>可解释</td><td>洗车工端可见原因与改善建议</td></tr>
+<tr><td>多次投诉 / 评分持续过低</td><td>暂停接单 N 天（可配置）+ 培训/复训</td><td>需人工审核</td><td>申诉入口</td></tr>
+<tr><td>严重投诉（事故逃逸、车内财物、人身冲突、酒驾、无证/证件造假）</td><td><strong>立即冻结</strong> → 人工复核取证 → 封号；必要时报警与保险联动</td><td><strong>禁止</strong>算法自动封号；必须证据 + 复核 + 书面告知</td><td>申诉复核队列 + 时限 + 改判记录</td></tr>
+<tr><td>申诉</td><td>复核证据（订单/验车照片/评价/投诉原件）→ 维持 / 减轻 / 撤销</td><td>处置期间影响可暂停执行</td><td>改判率纳入 2.3 指标监控，防止误封</td></tr>
+</tbody>
+</table>
+<div class="callout danger"><span class="t">合规提示</span>「适量减少订单」用<strong>可解释、可配置、可申诉的降权</strong>实现，<strong>禁止</strong>黑箱扣分、禁止无证据封号、禁止以「严重投诉」为由绕过复核直接永久封禁；否则易引发劳动争议与平台责任。</div>
+
+<!-- ============ 10 ============ -->
+<h2 id="s10"><span class="num">10</span>十、数据与埋点需求</h2>
+
+<h3 id="s10-1">10.1 系统架构</h3>
+<div class="arch">
+<div class="lbl">接入层 · 三端</div>
+<div class="row">
+  <div class="box"><b>用户端</b>App / 小程序</div>
+  <div class="box"><b>洗车工端</b>App</div>
+  <div class="box"><b>后台管理端</b>Web（RBAC）</div>
+</div>
+<div class="line">▲ HTTPS / JWT / 签名 ▼</div>
+<div class="lbl">服务端 · 业务域</div>
+<div class="row">
+  <div class="box"><b>用户与认证</b>注册/登录/权限</div>
+  <div class="box"><b>订单中心</b>状态机/计价</div>
+  <div class="box"><b>派单中心</b>抢单池/权重</div>
+  <div class="box"><b>洗车工中心</b>准入/评分/治理</div>
+</div>
+<div class="row">
+  <div class="box"><b>资金中心</b>支付/分账/结算/对账</div>
+  <div class="box"><b>保险中心</b>按单出单/报案</div>
+  <div class="box"><b>证据中心</b>验车照片/轨迹</div>
+  <div class="box"><b>治理中心</b>投诉/申诉/审计</div>
+</div>
+<div class="line">▲ 接口 ▼</div>
+<div class="lbl">基础设施与外部依赖</div>
+<div class="row">
+  <div class="box"><b>MySQL</b>主从 / 事务持久化</div>
+  <div class="box"><b>对象存储 + CDN</b>验车影像</div>
+  <div class="box"><b>持牌支付机构</b>分账 / 退款</div>
+  <div class="box"><b>保险合作方</b>按单出单</div>
+  <div class="box"><b>实名/驾驶证核验</b>权威接口</div>
+  <div class="box"><b>短信通道</b>V1.1 预留</div>
+</div>
+</div>
+
+<h3 id="s10-2">10.2 MySQL 核心表设计（字段级，金额一律 DECIMAL/分）</h3>
+<div class="ddl"><span class="c">-- 用户与认证 ---------------------------------------------------</span>
+<span class="k">t_user</span>          user_id(BIGINT PK), phone(VARBIN/加密或唯一索引), phone_hash, pwd_hash, salt,
+                   status, register_channel, created_at, updated_at
+<span class="k">t_user_session</span>   session_id, user_id, refresh_token_hash, device_id, ip, expire_at, status
+<span class="k">t_sms_code</span>      <span class="c">【V1 预留、不实现】</span> id, phone_hash, code_hash, scene, expire_at, used, send_ip, rate_limit_key
+<span class="k">t_agreement_sign</span> sign_id, user_id, order_id, agreement_type, agreement_version, signed_at, ip
+
+<span class="c">-- 洗车工与准入 -------------------------------------------------</span>
+<span class="k">t_worker</span>        worker_id(PK), phone_hash, real_name, id_no_enc, license_no_enc, license_class,
+                 license_expire_date, face_verify_status, verify_status, service_city,
+                 settlement_account_id, score_attitude, score_punctual, score_clean, score_vehicle,
+                 penalty_level, status, created_at
+<span class="k">t_worker_verify</span>  verify_id, worker_id, check_item, check_result, evidence_url, operator, created_at
+<span class="k">t_worker_penalty</span> penalty_id, worker_id, action(WARN/Downgrade/SUSPEND/BAN), reason, evidence_json,
+                   source_complaint_id, weight_snapshot, effective_from/to, operator, review_status,
+                   appeal_status, created_at
+
+<span class="c">-- 订单、派单、保险 --------------------------------------------</span>
+<span class="k">t_wash_order</span>    order_id(PK), order_no(唯一), user_id, worker_id, sku_id,
+                   take_address, take_geo, take_time_window, car_plate, car_model, car_color,
+                   amount_service DECIMAL(12,2), amount_ins_base DECIMAL(12,2),
+                   amount_ins_add DECIMAL(12,2), amount_total DECIMAL(12,2),
+                   <span class="k">rate_snapshot</span> DECIMAL(5,4), fee_version, <span class="c">-- 抽成快照，禁止追溯改价</span>
+                   pay_status, order_status, idempotency_key, created_at, paid_at, finished_at
+<span class="k">t_dispatch_task</span> task_id, order_id, mode(GRAB/AUTO), pool_expire_at, assigned_worker_id,
+                 weight_snapshot_json, status, created_at
+<span class="k">t_grab_record</span>   grab_id, task_id, worker_id, result(SUCCESS/FAIL), delay_ms, created_at
+<span class="k">t_insurance_policy</span> policy_id, order_id, level(L1/L2), insurer, policy_no, coverage_json,
+                   premium DECIMAL(12,2), coverage_start/end, out_status, claim_status, created_at
+
+<span class="c">-- 资金（幂等 / 分账 / 结算 / 对账） ----------------------------</span>
+<span class="k">t_payment_order</span> payment_id, order_id, channel, channel_flow_no, amount DECIMAL(12,2),
+                 status, idempotency_key, callback_at, created_at
+<span class="k">t_split_instruction</span> split_id, order_id, platform_fee DECIMAL(12,2), worker_amount DECIMAL(12,2),
+                 ins_amount DECIMAL(12,2), total DECIMAL(12,2), channel, status, idempotency_key
+<span class="k">t_settlement</span>    settle_id, order_id, worker_id, amount_gross, platform_fee, amount_net,
+                 rate_snapshot, status(AVAILABLE/FROZEN/SETTLED/REVERSED), available_at, created_at
+<span class="k">t_withdraw</span>      withdraw_id, worker_id, amount DECIMAL(12,2), account_id, status,
+                 idempotency_key, channel_flow_no, created_at
+<span class="k">t_reconcile_diff</span> diff_id, biz_date, source(CHANNEL/INSURER/SETTLEMENT), order_id,
+                 diff_type, diff_amount, status, hang_until, handler, created_at
+
+<span class="c">-- 证据、投诉、治理、配置、审计 ---------------------------------</span>
+<span class="k">t_vehicle_check</span> check_id, order_id, phase(TAKE/RETURN), photos_json, mileage, gps, shot_at,
+                 existing_scratch_json, worker_id, user_confirm_status, confirm_at
+<span class="k">t_trip_track</span>    track_id, order_id, node(DEPART/ARRIVE_WASH/WASH_DONE/RETURN), gps, node_at
+<span class="k">t_incident</span>      incident_id, order_id, type, photos_json, report_no, liability, claim_status,
+                 handler, created_at
+<span class="k">t_complaint</span>     complaint_id, order_id, complainant_id, type, content, evidence_json, status,
+                 sla_due_at, handler, appeal_status, created_at
+<span class="k">t_review</span>        review_id, order_id, user_id, attitude/punctual/clean/vehicle TINYINT, content, created_at
+<span class="k">t_sys_config</span>    config_id, config_key(fee_rate/grab_pool_sec/penalty_coef/sla_hours...),
+                 config_value, <span class="k">version</span>, effective_from, operator, change_reason, created_at
+<span class="k">t_admin_user / t_role / t_permission / t_admin_operation_log</span>  <span class="c">RBAC + 审计（前后值/IP/时间）</span>
+</div>
+<p class="small"><strong>设计要点</strong>：① 手机号、身份证号、驾驶证号加密/哈希存储，查询用 <code>phone_hash</code> 索引；② 所有资金表带 <code>idempotency_key</code> 唯一索引；③ <code>rate_snapshot + fee_version</code> 固化到订单与结算，费率调整不追溯；④ 状态字段用枚举字符串，配状态机允许表约束；⑤ 照片不入库，只存对象存储 URL 与水印元数据；⑥ 关键表建 <code>order_id / worker_id / created_at</code> 索引，按日期分区评估。</p>
+<p><strong>核心实体关系</strong>：用户 1—N 订单；洗车工 1—N 订单（接单后）；订单 1—1 分账指令、1—N 保单（L1 必 1 张、L2 可 0/1）、1—2 验车记录（取/还）、0—N 事故/投诉/评价；订单 1—1 结算单；洗车工 1—N 治理动作。</p>
+
+<h3 id="s10-3">10.3 金额、抽成与结算口径（可直接写进测试用例）</h3>
+<table>
+<thead><tr><th>规则</th><th>定义</th></tr></thead>
+<tbody>
+<tr><td>金额精度</td><td>全部 <code>DECIMAL(12,2)</code> 或按分存 BIGINT；<strong>禁止</strong> float/double；舍入规则统一（建议四舍五入到分，需财务确认）</td></tr>
+<tr><td>计价主体</td><td>服务端按 SKU + 保险项计算，前端传参<strong>不参与</strong>金额计算</td></tr>
+<tr><td>抽成</td><td><code>platform_fee = ROUND(amount_service × rate_snapshot, 2)</code>；<code>amount_net = amount_service − platform_fee</code>；保险费不参与抽成</td></tr>
+<tr><td>恒等式</td><td><code>amount_total = platform_fee + amount_net + amount_ins_base + amount_ins_add</code>，分账指令必须相等，差异即资损告警并阻断</td></tr>
+<tr><td>幂等</td><td>支付 / 分账 / 退款 / 提现 / 投保 / 抢单：幂等键 = 业务单号 + 场景 + 渠道流水号；重复请求返回首次结果，<strong>禁止</strong>重复入账或重复接单</td></tr>
+<tr><td>对账</td><td>T+1 对支付渠道、保险出单方、洗车工结算三方逐单核对；差异单挂起、≤24h 超时告警；差异处理留痕，<strong>禁止</strong>自动平账</td></tr>
+<tr><td>资损告警（四类起）</td><td>重复支付 / 负金额或超额 / 状态回跳 / 对账差异与分账金额不符；建议 ≤5 分钟触达</td></tr>
+<tr><td>退款</td><td>原路退回，支持部分退款；退款金额按服务端分摊规则；退款<strong>必须</strong>回冲分账、冲销/标记保单、冲销结算；幂等防重复退</td></tr>
+<tr><td>冻结</td><td>异常处置 / 投诉未结 / 申诉中的订单，结算状态 = FROZEN，处置完成后释放或按结果调整</td></tr>
+</tbody>
+</table>
+
+<h3 id="s10-4">10.4 埋点事件（最小集）</h3>
+<table>
+<thead><tr><th>事件名</th><th>触发时机</th><th>关键上报字段</th></tr></thead>
+<tbody>
+<tr><td><code>order_submit</code></td><td>提交订单</td><td>order_id, sku_id, city, amount_total, has_l2, agreement_version</td></tr>
+<tr><td><code>pay_success / pay_fail</code></td><td>支付回调与主动查询确认</td><td>order_id, channel, channel_flow_no, amount, idempotency_key, latency_ms</td></tr>
+<tr><td><code>policy_out_success / fail</code></td><td>按单投保结果</td><td>order_id, level, policy_no, insurer, fail_reason</td></tr>
+<tr><td><code>dispatch_grab / dispatch_auto / dispatch_timeout</code></td><td>抢单/指派/超时</td><td>order_id, worker_id, delay_ms, weight_snapshot, penalty_level</td></tr>
+<tr><td><code>check_upload</code></td><td>取/还车验车提交</td><td>order_id, phase, photo_count, has_existing_scratch, gps, shot_at</td></tr>
+<tr><td><code>incident_report</code></td><td>异常上报</td><td>order_id, type, report_no, photo_count</td></tr>
+<tr><td><code>order_finish</code></td><td>完成确认</td><td>order_id, confirm_type(USER/TIMEOUT), duration_min</td></tr>
+<tr><td><code>settle_created / withdraw_apply</code></td><td>结算生成 / 提现</td><td>order_id, worker_id, amount_gross, platform_fee, amount_net, rate_snapshot</td></tr>
+<tr><td><code>complaint_create / penalty_apply / appeal_submit</code></td><td>投诉、治理、申诉</td><td>complaint_id, worker_id, action, operator, evidence_count</td></tr>
+<tr><td><code>reconcile_diff_found</code></td><td>对账发现差异</td><td>diff_id, source, diff_type, diff_amount</td></tr>
+</tbody>
+</table>
+
+<h3 id="s10-5">10.5 指标口径库（节选，完整口径评审前确认）</h3>
+<table>
+<thead><tr><th>指标</th><th>定义 / 公式</th><th>排除项与歧义</th></tr></thead>
+<tbody>
+<tr><td>GMV（平台口径）</td><td>支付成功订单的 <code>amount_service</code> 合计（保险费单列，不计入 GMV）</td><td>未支付不计；退款单<strong>单列冲减</strong>还是净额展示需确认</td></tr>
+<tr><td>平台运营收入</td><td><code>Σ platform_fee</code>（按 <code>rate_snapshot</code>）</td><td>不含代收保险费；退款需冲回</td></tr>
+<tr><td>订单完成率</td><td>已完成订单 ÷ 支付成功订单</td><td>用户取消/全额退款单是否进分母需确认（建议单列）</td></tr>
+<tr><td>接单响应 P50/P95</td><td>支付成功 → 接单成功</td><td>超时转指派计入；按城市/时段分层</td></tr>
+<tr><td>抢单池超时率</td><td>超时转指派单 ÷ 支付成功单</td><td>反映供给与 40% 抽成影响</td></tr>
+<tr><td>车况纠纷率</td><td>还车争议单 ÷ 完成单</td><td>取车前已标注既有划痕不计</td></tr>
+<tr><td>重复支付率 / 分账差异率</td><td>重复支付单数 / 分账金额≠订单金额单数</td><td><strong>底线 0</strong></td></tr>
+<tr><td>对账差异挂起时长</td><td>差异产生 → 关闭</td><td>≤24h 超时告警</td></tr>
+<tr><td>洗车工 30 天留存 / 实收时薪</td><td>第 30 日仍接单数 ÷ 新准入数；实收 ÷ 在线时长</td><td>40% 抽成可持续性的核心观测；口径需与财务对齐</td></tr>
+<tr><td>封号申诉改判率</td><td>申诉改判数 ÷ 封号申诉数</td><td>监控误封与治理公正性</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 11 ============ -->
+<h2 id="s11"><span class="num">11</span>十一、权限与安全要求</h2>
+<h3>11.1 角色权限矩阵（RBAC）</h3>
+<table>
+<thead><tr><th>角色 / 模块</th><th>订单查询</th><th>订单干预(改派/退款)</th><th>洗车工审核</th><th>治理与封号</th><th>费率/派单配置</th><th>对账与提现审批</th><th>协议与内容</th></tr></thead>
+<tbody>
+<tr><td>超级管理员</td><td>全部</td><td>✓</td><td>✓</td><td>✓（仍需复核）</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>审核员</td><td>本职责范围</td><td>—</td><td>✓</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>客服</td><td>关联工单</td><td>申请（需审批）</td><td>—</td><td>申请（需审批）</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>财务</td><td>金额字段（脱敏）</td><td>退款审批</td><td>—</td><td>—</td><td>—</td><td>✓</td><td>—</td></tr>
+<tr><td>运营</td><td>全部（脱敏）</td><td>申请</td><td>—</td><td>降权/暂停（非封号）</td><td>申请</td><td>—</td><td>编辑草稿</td></tr>
+<tr><td>洗车工端</td><td>仅本人订单</td><td>—</td><td>仅本人资料</td><td>仅查看与申诉</td><td>—</td><td>仅本人账单</td><td>阅读签署</td></tr>
+<tr><td>用户端</td><td>仅本人订单</td><td>取消/退款申请</td><td>—</td><td>投诉/评价</td><td>—</td><td>—</td><td>阅读签署</td></tr>
+</tbody>
+</table>
+<p class="small">数据权限按「全部 / 本职责 / 本人」三级；越权校验<strong>必须</strong>在服务端执行，前端隐藏不算权限控制；所有后台操作写 <code>t_admin_operation_log</code>（操作人、时间、对象、前后值、IP）。</p>
+
+<h3>11.2 敏感个人信息与数据合规（8 项）</h3>
+<table>
+<thead><tr><th>#</th><th>要求</th><th>落地</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>数据分类分级</td><td>公开 / 内部 / 敏感（身份证、驾驶证、人脸、精确位置、车况照片、结算账户）分级标记</td></tr>
+<tr><td>2</td><td>最小必要采集</td><td>车主仅手机号 + 授权书；洗车工按准入必要项采集，<strong>禁止</strong>过度采集</td></tr>
+<tr><td>3</td><td>单独告知同意</td><td>敏感信息、精确位置、相机、车况影像在采集前<strong>单独弹窗同意</strong>并留版本与时间</td></tr>
+<tr><td>4</td><td>加密与脱敏</td><td>证件号加密存储、展示脱敏；照片访问带鉴权与短期签名 URL；<strong>禁止</strong>日志打印明文 PII</td></tr>
+<tr><td>5</td><td>用户权利</td><td>提供查询 / 更正 / 导出 / 注销删除入口与时限；删除需覆盖备份与对象存储的清理策略</td></tr>
+<tr><td>6</td><td>留存与清理</td><td>协议、证据、保单、资金、审计 ≥180 天（建议，按法务要求）；到期归档或删除留痕</td></tr>
+<tr><td>7</td><td>跨境传输</td><td>V1 数据境内存储；如后续用境外服务需先做合规评估（本期不涉及）</td></tr>
+<tr><td>8</td><td>审计与应急</td><td>敏感数据访问全量审计；制定泄露应急预案与通知流程；权限定期复核</td></tr>
+</tbody>
+</table>
+
+<h3>11.3 资金安全底线三件套（不可砍）</h3>
+<div class="grid g3">
+<div class="card"><div class="h">① 幂等</div><p>支付 / 分账 / 退款 / 提现 / 投保 / 抢单全部幂等键 + 唯一索引；重复请求不重复入账、不重复接单。</p></div>
+<div class="card"><div class="h">② 对账</div><p>T+1 三方逐单对账；差异挂起 ≤24h 告警；差异处理留痕，<strong>禁止</strong>自动平账。</p></div>
+<div class="card"><div class="h">③ 资损监控</div><p>重复支付、负金额/超额、状态回跳、分账金额不符、对账差异五类告警，建议 ≤5 分钟触达。</p></div>
+</div>
+<p class="small">补充：金额以分/DECIMAL 存储；回调 + 主动查询双通道防状态回跳；状态机单向流转；高风险操作（提现、封号、退款）二次确认或人工复核；资金场景在用户端与洗车工端附客服电话与话术入口。</p>
+
+<!-- ============ 12 ============ -->
+<h2 id="s12"><span class="num">12</span>十二、异常处理清单</h2>
+<table>
+<thead><tr><th style="width:170px">场景</th><th>表现</th><th>处理方式</th></tr></thead>
+<tbody>
+<tr><td>支付成功但投保失败</td><td>订单卡在「已支付待投保」</td><td>自动重试（次数/间隔可配置）+ 告警；超限时<strong>自动全额退款</strong>并通知；<strong>禁止</strong>进派单池</td></tr>
+<tr><td>支付回调丢失/乱序</td><td>用户已扣款、订单未更新</td><td>主动查询补偿；幂等处理；非法状态迁移丢弃并告警</td></tr>
+<tr><td>重复支付</td><td>同订单两笔扣款</td><td>幂等拦截；若已发生则自动原路退多余一笔并记资损事件</td></tr>
+<tr><td>抢单并发冲突</td><td>多人同时抢同一单</td><td>数据库原子锁 + 幂等；仅一人成功，其余提示「已被接单」</td></tr>
+<tr><td>抢单池超时无人抢</td><td>T 秒无接单</td><td>转自动指派；仍无可用洗车工 → 后台待办 + 通知车主，按规则可自动全额退款</td></tr>
+<tr><td>洗车工接单后拒单</td><td>主动取消</td><td>计违约与评分扣减；重派；超上限暂停接单</td></tr>
+<tr><td>取车找不到车 / 无钥匙</td><td>到达后无法履约</td><td>洗车工端上报 → 客服介入联系车主 → 改约或按阶段退款；留痕</td></tr>
+<tr><td>取车发现既有划痕</td><td>车况与描述不符</td><td>逐条拍照标注 + 推送车主确认；未确认不进入驾驶</td></tr>
+<tr><td><strong>途中刮蹭 / 事故 / 违章</strong></td><td>责任事件</td><td>一键上报 → 冻结结算 → 保险报案 → 定损理赔 → 后台定责 → 车主沟通 → 归档；严重情形报警联动；协议明确违章由实际驾驶人承担</td></tr>
+<tr><td>洗车点满位 / 无法作业</td><td>履约受阻</td><td>改约或就近改点，通知车主；超时按规则退款</td></tr>
+<tr><td>还车车主不在 / 超时未确认</td><td>无法当面交还</td><td>按协议约定交还方式（钥匙交接留痕 + 照片）；超时规则默认完成并留痕「超时默认」</td></tr>
+<tr><td>车况争议（还车核验不一致）</td><td>车主主张新增划痕</td><td>转「异常处置」→ 调取取/还车对比人工复核 → 定责 → 保险或协商 → 申诉；<strong>禁止</strong>自动定责</td></tr>
+<tr><td>严重投诉</td><td>事故逃逸/财物/人身/酒驾/证件造假</td><td>立即冻结接单权限 → 人工复核取证 → 封号或移交；申诉通道全程开放</td></tr>
+<tr><td>驾驶证过期 / 准驾不符</td><td>资格失效</td><td>到期前提醒、到期当日自动停派；已派单由后台改派</td></tr>
+<tr><td>分账失败 / 对账差异</td><td>金额不一致</td><td>挂起差异单、冻结对应结算、≤24h 告警、人工处理留痕，<strong>禁止</strong>自动平账</td></tr>
+<tr><td>提现超额 / 重复提现</td><td>资金风险</td><td>限额 + 幂等 + 人工复核；异常单拦截并告警</td></tr>
+<tr><td>断网 / 弱网 / 图片上传失败</td><td>验车无法提交</td><td>本地暂存 + 断点续传 + 重试；离线期间<strong>禁止</strong>推进「开始驾驶」状态；恢复后补传并校验水印时间</td></tr>
+<tr><td>验证码登录入口（本期）</td><td>用户点击</td><td>不发短信、不发网络请求，展示「即将开放」；埋点记录需求热度供 V1.1 决策</td></tr>
+<tr><td>权限被拒绝（定位/相机）</td><td>无法验车或定位</td><td>明示用途并引导开启；未授权时明确告知哪些功能不可用，不静默降级</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 13 ============ -->
+<h2 id="s13"><span class="num">13</span>十三、上线计划、依赖与上线后验证</h2>
+
+<h3 id="s13-1">13.1 真实上架合规资质清单（按优先级）</h3>
+<table>
+<thead><tr><th>#</th><th>资质 / 事项</th><th>说明与适用判断</th><th>分级</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><strong>支付二清合规（持牌分账）</strong></td><td>开通持牌支付机构分账产品，洗车工完成分账接收方进件；平台自有账户禁止沉淀转付</td><td><span class="badge b-red">阻塞</span></td></tr>
+<tr><td>2</td><td><strong>保险出单合规</strong></td><td>与持牌保险经纪/代理或保险公司合作，由其出单；确认代驾责任险险种、保额、免赔、除外责任；平台不无资质销售保险</td><td><span class="badge b-red">阻塞</span></td></tr>
+<tr><td>3</td><td><strong>代驾授权与责任协议</strong></td><td>《代为驾驶授权书》《服务协议》《隐私政策》明确：允许驾驶范围与时段、违章与事故责任、保险范围与免赔、车内财物、贵重物品提示、争议解决</td><td><span class="badge b-red">阻塞</span></td></tr>
+<tr><td>4</td><td><strong>灵活用工税务方案</strong></td><td>洗车工 60% 收入的个税代扣代缴 / 个体户核定 / 委托代征路径；避免被认定劳动关系或漏税</td><td><span class="badge b-red">阻塞</span></td></tr>
+<tr><td>5</td><td>增值电信业务许可 / ICP 备案</td><td>ICP 备案必需；平台撮合交易并收取信息服务费是否需要 <strong>EDI 或 ICP 经营许可证</strong>，<strong>必须由法务按实际业务形态确认</strong></td><td><span class="badge b-red">阻塞(待法务定性)</span></td></tr>
+<tr><td>6</td><td>隐私合规与敏感信息</td><td>隐私政策、单独同意、权限说明（定位/相机/通知）、个人信息清单、注销删除入口；个保法合规</td><td><span class="badge b-red">阻塞</span></td></tr>
+<tr><td>7</td><td>软件著作权</td><td>安卓商店及部分审核场景要求，建议尽早申请</td><td><span class="badge b-org">并行</span></td></tr>
+<tr><td>8</td><td>等保备案（建议二级）</td><td>涉及支付与大量个人信息的系统，建议完成定级备案与测评</td><td><span class="badge b-org">并行 / 建议</span></td></tr>
+<tr><td>9</td><td>应用商店审核材料</td><td>隐私清单、权限用途说明、<strong>可演示的后台运营能力 / 演示账号</strong>、服务类目资质、客服与投诉通道、内容合规自查</td><td><span class="badge b-org">并行</span></td></tr>
+<tr><td>10</td><td>车险兼容性提示</td><td>用户商业车险对非约定驾驶人可能加扣免赔/拒赔，协议明示并由平台基础保障补足</td><td><span class="badge b-org">并行 / 协议</span></td></tr>
+<tr><td>11</td><td>客服 / 投诉 / 争议通道</td><td>400 电话、在线客服、投诉处理时限、事故与封号申诉话术、值守安排</td><td><span class="badge b-red">阻塞</span></td></tr>
+<tr><td>12</td><td>违禁词与宣传合规</td><td>页面与协议禁止「全赔 / 零风险 / 最 / 第一 / 国家级」等绝对化与承诺性表述；不承诺赔付结果</td><td><span class="badge b-org">并行</span></td></tr>
+</tbody>
+</table>
+<div class="callout warn"><span class="t">上架判断不能只靠研发</span>上述第 1/2/3/4/5/6/11 项属于<strong>阻塞</strong>，任一未就绪即<strong>不承诺上架排期</strong>；具体资质类目与适用与否，请以公司法务、支付机构与保险合作方的书面意见为准，本文为产品设计层面的识别与提示，不构成法律意见。</div>
+
+<h3 id="s13-2">13.2 依赖就绪度评估（三档分级）</h3>
+<table>
+<thead><tr><th>依赖项</th><th>所属方</th><th>分级</th><th>最晚就绪时限</th><th>影响与替代方案</th></tr></thead>
+<tbody>
+<tr><td>持牌分账通道 + 洗车工进件</td><td>支付机构</td><td><span class="badge b-red">阻塞</span></td><td>联调启动前</td><td>未就绪则本期无法上线结算；无合规替代（禁止平台代收）</td></tr>
+<tr><td>保险合作方按单出单接口 + 条款确认</td><td>保险经纪/保险公司</td><td><span class="badge b-red">阻塞</span></td><td>联调启动前</td><td>未就绪则「每单必须有保险」不成立；不得降级为年度统保</td></tr>
+<tr><td>实名 / 驾驶证核验接口</td><td>权威核验服务商</td><td><span class="badge b-red">阻塞</span></td><td>洗车工端开发前</td><td>可降级为「人工审核 + 证件上传」，但需在 V1 明确并加人工复核工作量</td></tr>
+<tr><td>协议与授权书法务定稿</td><td>法务</td><td><span class="badge b-red">阻塞</span></td><td>用户端下单页开发前</td><td>未定稿不得开放真实下单</td></tr>
+<tr><td>灵活用工税务方案</td><td>财务 / 税务顾问</td><td><span class="badge b-red">阻塞</span></td><td>结算模块上线前</td><td>可先上线「冻结提现」的灰度，但不可真实出款</td></tr>
+<tr><td>短信验证码通道</td><td>短信服务商</td><td><span class="badge b-green">可绕过</span></td><td>V1.1</td><td>本期账号密码登录即可，入口置灰 + 契约预留</td></tr>
+<tr><td>对象存储 / CDN</td><td>云服务商</td><td><span class="badge b-blue">并行</span></td><td>验车模块联调前</td><td>可先用同云厂商临时桶，上线前切正式桶与生命周期策略</td></tr>
+<tr><td>消息推送通道</td><td>厂商推送 / 第三方</td><td><span class="badge b-blue">并行</span></td><td>联调前</td><td>降级为站内信 + 轮询，体验略降</td></tr>
+<tr><td>软著 / 等保 / 商店材料</td><td>内部 + 外部</td><td><span class="badge b-blue">并行</span></td><td>提审前</td><td>可与开发并行，但阻塞提审时间</td></tr>
+</tbody>
+</table>
+
+<h3 id="s13-3">13.3 MVP 版本规划</h3>
+<table>
+<thead><tr><th>版本</th><th>范围</th><th>验收要点</th></tr></thead>
+<tbody>
+<tr><td><strong>V1（MVP）</strong></td><td>三端闭环：注册登录（密码）、下单+保险明示与加购、持牌分账支付、按单投保、混合派单基础版、取/还车验车证据链、异常上报、投诉评价、洗车工准入与分级治理（降权/暂停/封号+申诉）、费率配置、分账对账、最小数据看板</td><td>全链路可跑通；资金三件套生效；保单未回写不派单；验车不齐不能开始驾驶；封号必须有复核；每版含核心指标看板</td></tr>
+<tr><td>V1.1</td><td>短信验证码登录落地、精细派单权重与 A/B、保单电子凭证、辅助图像比对（不定责）、客服工单 SLA 完善</td><td>预留契约与真实实现一致；实验显著性口径确认</td></tr>
+<tr><td>V2</td><td>多城市、分城市差异化费率、洗车工成长体系、订阅/储值、发票自动化、银行存管升级</td><td>单城市模型与洗车工留存验证通过后再扩</td></tr>
+</tbody>
+</table>
+
+<h3 id="s13-4">13.4 灰度、回滚与上线后验证</h3>
+<table>
+<thead><tr><th>环节</th><th>方案</th></tr></thead>
+<tbody>
+<tr><td>灰度</td><td>按<strong>单城市 → 单区域 → 全量</strong>；先内部员工单与白名单车主，再小流量真实单；洗车工侧先小批量准入，观察抢单池响应与车况纠纷；<strong>提现功能在税务方案就绪前保持冻结</strong></td></tr>
+<tr><td>回滚</td><td>每版本可回滚至上一稳定版；状态机变更需兼容旧数据；分账/结算回滚以「冻结 + 人工对账」为主，<strong>禁止</strong>自动冲正用户资金；协议版本可回退展示但已签署记录保留</td></tr>
+<tr><td>上线前验证</td><td>资金用例（重复支付/部分退款/分账差异/重复提现）、并发抢单、保单失败阻断、验车缺图拦截、驾驶证过期停派、封号无复核拦截、越权访问、断网补传、回调乱序</td></tr>
+<tr><td>最小数据能力</td><td>V1 <strong>必须</strong>上线 FR-A-10 看板；上线后按日回收「订单完成率 / 接单响应 / 抢单池超时率 / 车况纠纷率 / 洗车工 30 天留存 / 对账差异率 / 资损告警数」</td></tr>
+<tr><td>效果复盘</td><td>上线后按周复盘：<strong>40% 抽成下的洗车工留存与供给</strong>、车况纠纷与理赔、投诉与封号改判率；据此决定费率差异化或调整（走变更评估）</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 14 ============ -->
+<h2 id="s14"><span class="num">14</span>十四、风险与遗留问题</h2>
+<h3>14.1 需求风险登记册（概率 × 影响，1–5 级；≥15 为高）</h3>
+<table>
+<thead><tr><th style="width:58px">编号</th><th>风险描述</th><th style="width:80px">类别</th><th>概率</th><th>影响</th><th>等级</th><th>应对措施</th><th style="width:70px">责任方</th></tr></thead>
+<tbody>
+<tr><td>RK-01</td><td>平台代收代付构成资金二清，被支付渠道/监管叫停</td><td>合规/资金</td><td>4</td><td>5</td><td><span class="badge b-red">20 高</span></td><td>规避：V1 强制持牌分账，洗车工完成进件；上线前书面确认通道</td><td>法务/支付</td></tr>
+<tr><td>RK-02</td><td>无资质销售保险，或代驾责任险不覆盖驾驶途中/非约定驾驶人免赔</td><td>合规</td><td>4</td><td>5</td><td><span class="badge b-red">20 高</span></td><td>规避：持牌机构出单；条款逐项确认险种/保额/免赔/保障窗口，协议明示车险兼容</td><td>法务/保险</td></tr>
+<tr><td>RK-03</td><td>洗车工驾驶用户车辆发生事故/违章，责任与赔付不清引发纠纷</td><td>合规/安全</td><td>4</td><td>5</td><td><span class="badge b-red">20 高</span></td><td>缓解：驾驶授权书 + 驾驶证核验 + 取/还车证据链 + 轨迹 + 全窗口保险 + 申诉调解</td><td>产品/法务</td></tr>
+<tr><td>RK-04</td><td><strong>40% 抽成导致洗车工实收偏低、留存不足、抢单池无人抢</strong></td><td>运营/商业</td><td>4</td><td>4</td><td><span class="badge b-red">16 高</span></td><td>缓解：费率可配置 + 分城市差异化 + 新手保护期（需变更评估）+ 试点供给测算；上线后重点监控 30 天留存与实收时薪</td><td>业务/运营</td></tr>
+<tr><td>RK-05</td><td>验车证据链缺失或照片可伪造，刮蹭责任无法判定</td><td>数据/体验</td><td>4</td><td>4</td><td><span class="badge b-red">16 高</span></td><td>缓解：实时拍摄禁相册 + 水印 + 缺图拦截 + 并排人工复核 + 留存 ≥180 天</td><td>产品/研发</td></tr>
+<tr><td>RK-06</td><td>敏感个人信息（证件/人脸/位置/车况照）泄露或过度采集</td><td>合规/安全</td><td>3</td><td>5</td><td><span class="badge b-red">15 高</span></td><td>缓解：数据合规 8 项、加密脱敏、单独同意、权限隔离、访问审计、应急预案</td><td>安全/法务</td></tr>
+<tr><td>RK-07</td><td>封号/降权黑箱、无申诉，引发劳动争议与投诉升级</td><td>合规/体验</td><td>3</td><td>4</td><td><span class="badge b-org">12 中</span></td><td>缓解：分级处置 + 人工复核 + 证据 + 书面告知 + 申诉 + 改判率监控</td><td>运营/法务</td></tr>
+<tr><td>RK-08</td><td>资金不一致（重复支付/分账差异/状态回跳/重复提现）</td><td>资金</td><td>3</td><td>5</td><td><span class="badge b-red">15 高</span></td><td>缓解：三件套（幂等 + 对账 + 资损告警）+ DECIMAL + 状态机单向流转</td><td>研发/财务</td></tr>
+<tr><td>RK-09</td><td>驾驶证过期/准驾不符仍接单</td><td>合规</td><td>3</td><td>4</td><td><span class="badge b-org">12 中</span></td><td>缓解：到期自动停派 + 定期复核 + 抢单资格强校验</td><td>研发/审核</td></tr>
+<tr><td>RK-10</td><td>增值电信/ICP 许可类目判断错误，提审被拒</td><td>合规/进度</td><td>3</td><td>4</td><td><span class="badge b-org">12 中</span></td><td>缓解：开发期即由法务出具书面定性，预留办理周期</td><td>法务</td></tr>
+<tr><td>RK-11</td><td>验证码登录入口暴露但本期不实现，用户困惑</td><td>体验</td><td>3</td><td>2</td><td><span class="badge b-blue">6 低</span></td><td>缓解：入口置灰 + 明确预告 + 埋点记录需求热度</td><td>产品</td></tr>
+<tr><td>RK-12</td><td>弱网下验车照片丢失导致流程卡死</td><td>技术/体验</td><td>3</td><td>3</td><td><span class="badge b-blue">9 中</span></td><td>缓解：本地暂存 + 断点续传 + 重试 + 离线禁止推进状态</td><td>研发</td></tr>
+<tr><td>RK-13</td><td>范围蔓延（订阅/储值/多城市被要求塞进 V1）</td><td>需求/进度</td><td>3</td><td>3</td><td><span class="badge b-blue">9 中</span></td><td>缓解：变更评估五要素；不纳入项记后续版本池 + 立项前置条件</td><td>产品</td></tr>
+</tbody>
+</table>
+
+<h3>14.2 遗留问题（评审时需拍板）</h3>
+<table>
+<thead><tr><th>#</th><th>问题</th><th>建议</th><th>决策方</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>0.1 五项假设（A1–A5）是否确认</td><td>逐项确认或推翻，推翻后按影响范围走变更评估</td><td>业务方</td></tr>
+<tr><td>2</td><td>40% 抽成是否分城市/分阶段差异化，是否设新手保护期</td><td>先做成可配置，试点后按留存数据决策，不一次性全量硬上</td><td>业务/财务</td></tr>
+<tr><td>3</td><td>保险险种、保额、免赔、除外责任与保障窗口</td><td>由保险合作方书面确认后写入协议与下单页</td><td>法务/保险</td></tr>
+<tr><td>4</td><td>洗车工法律关系（灵活就业 vs 劳动关系）与税务路径</td><td>法务 + 税务顾问书面定性，直接决定结算与治理设计</td><td>法务/财务</td></tr>
+<tr><td>5</td><td>EDI / ICP 经营许可证适用类目</td><td>法务按实际业务形态书面定性</td><td>法务</td></tr>
+<tr><td>6</td><td>抢单池 T、降权系数、SLA 时限、留存期等数值</td><td>本文全部为建议值/占位，需业务与压测后定稿</td><td>业务/研发</td></tr>
+<tr><td>7</td><td>用户取消/退款在各阶段的手续费与保险成本承担口径</td><td>需明确，避免退款资损与客诉</td><td>业务/财务</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 15 ============ -->
+<h2 id="s15"><span class="num">15</span>十五、附录</h2>
+
+<h3 id="s15-1">15.1 信息架构与页面清单</h3>
+<table>
+<thead><tr><th>端</th><th>页面 / 模块</th><th>核心内容</th><th>主要操作</th></tr></thead>
+<tbody>
+<tr><td rowspan="7">用户端</td><td>登录 / 注册</td><td>手机号+密码；验证码登录入口（置灰预告）</td><td>注册、登录、找回密码</td></tr>
+<tr><td>首页 / 下单</td><td>服务套餐、取车地址、时间窗、车辆信息、金额明细、L1 保障说明、L2 加购、协议签署</td><td>提交订单、去支付</td></tr>
+<tr><td>支付结果</td><td>支付状态、保单出单状态</td><td>返回订单、重试</td></tr>
+<tr><td>订单详情 / 跟踪</td><td>状态时间轴、洗车工信息、行程节点、取/还车验车单</td><td>确认验车、标注异议、取消、联系客服</td></tr>
+<tr><td>验车确认页</td><td>并排照片、时间/GPS 水印、既有划痕标注</td><td>确认 / 提交异议</td></tr>
+<tr><td>评价 / 投诉</td><td>多维评分、证据上传、投诉类型</td><td>提交、查看回执与进度</td></tr>
+<tr><td>个人中心</td><td>我的订单、车辆管理、协议与隐私、客服电话、注销</td><td>设置、退出</td></tr>
+<tr><td rowspan="6">洗车工端</td><td>注册 / 准入</td><td>手机号、实名、驾驶证 OCR、人脸、服务城市、结算账户、协议</td><td>提交、查看审核状态与驳回原因</td></tr>
+<tr><td>抢单大厅</td><td>可抢订单（距离/金额/时间/降权提示）、倒计时</td><td>抢单、拒单</td></tr>
+<tr><td>订单执行</td><td>导航到取车点、取车验车引导、开始驾驶、节点打卡、还车验车</td><td>拍照上传、异常上报、完成</td></tr>
+<tr><td>异常上报</td><td>类型选择、现场照片、说明、报案引导、客服电话</td><td>提交上报</td></tr>
+<tr><td>账单 / 提现</td><td>每单金额明细（S/抽成/实收/保险代收）、可提现余额、提现记录</td><td>提现、查看明细</td></tr>
+<tr><td>我的评分 / 治理</td><td>评分趋势、降权/暂停状态、原因与依据、申诉</td><td>发起申诉、查看进度</td></tr>
+<tr><td rowspan="8">后台端</td><td>工作台 / 数据看板</td><td>FR-A-10 核心指标</td><td>筛选、导出（脱敏）</td></tr>
+<tr><td>订单管理</td><td>全量订单、状态筛选、异常单、证据调阅</td><td>改派、强制取消、退款审批</td></tr>
+<tr><td>洗车工管理</td><td>列表、资质审核、证件到期、评分、治理状态</td><td>通过/驳回、降权、暂停、封号（需复核）</td></tr>
+<tr><td>投诉与申诉</td><td>工单列表、SLA 倒计时、证据、处置与回访</td><td>受理、判定、处置、复核改判</td></tr>
+<tr><td>保险管理</td><td>按单保单、出单异常、报案与理赔进度</td><td>查询、重试、标记</td></tr>
+<tr><td>财务与对账</td><td>分账指令、三方对账、差异单、提现审批</td><td>差异处理、审批、导出</td></tr>
+<tr><td>配置中心</td><td>抽成费率（版本化）、抢单池时长、降权系数、SLA、协议版本、违禁词自查</td><td>配置变更（全留痕）</td></tr>
+<tr><td>权限与审计</td><td>管理员/角色/权限、操作审计日志</td><td>授权、审计查询</td></tr>
+</tbody>
+</table>
+
+<h3 id="s15-2">15.2 关键页面原型思路（线框描述，不含视觉稿）</h3>
+<div class="grid g2">
+<div class="card"><div class="h">用户端 · 确认订单页</div>
+<p><strong>目标</strong>：让用户一次看清金额、保障与授权，放心把车钥匙交出去。<br>
+<strong>布局</strong>：顶部导航（返回/标题）→ 取车信息卡（地址/时间/车辆）→ 服务套餐 → <strong>金额明细（S / 基础保障 / 增值保障 / 合计）</strong> → 保障说明卡（L1 不可取消、L2 默认不勾、保障范围与除外责任入口）→ 协议勾选项（授权书 + 服务协议，带版本）→ 底部吸底「合计 ¥xxx · 去支付」。<br>
+<strong>交互</strong>：L2 勾选实时更新合计；未勾协议禁止支付；金额一律服务端返回；保单出单中展示进度，失败给退款/重试说明；空/载/错/界四态齐全。</p></div>
+<div class="card"><div class="h">洗车工端 · 取车验车页</div>
+<p><strong>目标</strong>：把「车交给我之前长什么样」固定成不可抵赖的证据。<br>
+<strong>布局</strong>：顶部进度（第 N/共 M 张）+ 拍摄引导示意图 → 已拍缩略图网格（缺项标红）→ 「标注既有划痕」入口 → 底部「提交验车单」（照片不齐置灰）。<br>
+<strong>交互</strong>：仅实时拍摄、禁相册；每张自动加时间戳/GPS/订单号水印；弱网本地暂存并断点续传；提交前不可点击「开始驾驶」；提交后推送车主确认，超时按规则默认通过并留痕。</p></div>
+<div class="card"><div class="h">后台 · 洗车工治理页</div>
+<p><strong>目标</strong>：让「减少订单 / 封号」有证据、有分级、可申诉。<br>
+<strong>布局</strong>：洗车工概览（评分趋势、证件有效期、近 30 天单量）→ 关联投诉与证据列表 → 处置面板（警告 / 降权系数 / 暂停 N 天 / 封号）→ 复核与告知记录 → 申诉记录与改判。<br>
+<strong>交互</strong>：选「封号」时强制上传证据 + 填写理由 + 指定复核人，缺失则提交按钮不可用；降权自动带出权重快照；所有动作写审计日志并通知洗车工端。</p></div>
+<div class="card"><div class="h">后台 · 对账看板</div>
+<p><strong>目标</strong>：资金差异一眼可见、可追、可关。<br>
+<strong>布局</strong>：日期/渠道筛选 → 汇总卡（应分账、实分账、差异单数、挂起超 24h 数）→ 差异明细表（订单号 / 来源 / 类型 / 金额 / 状态 / 处理人）→ 资损告警列表。<br>
+<strong>交互</strong>：差异单默认挂起、禁止自动平账；超时标红并升级；处理需填原因与凭证；与订单、分账指令、结算单三处可跳转核对。</p></div>
+</div>
+<p class="small"><strong>可用性自检</strong>：核心任务（下单、抢单、验车、处置）关键操作 ≤3 步；每按钮有明确结果预期；表单有校验与错误定位；无死链；危险操作（封号、退款、提现）二次确认；关键操作可返回/取消；文案无歧义、无诱导、无绝对化用语。</p>
+
+<h3 id="s15-3">15.3 需求追踪矩阵（RTM，节选）</h3>
+<table>
+<thead><tr><th>需求编号</th><th>来源（用户原话要点）</th><th>PRD 章节</th><th>功能需求</th><th>测试用例</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>R-01</td><td>用户下单后洗车工接单 / 三端</td><td>6 / 9.1 / 9.2</td><td>FR-U-04, FR-W-03</td><td>TC-01 全链路下单接单</td><td>待评审</td></tr>
+<tr><td>R-02</td><td>系统自动分配或洗车工抢单</td><td>5.1 / 9.3</td><td>FR-W-03, FR-A-03</td><td>TC-02 并发抢单 / 超时指派</td><td>待评审</td></tr>
+<tr><td>R-03</td><td>到指定地点拿钥匙开车去洗车</td><td>9.1 / 9.4</td><td>FR-U-04, FR-W-04/05/07</td><td>TC-03 授权 + 验车 + 轨迹</td><td>待评审</td></tr>
+<tr><td>R-04</td><td>考虑开车途中可能刮蹭</td><td>9.4 / 12</td><td>FR-W-06, FR-A-06</td><td>TC-04 事故上报与冻结结算</td><td>待评审</td></tr>
+<tr><td>R-05</td><td>用户下单时可选择保险 / 每单必须有保险</td><td>5.2 / 7.1 FR-U-05</td><td>FR-U-05, FR-A-07</td><td>TC-05 保单未回写阻断派单</td><td>待评审</td></tr>
+<tr><td>R-06</td><td>对服务态度不好的洗车工适量减少订单</td><td>9.6 / 7.3 FR-A-03</td><td>FR-A-03/04, FR-W-09</td><td>TC-06 降权权重快照可解释</td><td>待评审</td></tr>
+<tr><td>R-07</td><td>严重投诉可封号</td><td>9.6</td><td>FR-A-04, FR-W-09</td><td>TC-07 无复核记录禁止封号</td><td>待评审</td></tr>
+<tr><td>R-08</td><td>抽洗车工 40% 作为运营费用</td><td>2.2 / 10.3</td><td>FR-A-05/08, FR-W-08</td><td>TC-08 分账恒等式与费率快照</td><td>待评审</td></tr>
+<tr><td>R-09</td><td>可真实上架 / 必须有后台端</td><td>13.1 / 7.3</td><td>FR-A-01~11</td><td>TC-09 上架材料与后台能力核验</td><td>待评审</td></tr>
+<tr><td>R-10</td><td>MySQL 数据持久</td><td>10.1 / 10.2</td><td>全部服务端</td><td>TC-10 事务/幂等/恢复演练</td><td>待评审</td></tr>
+<tr><td>R-11</td><td>账号密码登录 + 手机验证码登录（接口暂缓）</td><td>4 / 7.1 FR-U-01~03</td><td>FR-U-01/02/03</td><td>TC-11 本期不发短信</td><td>待评审</td></tr>
+<tr><td>R-12</td><td>注册必须填手机号</td><td>7.1 FR-U-01</td><td>FR-U-01</td><td>TC-12 手机号唯一性</td><td>待评审</td></tr>
+<tr><td>R-13</td><td>洗车工注册需驾驶证+手机号+实名认证</td><td>7.2 FR-W-01/02</td><td>FR-W-01/02, FR-A-02</td><td>TC-13 过期/准驾不符拒入</td><td>待评审</td></tr>
+</tbody>
+</table>
+
+<h3 id="s15-4">15.4 待确认清单汇总与合规声明</h3>
+<div class="callout warn"><span class="t">评审请优先拍板这 8 项</span>
+<ol style="margin-bottom:0">
+<li>0.1 的 A1–A5 五项假设（保险双层 / 抽成基数 / 混合派单 / 法律关系 / 验证码暂缓）是否确认；</li>
+<li>40% 抽成是否分城市差异化、是否设新手保护期；</li>
+<li>保险合作方、险种、保额、免赔、除外责任与保障窗口；</li>
+<li>洗车工法律关系与税务方案（直接决定结算与治理）；</li>
+<li>持牌分账通道与洗车工进件方案；</li>
+<li>EDI / ICP 许可适用类目（法务书面定性）；</li>
+<li>抢单池时长、降权系数、SLA 时限、证据留存期等数值定稿；</li>
+<li>分阶段取消/退款的手续费与保费承担口径。</li>
+</ol></div>
+<p class="small"><strong>原创与数据说明</strong>：本方案为原创撰写，仅使用通用产品方法论与公开合规常识，未复刻任何产品专有内容；文中所有示例数值均标注「建议值 / 估算 / 待确认」，非市场调研结论或实测数据；未引用未经核实的行业数据；涉及资质与法律适用仅为产品设计层面的风险识别，不构成法律意见。</p>
+
+<div class="foot">
+<p><strong>合规声明</strong>：本方案为产品设计参考，具体实施请结合公司合规与法务要求确认。</p>
+<p>线上洗车平台 · 产品设计方案与 PRD v1.0 ｜ 2026-11-15 ｜ 状态：待评审 ｜ 下一轮：法务/支付/保险/财务联合评审后按决策表收敛修订，更新版本与变更记录。</p>
+</div>
+
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+/* 线上洗车平台 v6.0 · 全局样式（净水蓝 #1668E3 体系） */
+page {
+  --primary: #1668E3;
+  --primary-light: #EAF2FE;
+  --accent: #0E9F9F;
+  --success: #18A058;
+  --warning: #F0A020;
+  --danger: #E5484D;
+  --sim-accent: #F5901B;
+  --sim-bg: #FFF4E0;
+  --sim-stripe: #FDE9C4;
+  --sim-border: #F5C26B;
+  --sim-fg: #8A4B08;
+  --text-1: #121826;
+  --text-2: #4A5568;
+  --text-3: #97A3B6;
+  --bg: #F7F9FC;
+  --card: #FFFFFF;
+  --border: #E4E9F2;
+  --radius: 12rpx;
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  font-size: 28rpx;
+  line-height: 1.5;
+}
+
+page, .page { min-height: 100vh; box-sizing: border-box; }
+.container { padding: 24rpx; }
+.card { background: var(--card); border-radius: var(--radius); padding: 28rpx; box-shadow: 0 2rpx 12rpx rgba(18,24,56,.05); margin-bottom: 24rpx; }
+.card-title { font-size: 32rpx; font-weight: 600; margin-bottom: 20rpx; display: flex; align-items: center; justify-content: space-between; }
+.muted { color: var(--text-3); font-size: 24rpx; }
+.row { display: flex; align-items: center; }
+.between { display: flex; align-items: center; justify-content: space-between; }
+.wrap { flex-wrap: wrap; }
+.grow { flex: 1; }
+
+/* 主按钮 / 次按钮 */
+.btn { display: inline-flex; align-items: center; justify-content: center; height: 88rpx; padding: 0 36rpx; border-radius: 12rpx; font-size: 30rpx; font-weight: 600; border: none; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary::after, .btn-ghost::after, .btn-sim::after { border: none; }
+.btn-ghost { background: var(--primary-light); color: var(--primary); }
+.btn-sim { background: var(--sim-accent); color: #fff; }
+.btn-block { width: 100%; }
+.btn-disabled { background: #CBD3E0 !important; color: #fff !important; }
+.btn-sm { height: 60rpx; padding: 0 24rpx; font-size: 24rpx; border-radius: 8rpx; }
+
+/* ===== 模拟支付红线：常驻横幅（琥珀斜纹） ===== */
+.sim-banner {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 18rpx 24rpx;
+  color: var(--sim-fg);
+  background-color: var(--sim-bg);
+  background-image: repeating-linear-gradient(45deg, var(--sim-stripe) 0, var(--sim-stripe) 16rpx, transparent 16rpx, transparent 32rpx);
+  border-bottom: 2rpx solid var(--sim-border);
+  font-size: 24rpx;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.sim-banner .sim-icon { font-size: 28rpx; }
+.sim-banner--inline { border: 2rpx solid var(--sim-border); border-radius: 10rpx; margin-bottom: 20rpx; }
+
+/* 模拟支付成功——橙色，严禁绿色 */
+.sim-success { color: var(--sim-accent) !important; }
+.sim-success-desc { color: var(--sim-fg); }
+
+/* 标签 */
+.tag { display: inline-flex; align-items: center; padding: 4rpx 16rpx; border-radius: 999rpx; font-size: 22rpx; font-weight: 500; }
+.tag-primary { background: var(--primary-light); color: var(--primary); }
+.tag-success { background: #E8F7EF; color: var(--success); }
+.tag-warning { background: var(--sim-bg); color: var(--warning); }
+.tag-danger { background: #FDECEC; color: var(--danger); }
+.tag-gray { background: #F1F4F9; color: var(--text-3); }
+
+/* 价格：金额为「分」，展示时 /100，示例值 */
+.price { font-family: "DIN Alternate", "Inter", sans-serif; font-weight: 700; color: var(--danger); }
+.price::before { content: '¥'; font-size: .7em; margin-right: 2rpx; }
+.price-example { color: var(--text-3); font-size: 20rpx; }
+
+/* 置灰锁定（认证不足） */
+.locked { opacity: .55; filter: grayscale(1); }
+.lock-mask { display: flex; align-items: center; justify-content: space-between; background: #F1F4F9; border-radius: 10rpx; padding: 20rpx; }
+
+/* 订单 8 态 Stepper */
+.stepper { display: flex; flex-wrap: wrap; }
+.stepper-item { width: 25%; text-align: center; position: relative; margin-bottom: 28rpx; }
+.stepper-dot { width: 40rpx; height: 40rpx; line-height: 40rpx; border-radius: 50%; margin: 0 auto 10rpx; background: #E4E9F2; color: #97A3B6; font-size: 22rpx; }
+.stepper-label { font-size: 22rpx; color: var(--text-3); }
+.stepper-item.done .stepper-dot { background: var(--primary); color: #fff; }
+.stepper-item.done .stepper-label { color: var(--primary); }
+.stepper-item.current .stepper-dot { background: var(--sim-accent); color: #fff; box-shadow: 0 0 0 6rpx rgba(245,144,27,.18); }
+.stepper-item.current .stepper-label { color: var(--sim-fg); font-weight: 600; }
+
+/* 证据缩略图 */
+.thumb-grid { display: flex; gap: 16rpx; flex-wrap: wrap; }
+.thumb { width: 140rpx; height: 140rpx; border-radius: 10rpx; background: #F1F4F9; display: flex; align-items: center; justify-content: center; font-size: 56rpx; border: 2rpx dashed var(--border); }
+
+/* 表单 */
+.form-item { padding: 20rpx 0; border-bottom: 2rpx solid var(--border); }
+.form-item:last-child { border-bottom: none; }
+.form-label { font-size: 26rpx; color: var(--text-2); margin-bottom: 12rpx; }
+.input { width: 100%; height: 72rpx; padding: 0 20rpx; background: #F7F9FC; border-radius: 8rpx; font-size: 28rpx; }
+textarea.input { height: 160rpx; padding: 16rpx 20rpx; }
+
+.divider { height: 2rpx; background: var(--border); margin: 20rpx 0; }
+.center { text-align: center; }
+.mt-8 { margin-top: 8rpx; } .mt-16 { margin-top: 16rpx; } .mt-24 { margin-top: 24rpx; }

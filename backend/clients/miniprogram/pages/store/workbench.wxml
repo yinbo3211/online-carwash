@@ -1,0 +1,50 @@
+<!-- 门店端 · 工作台（工位三态看板） -->
+<view class="page store-workbench">
+  <view class="sim-banner">
+    <text class="sim-icon">⚠</text>
+    <text>测试环境 · 模拟支付 · 不产生真实资金收付</text>
+  </view>
+
+  <view class="container">
+    <view class="card">
+      <view class="card-title"><text>工位看板</text><text class="muted">点击卡片切换状态</text></view>
+      <view class="bay-grid">
+        <view class="bay bay-{{item.status}}" wx:for="{{bays}}" wx:key="id" data-id="{{item.id}}" bindtap="onBayTap">
+          <view class="bay-name">{{item.name}}</view>
+          <view class="bay-dot"></view>
+          <view class="bay-status">{{item.statusText}}</view>
+          <view class="bay-sub">{{item.subText}}</view>
+        </view>
+      </view>
+      <view class="legend">
+        <view class="legend-item" wx:for="{{legend}}" wx:key="key">
+          <view class="legend-dot" style="background:{{item.color}}"></view>{{item.label}}
+        </view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title"><text>待接单任务</text><text class="muted">无空位时接单被拦截</text></view>
+      <view class="task" wx:for="{{tasks}}" wx:key="orderNo">
+        <view class="row between">
+          <view>
+            <view class="task-no">{{item.orderNo}}</view>
+            <view class="muted">{{item.serviceName}} · {{item.modeText}}</view>
+          </view>
+          <text class="tag tag-primary">待接单</text>
+        </view>
+        <view class="row between mt-16">
+          <view><text class="price task-fee">{{item.bayFeeText}}</text><text class="muted"> 工位费 M（门店结算）</text></view>
+          <button class="btn btn-primary btn-sm" data-order="{{item.orderNo}}" bindtap="onAccept">接单</button>
+        </view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title"><text>结算口径</text></view>
+      <view class="muted">门店端结算仅显示工位费 M 部分，不展示用户支付与平台服务费明细。</view>
+      <view class="divider"></view>
+      <view class="row between"><text>今日工位费</text><text class="price">{{todayFeeText}}</text></view>
+    </view>
+  </view>
+</view>

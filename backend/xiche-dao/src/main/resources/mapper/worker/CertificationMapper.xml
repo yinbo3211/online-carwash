@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.worker.dao.CertificationMapper">
+    <resultMap id="BaseResultMap" type="com.xiche.worker.entity.Certification">
+        <id column="id" property="id"/>
+        <result column="worker_id" property="workerId"/>
+        <result column="cert_code" property="certCode"/>
+        <result column="exam_score" property="examScore"/>
+        <result column="status" property="status"/>
+        <result column="passed_at" property="passedAt"/>
+    </resultMap>
+
+    <select id="selectByWorkerAndCode" resultMap="BaseResultMap">
+        SELECT id, worker_id, cert_code, exam_score, status, passed_at
+        FROM t_certification
+        WHERE worker_id = #{param1} AND cert_code = #{param2} AND deleted_at IS NULL LIMIT 1
+    </select>
+
+    <insert id="upsert" parameterType="com.xiche.worker.entity.Certification">
+        INSERT INTO t_certification (worker_id, cert_code, exam_score, status, passed_at,
+                                     created_at, updated_at)
+        VALUES (#{workerId}, #{certCode}, #{examScore}, #{status}, #{passedAt}, NOW(), NOW())
+        ON DUPLICATE KEY UPDATE
+            exam_score = VALUES(exam_score),
+            status = VALUES(status),
+            passed_at = VALUES(passed_at),
+            updated_at = NOW()
+    </insert>
+</mapper>

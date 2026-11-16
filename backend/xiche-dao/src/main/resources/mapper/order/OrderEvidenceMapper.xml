@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.order.dao.OrderEvidenceMapper">
+    <insert id="insert" parameterType="com.xiche.order.entity.OrderEvidence" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_order_evidence (order_id, stage, image_url, operator_id, created_at, updated_at)
+        VALUES (#{orderId}, #{stage}, #{imageUrl}, #{operatorId}, NOW(), NOW())
+    </insert>
+    <select id="selectByOrder" resultType="com.xiche.order.entity.OrderEvidence">
+        SELECT id, order_id AS orderId, stage, image_url AS imageUrl, operator_id AS operatorId,
+               created_at AS createdAt, updated_at AS updatedAt, deleted_at AS deletedAt
+        FROM t_order_evidence WHERE order_id=#{orderId} AND deleted_at IS NULL ORDER BY id
+    </select>
+    <select id="countByStage" resultType="int">
+        SELECT COUNT(1) FROM t_order_evidence WHERE order_id=#{orderId} AND stage=#{stage} AND deleted_at IS NULL
+    </select>
+</mapper>

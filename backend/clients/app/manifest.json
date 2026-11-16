@@ -1,0 +1,50 @@
+{
+  "name": "线上洗车平台",
+  "appid": "__UNI__XICHE2026",
+  "description": "O2O 取送车洗车平台 v6.0（V1 测试版·模拟支付）",
+  "versionName": "6.0.0",
+  "versionCode": 600,
+  "app-plus": {
+    "usingComponents": true,
+    "compilerVersion": 3,
+    "permission": {
+      "android": {
+        "CAMERA": "用于现场拍摄取车/还车证据",
+        "ACCESS_FINE_LOCATION": "用于匹配附近洗车工与上门取送地址",
+        "WRITE_EXTERNAL_STORAGE": "用于保存拍摄的车辆证据照片"
+      }
+    },
+    "distribute": {
+      "android": {
+        "permissions": [
+          "<uses-permission android:name=\"android.permission.CAMERA\"/>",
+          "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>"
+        ]
+      },
+      "ios": {
+        "info.plist": {
+          "NSCameraUsageDescription": "需要相机权限以现场拍摄取还车证据，保障车辆安全。",
+          "NSPhotoLibraryUsageDescription": "本版本仅支持现场拍摄，相册入口灰显，不申请相册权限。",
+          "NSLocationWhenInUseUsageDescription": "需要定位权限以匹配附近洗车工与上门取送地址。"
+        }
+      }
+    }
+  },
+  "h5": {
+    "title": "线上洗车平台 · 车主服务",
+    "router": { "mode": "hash" },
+    "devServer": {
+      "port": 8080,
+      "proxy": {
+        "/api": {
+          "target": "http://localhost:8080",
+          "changeOrigin": true
+        }
+      }
+    }
+  },
+  "mp-weixin": {
+    "appid": "",
+    "setting": { "urlCheck": false }
+  }
+}

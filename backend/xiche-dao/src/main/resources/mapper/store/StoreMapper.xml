@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.store.dao.StoreMapper">
+    <resultMap id="BaseResultMap" type="com.xiche.store.entity.Store">
+        <id column="id" property="id"/>
+        <result column="store_name" property="storeName"/>
+        <result column="owner_user_id" property="ownerUserId"/>
+        <result column="phone" property="phone"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="district" property="district"/>
+        <result column="address" property="address"/>
+        <result column="bay_count" property="bayCount"/>
+        <result column="bay_fee" property="bayFee"/>
+        <result column="rating" property="rating"/>
+        <result column="status" property="status"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted_at" property="deletedAt"/>
+    </resultMap>
+
+    <sql id="Columns">
+        id, store_name, owner_user_id, phone, province, city, district, address,
+        bay_count, bay_fee, rating, status, created_at, updated_at, deleted_at
+    </sql>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_store WHERE id = #{id} AND deleted_at IS NULL
+    </select>
+
+    <select id="selectByOwner" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_store
+        WHERE owner_user_id = #{ownerUserId} AND deleted_at IS NULL LIMIT 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_store
+        <where>
+            deleted_at IS NULL
+            <if test="city != null and city != ''">AND city = #{city}</if>
+            <if test="status != null">AND status = #{status}</if>
+        </where>
+        ORDER BY rating DESC, id ASC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <insert id="insert" parameterType="com.xiche.store.entity.Store" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_store (store_name, owner_user_id, phone, province, city, district,
+                             address, bay_count, bay_fee, rating, status, created_at, updated_at)
+        VALUES (#{storeName}, #{ownerUserId}, #{phone}, #{province}, #{city}, #{district},
+                #{address}, #{bayCount}, #{bayFee}, #{rating}, #{status}, NOW(), NOW())
+    </insert>
+
+    <update id="updateById" parameterType="com.xiche.store.entity.Store">
+        UPDATE t_store
+        <set>
+            <if test="storeName != null">store_name = #{storeName},</if>
+            <if test="bayFee != null">bay_fee = #{bayFee},</if>
+            <if test="rating != null">rating = #{rating},</if>
+            <if test="status != null">status = #{status},</if>
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id} AND deleted_at IS NULL
+    </update>
+</mapper>

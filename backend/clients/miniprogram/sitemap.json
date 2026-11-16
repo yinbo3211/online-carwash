@@ -1,0 +1,4 @@
+{
+  "desc": "线上洗车平台 v6.0 小程序 sitemap",
+  "rules": [{ "action": "allow", "page": "*" }]
+}

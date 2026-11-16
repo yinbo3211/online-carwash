@@ -1,0 +1,19 @@
+.store-workbench { padding-bottom: 40rpx; }
+.bay-grid { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.bay { width: calc(33.33% - 11rpx); border: 2rpx solid #E4E9F2; border-radius: 12rpx; padding: 24rpx 12rpx; text-align: center; box-sizing: border-box; }
+.bay-name { font-size: 26rpx; font-weight: 600; }
+.bay-dot { width: 28rpx; height: 28rpx; border-radius: 50%; margin: 20rpx auto 12rpx; }
+.bay-status { font-size: 26rpx; font-weight: 600; }
+.bay-sub { font-size: 20rpx; color: #97A3B6; margin-top: 6rpx; }
+.bay-free .bay-dot { background: #18A058; box-shadow: 0 0 0 6rpx rgba(24,160,88,.15); }
+.bay-free .bay-status { color: #18A058; }
+.bay-full .bay-dot { background: #E5484D; box-shadow: 0 0 0 6rpx rgba(229,72,77,.15); }
+.bay-full .bay-status { color: #E5484D; }
+.bay-paused .bay-dot { background: #97A3B6; }
+.bay-paused .bay-status { color: #97A3B6; }
+.legend { display: flex; gap: 24rpx; margin-top: 24rpx; }
+.legend-item { display: flex; align-items: center; gap: 8rpx; font-size: 22rpx; color: #6B778C; }
+.legend-dot { width: 16rpx; height: 16rpx; border-radius: 50%; }
+.task { padding: 20rpx 0; border-bottom: 2rpx solid #F1F4F9; }
+.task-no { font-size: 28rpx; font-weight: 600; }
+.task-fee { font-size: 30rpx; }

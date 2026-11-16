@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.settlement.dao.SettlementMapper">
+    <resultMap id="BaseResultMap" type="com.xiche.settlement.entity.Settlement">
+        <id column="id" property="id"/>
+        <result column="settlement_no" property="settlementNo"/>
+        <result column="order_id" property="orderId"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="service_mode" property="serviceMode"/>
+        <result column="paid_amount" property="paidAmount"/>
+        <result column="platform_subsidy" property="platformSubsidy"/>
+        <result column="store_bay_fee" property="storeBayFee"/>
+        <result column="pass_through_cost" property="passThroughCost"/>
+        <result column="labor_income" property="laborIncome"/>
+        <result column="commission_rate" property="commissionRate"/>
+        <result column="platform_fee" property="platformFee"/>
+        <result column="worker_net" property="workerNet"/>
+        <result column="store_net" property="storeNet"/>
+        <result column="total" property="total"/>
+        <result column="status" property="status"/>
+        <result column="env_flag" property="envFlag"/>
+        <result column="settled_at" property="settledAt"/>
+    </resultMap>
+
+    <sql id="Columns">
+        id, settlement_no, order_id, order_no, service_mode, paid_amount, platform_subsidy,
+        store_bay_fee, pass_through_cost, labor_income, commission_rate, platform_fee,
+        worker_net, store_net, total, status, env_flag, settled_at
+    </sql>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_settlement WHERE id = #{id} AND deleted_at IS NULL
+    </select>
+
+    <select id="selectByOrderId" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_settlement
+        WHERE order_id = #{orderId} AND deleted_at IS NULL ORDER BY id DESC LIMIT 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_settlement
+        <where>
+            deleted_at IS NULL
+            <if test="status != null and status != ''">AND status = #{status}</if>
+            <if test="orderNo != null and orderNo != ''">AND order_no LIKE CONCAT('%', #{orderNo}, '%')</if>
+        </where>
+        ORDER BY id DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <insert id="insert" parameterType="com.xiche.settlement.entity.Settlement" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_settlement (settlement_no, order_id, order_no, service_mode, paid_amount,
+                                  platform_subsidy, store_bay_fee, pass_through_cost, labor_income,
+                                  commission_rate, platform_fee, worker_net, store_net, total,
+                                  status, env_flag, settled_at, created_at, updated_at)
+        VALUES (#{settlementNo}, #{orderId}, #{orderNo}, #{serviceMode}, #{paidAmount},
+                #{platformSubsidy}, #{storeBayFee}, #{passThroughCost}, #{laborIncome},
+                #{commissionRate}, #{platformFee}, #{workerNet}, #{storeNet}, #{total},
+                #{status}, #{envFlag}, NOW(), NOW(), NOW())
+    </insert>
+</mapper>

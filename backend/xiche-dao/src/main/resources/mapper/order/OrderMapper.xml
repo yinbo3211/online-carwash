@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.order.dao.OrderMapper">
+    <resultMap id="BaseResultMap" type="com.xiche.order.entity.Order">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="user_id" property="userId"/>
+        <result column="store_id" property="storeId"/>
+        <result column="worker_id" property="workerId"/>
+        <result column="service_sku_id" property="serviceSkuId"/>
+        <result column="service_level" property="serviceLevel"/>
+        <result column="service_mode" property="serviceMode"/>
+        <result column="fulfill_mode" property="fulfillMode"/>
+        <result column="status" property="status"/>
+        <result column="paid_amount" property="paidAmount"/>
+        <result column="platform_subsidy" property="platformSubsidy"/>
+        <result column="store_bay_fee" property="storeBayFee"/>
+        <result column="insurance_fee" property="insuranceFee"/>
+        <result column="advance_amount" property="advanceAmount"/>
+        <result column="labor_income" property="laborIncome"/>
+        <result column="pass_through_cost" property="passThroughCost"/>
+        <result column="platform_fee" property="platformFee"/>
+        <result column="worker_net" property="workerNet"/>
+        <result column="store_net" property="storeNet"/>
+        <result column="rating" property="rating"/>
+        <result column="env_flag" property="envFlag"/>
+        <result column="remark" property="remark"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted_at" property="deletedAt"/>
+    </resultMap>
+
+    <sql id="Columns">
+        id, order_no, user_id, store_id, worker_id, service_sku_id, service_level,
+        service_mode, fulfill_mode, status, paid_amount, platform_subsidy, store_bay_fee,
+        insurance_fee, advance_amount, labor_income, pass_through_cost, platform_fee,
+        worker_net, store_net, rating, env_flag, remark, created_at, updated_at, deleted_at
+    </sql>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_order WHERE id = #{id} AND deleted_at IS NULL
+    </select>
+
+    <select id="selectByOrderNo" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_order
+        WHERE order_no = #{orderNo} AND deleted_at IS NULL
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_order
+        <where>
+            deleted_at IS NULL
+            <if test="userId != null">AND user_id = #{userId}</if>
+            <if test="workerId != null">AND worker_id = #{workerId}</if>
+            <if test="storeId != null">AND store_id = #{storeId}</if>
+            <if test="status != null">AND status = #{status}</if>
+            <if test="statusIn != null">
+                AND status IN
+                <foreach collection="statusIn" item="s" open="(" separator="," close=")">#{s}</foreach>
+            </if>
+        </where>
+        ORDER BY id DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countList" resultType="int">
+        SELECT COUNT(1) FROM t_order
+        <where>
+            deleted_at IS NULL
+            <if test="userId != null">AND user_id = #{userId}</if>
+            <if test="workerId != null">AND worker_id = #{workerId}</if>
+            <if test="storeId != null">AND store_id = #{storeId}</if>
+            <if test="status != null">AND status = #{status}</if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.xiche.order.entity.Order" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_order (order_no, user_id, store_id, service_sku_id, service_level,
+                             service_mode, fulfill_mode, status, paid_amount, platform_subsidy,
+                             store_bay_fee, insurance_fee, advance_amount, env_flag, remark,
+                             created_at, updated_at)
+        VALUES (#{orderNo}, #{userId}, #{storeId}, #{serviceSkuId}, #{serviceLevel},
+                #{serviceMode}, #{fulfillMode}, #{status}, #{paidAmount}, #{platformSubsidy},
+                #{storeBayFee}, #{insuranceFee}, #{advanceAmount}, #{envFlag}, #{remark},
+                NOW(), NOW())
+    </insert>
+
+    <update id="updateStatus">
+        UPDATE t_order SET status = #{status}, updated_at = NOW()
+        WHERE id = #{id} AND deleted_at IS NULL
+    </update>
+
+    <update id="assignWorker">
+        UPDATE t_order SET worker_id = #{workerId}, status = #{toStatus}, updated_at = NOW()
+        WHERE id = #{id} AND status = #{fromStatus} AND worker_id IS NULL AND deleted_at IS NULL
+    </update>
+
+    <update id="updateSettlement" parameterType="com.xiche.order.entity.Order">
+        UPDATE t_order SET
+            labor_income = #{laborIncome},
+            pass_through_cost = #{passThroughCost},
+            platform_fee = #{platformFee},
+            worker_net = #{workerNet},
+            store_net = #{storeNet},
+            updated_at = NOW()
+        WHERE id = #{id} AND deleted_at IS NULL
+    </update>
+</mapper>

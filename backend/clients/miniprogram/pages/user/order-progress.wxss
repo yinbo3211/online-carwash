@@ -1,0 +1,6 @@
+.order-progress { padding-bottom: 160rpx; }
+.order-no { font-size: 32rpx; font-weight: 700; letter-spacing: 1rpx; }
+.hint { font-size: 22rpx; color: #8A4B08; background: #FFF4E0; padding: 12rpx 16rpx; border-radius: 8rpx; margin-top: 12rpx; }
+.evidence-item { margin-bottom: 20rpx; }
+.evidence-stage { font-size: 26rpx; color: #4A5568; margin-bottom: 12rpx; font-weight: 500; }
+.actionbar { position: fixed; left: 0; right: 0; bottom: 0; background: #fff; padding: 16rpx 24rpx; box-shadow: 0 -4rpx 16rpx rgba(18,24,56,.08); display: flex; gap: 16rpx; z-index: 20; }

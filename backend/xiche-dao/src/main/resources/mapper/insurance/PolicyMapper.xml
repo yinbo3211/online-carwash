@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.insurance.dao.PolicyMapper">
+    <resultMap id="BaseResultMap" type="com.xiche.insurance.entity.Policy">
+        <id column="id" property="id"/>
+        <result column="policy_no" property="policyNo"/>
+        <result column="order_id" property="orderId"/>
+        <result column="product_id" property="productId"/>
+        <result column="level" property="level"/>
+        <result column="premium" property="premium"/>
+        <result column="status" property="status"/>
+        <result column="effective_from" property="effectiveFrom"/>
+        <result column="effective_to" property="effectiveTo"/>
+    </resultMap>
+
+    <select id="selectByOrderId" resultMap="BaseResultMap">
+        SELECT id, policy_no, order_id, product_id, level, premium, status,
+               effective_from, effective_to
+        FROM t_policy WHERE order_id = #{orderId} AND deleted_at IS NULL ORDER BY id DESC
+    </select>
+
+    <select id="countValidL1ByOrderId" resultType="int">
+        SELECT COUNT(1) FROM t_policy
+        WHERE order_id = #{orderId}
+          AND level = 'L1'
+          AND status = 'ACTIVE'
+          AND effective_from &lt;= #{now}
+          AND effective_to &gt;= #{now}
+          AND deleted_at IS NULL
+    </select>
+</mapper>

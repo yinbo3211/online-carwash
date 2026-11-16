@@ -1,0 +1,6 @@
+.worker-evidence { padding-bottom: 40rpx; }
+.watermark-hint { font-size: 24rpx; color: #8A4B08; background: #FFF4E0; border-radius: 8rpx; padding: 16rpx; }
+.stage-card { transition: opacity .2s; }
+.stage-title { font-size: 30rpx; font-weight: 600; margin-bottom: 6rpx; }
+.btn-row { display: flex; gap: 12rpx; flex-wrap: wrap; }
+.btn-album { background: #F1F4F9; color: #97A3B6; }

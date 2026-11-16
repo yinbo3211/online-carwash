@@ -1,0 +1,63 @@
+<!-- 车主端 · 订单进度：8 态 Stepper + 证据缩略图 -->
+<view class="page order-progress">
+  <view class="sim-banner">
+    <text class="sim-icon">⚠</text>
+    <text>测试环境 · 模拟支付 · 不产生真实资金收付</text>
+  </view>
+
+  <view class="container">
+    <view class="card">
+      <view class="row between">
+        <view>
+          <view class="order-no">{{order.orderNo}}</view>
+          <view class="muted">{{order.serviceName}} · {{order.modeText}}</view>
+        </view>
+        <text class="tag {{statusToneClass}}">{{statusLabel}}</text>
+      </view>
+      <view class="divider"></view>
+      <view class="stepper">
+        <view class="stepper-item {{item.state}}" wx:for="{{steps}}" wx:key="key">
+          <view class="stepper-dot">{{item.state === 'done' ? '✓' : (index + 1)}}</view>
+          <view class="stepper-label">{{item.label}}</view>
+        </view>
+      </view>
+      <view class="hint" wx:if="{{statusIndex === 6}}">待验收：请核对车辆与清洁效果（警告色提示）</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title"><text>取还车证据</text><text class="muted">现场拍摄留痕</text></view>
+      <view class="evidence-item" wx:for="{{evidence}}" wx:key="stage">
+        <view class="evidence-stage">{{item.stage}}</view>
+        <view class="thumb-grid">
+          <view class="thumb" wx:for="{{item.photos}}" wx:for-item="p" wx:key="*this">{{p}}</view>
+        </view>
+      </view>
+      <view class="muted mt-16">证据图片为示意；生产环境由对象存储 URL 渲染并支持懒加载。</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title"><text>服务信息</text></view>
+      <view class="row between"><text>洗车工</text><text>{{order.workerName || '待分配'}}</text></view>
+      <view class="divider"></view>
+      <view class="row between"><text>车型 / 车牌</text><text>{{order.carNo || '—'}}</text></view>
+      <view class="divider"></view>
+      <view class="row between"><text>实付（示例）</text><text class="price">{{order.amountText}}</text></view>
+      <view class="divider"></view>
+      <view class="row between"><text>保险</text><text class="tag tag-danger">L1 强制</text><text class="tag tag-primary" wx:if="{{order.l2}}">L2 已投保</text></view>
+    </view>
+
+    <view class="card" wx:if="{{certBlocked}}">
+      <view class="card-title"><text>资质要求</text></view>
+      <view class="lock-mask">
+        <text>该档位需洗车工持有 {{requiredCert}} 认证</text>
+        <text class="tag tag-gray">已置灰锁定</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="actionbar">
+    <button class="btn btn-ghost grow" bindtap="onContact">联系洗车工</button>
+    <button class="btn btn-primary grow" wx:if="{{statusIndex === 6}}" bindtap="onAccept">确认验收</button>
+    <button class="btn btn-ghost grow" wx:else bindtap="goReview">去评价</button>
+  </view>
+</view>

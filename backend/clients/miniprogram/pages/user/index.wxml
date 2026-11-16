@@ -1,0 +1,74 @@
+<!-- 车主端首页 · v6.0 -->
+<view class="page user-index">
+  <!-- 模拟支付红线：顶部常驻 -->
+  <view class="sim-banner">
+    <text class="sim-icon">⚠</text>
+    <text>测试环境 · 模拟支付 · 不产生真实资金收付</text>
+  </view>
+
+  <view class="hero">
+    <view class="hero-title">线上洗车 · 取送车服务</view>
+    <view class="hero-sub">一键下单，洗车工上门取送，全程留证</view>
+    <view class="hero-tags">
+      <text class="tag tag-primary">L1 平台强制保障</text>
+      <text class="tag tag-gray">价格为示例值</text>
+    </view>
+  </view>
+
+  <view class="container">
+    <view class="card">
+      <view class="card-title">
+        <text>选择服务档位</text>
+        <text class="muted">金额单位：分 → 展示为元</text>
+      </view>
+      <view
+        class="tier-card {{item.key === selectedTier ? 'tier-card--active' : ''}}"
+        wx:for="{{tiers}}"
+        wx:key="key"
+        data-tier="{{item.key}}"
+        bindtap="onTierTap"
+      >
+        <view class="tier-head">
+          <text class="tier-name">{{item.name}}</text>
+          <text class="tag tag-warning" wx:if="{{item.recommend}}">推荐</text>
+          <text class="grow"></text>
+          <text class="price">{{item.priceText}}</text>
+        </view>
+        <view class="tier-desc">{{item.desc}}</view>
+        <view class="tier-features">
+          <text class="feature" wx:for="{{item.feature}}" wx:for-item="f" wx:key="*this">· {{f}}</text>
+        </view>
+      </view>
+      <view class="price-example mt-8">* 以上为示例价，实际以服务端返回为准</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title"><text>快捷入口</text></view>
+      <view class="entry-grid">
+        <view class="entry" bindtap="goCreate">
+          <view class="entry-icon">🚗</view>
+          <view class="entry-label">立即下单</view>
+        </view>
+        <view class="entry" bindtap="goProgress">
+          <view class="entry-icon">📋</view>
+          <view class="entry-label">订单进度</view>
+        </view>
+        <view class="entry" bindtap="goPayDemo">
+          <view class="entry-icon">💳</view>
+          <view class="entry-label">模拟支付</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title"><text>服务保障</text></view>
+      <view class="row between"><text>L1 平台强制保障</text><text class="tag tag-primary">已锁定 · 不可取消</text></view>
+      <view class="divider"></view>
+      <view class="row between"><text>L2 增值保险</text><text class="muted">下单页可选</text></view>
+      <view class="divider"></view>
+      <view class="row between"><text>取还车证据</text><text class="muted">现场拍摄留痕</text></view>
+    </view>
+  </view>
+
+  <button class="btn btn-primary btn-block fixed-cta" bindtap="goCreate">去下单</button>
+</view>

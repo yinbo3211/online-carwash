@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1668E3" />
+  <title>线上洗车平台 v6.0 · 车主服务（测试版）</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- 模拟支付红线：顶部常驻琥珀斜纹横幅（所有页面可见） -->
+  <div class="sim-banner" role="alert">
+    <span class="sim-icon">⚠</span>
+    <span>测试环境 · 模拟支付 · 不产生真实资金收付</span>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-logo">🚿</span>
+      <div>
+        <div class="brand-name">线上洗车平台</div>
+        <div class="brand-sub">取送车洗车 · v6.0 测试版</div>
+      </div>
+    </div>
+    <nav class="nav" aria-label="主导航">
+      <a href="#/home" data-nav="home" class="nav-link active">首页</a>
+      <a href="#/order" data-nav="order" class="nav-link">下单</a>
+      <a href="#/progress" data-nav="progress" class="nav-link">订单进度</a>
+    </nav>
+  </header>
+
+  <main id="app">
+    <section id="view-home" class="view"></section>
+    <section id="view-order" class="view" hidden></section>
+    <section id="view-pay-success" class="view" hidden></section>
+    <section id="view-progress" class="view" hidden></section>
+  </main>
+
+  <footer class="footer">
+    <div>线上洗车平台 v6.0 · 车主端 H5（纯静态演示）</div>
+    <div class="footer-sub">价格为示例值 · 所有支付为模拟，不产生真实资金收付</div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="modal-root"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

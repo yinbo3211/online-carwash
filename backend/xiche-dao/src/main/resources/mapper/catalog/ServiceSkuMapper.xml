@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.catalog.dao.ServiceSkuMapper">
+    <resultMap id="BaseResultMap" type="com.xiche.catalog.entity.ServiceSku">
+        <id column="id" property="id"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="sku_code" property="skuCode"/>
+        <result column="sku_name" property="skuName"/>
+        <result column="service_level" property="serviceLevel"/>
+        <result column="service_mode" property="serviceMode"/>
+        <result column="price" property="price"/>
+        <result column="price_remark" property="priceRemark"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <sql id="Columns">
+        id, category_id, sku_code, sku_name, service_level, service_mode, price, price_remark, status
+    </sql>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_service_sku WHERE id = #{id} AND deleted_at IS NULL
+    </select>
+
+    <select id="selectByCategory" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_service_sku
+        WHERE category_id = #{categoryId} AND deleted_at IS NULL ORDER BY id ASC
+    </select>
+
+    <select id="selectByLevelAndMode" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_service_sku
+        WHERE service_level = #{serviceLevel} AND service_mode = #{serviceMode}
+          AND status = 1 AND deleted_at IS NULL LIMIT 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_service_sku
+        <where>
+            deleted_at IS NULL
+            <if test="serviceMode != null and serviceMode != ''">AND service_mode = #{serviceMode}</if>
+            <if test="status != null">AND status = #{status}</if>
+        </where>
+        ORDER BY service_level ASC, id ASC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <insert id="insert" parameterType="com.xiche.catalog.entity.ServiceSku" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_service_sku (category_id, sku_code, sku_name, service_level,
+                                   service_mode, price, price_remark, status, created_at, updated_at)
+        VALUES (#{categoryId}, #{skuCode}, #{skuName}, #{serviceLevel},
+                #{serviceMode}, #{price}, #{priceRemark}, #{status}, NOW(), NOW())
+    </insert>
+</mapper>

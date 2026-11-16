@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!-- 数据库下划线列自动映射到驼峰属性：created_at -> createdAt -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <setting name="cacheEnabled" value="true"/>
+        <setting name="jdbcTypeForNull" value="NULL"/>
+        <setting name="logImpl" value="SLF4J"/>
+        <setting name="callSettersOnNulls" value="true"/>
+    </settings>
+
+    <!-- 金额统一 java.math.BigDecimal <-> DECIMAL(10,2)，不注册浮点型处理器 -->
+    <typeAliases>
+        <package name="com.xiche.user.entity"/>
+        <package name="com.xiche.worker.entity"/>
+        <package name="com.xiche.store.entity"/>
+        <package name="com.xiche.order.entity"/>
+        <package name="com.xiche.catalog.entity"/>
+        <package name="com.xiche.payment.entity"/>
+        <package name="com.xiche.insurance.entity"/>
+        <package name="com.xiche.settlement.entity"/>
+        <package name="com.xiche.coupon.entity"/>
+        <package name="com.xiche.commission.entity"/>
+        <package name="com.xiche.auth.entity"/>
+        <package name="com.xiche.learning.entity"/>
+        <package name="com.xiche.governance.entity"/>
+        <package name="com.xiche.cache.entity"/>
+    </typeAliases>
+</configuration>

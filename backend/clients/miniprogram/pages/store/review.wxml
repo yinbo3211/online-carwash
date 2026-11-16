@@ -1,0 +1,36 @@
+<!-- 门店端 · 五维评价 -->
+<view class="page store-review">
+  <view class="sim-banner">
+    <text class="sim-icon">⚠</text>
+    <text>测试环境 · 模拟支付 · 不产生真实资金收付</text>
+  </view>
+
+  <view class="container">
+    <view class="card">
+      <view class="card-title"><text>订单评价</text><text class="muted">{{orderNo}}</text></view>
+      <view class="muted">五维评分，1~5 星。任一维度 ≤2 星时强制填写原因。</view>
+    </view>
+
+    <view class="card dim" wx:for="{{dims}}" wx:key="key">
+      <view class="row between">
+        <view class="dim-name">{{item.label}}</view>
+        <view class="stars">
+          <text class="star {{idx <= item.score ? 'on' : ''}}"
+                wx:for="{{[1,2,3,4,5]}}" wx:for-item="idx" wx:key="*this"
+                data-dim="{{index}}" data-score="{{idx}}" bindtap="onStar">★</text>
+        </view>
+      </view>
+      <view class="score-text muted">{{item.score ? item.score + ' 星' : '未评分'}}</view>
+      <view class="reason-wrap" wx:if="{{item.score && item.score <= lowScore}}">
+        <textarea class="input" placeholder="低分原因（必填）" value="{{item.reason}}" data-dim="{{index}}" bindinput="onReason" />
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="form-label">总体评价（选填）</view>
+      <textarea class="input" placeholder="补充说明服务体验" value="{{comment}}" bindinput="onComment" />
+    </view>
+
+    <button class="btn btn-primary btn-block" bindtap="onSubmit">提交评价</button>
+  </view>
+</view>

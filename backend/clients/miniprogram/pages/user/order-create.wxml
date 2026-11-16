@@ -1,0 +1,108 @@
+<!-- 车主端 · 下单页：档位 / 增值 / 保险 / 券 -->
+<view class="page order-create">
+  <view class="sim-banner">
+    <text class="sim-icon">⚠</text>
+    <text>测试环境 · 模拟支付 · 不产生真实资金收付</text>
+  </view>
+
+  <view class="container">
+    <!-- 服务档位 -->
+    <view class="card">
+      <view class="card-title"><text>服务档位</text><text class="muted">示例价</text></view>
+      <view class="tier-row {{tier.key === selectedTier ? 'on' : ''}}"
+            wx:for="{{tiers}}" wx:key="key" data-tier="{{tier.key}}" bindtap="onTierTap">
+        <view class="tier-main">
+          <text class="tier-name">{{tier.name}}</text>
+          <text class="tag tag-warning" wx:if="{{tier.recommend}}">推荐</text>
+        </view>
+        <view class="tier-sub">{{tier.desc}}</view>
+        <text class="price">{{tier.priceText}}</text>
+      </view>
+    </view>
+
+    <!-- 服务方式 -->
+    <view class="card">
+      <view class="card-title"><text>服务方式</text></view>
+      <view class="seg">
+        <view class="seg-item {{serviceMode === 'store' ? 'on' : ''}}" data-mode="store" bindtap="onModeTap">到店洗</view>
+        <view class="seg-item {{serviceMode === 'door' ? 'on' : ''}} {{doorDisabled ? 'seg-disabled' : ''}}" data-mode="door" bindtap="onModeTap">
+          上门取送 <text class="price seg-price">{{doorPriceText}}</text>
+        </view>
+      </view>
+      <view class="hint" wx:if="{{doorDisabled}}">精细清洁暂不支持上门，请选择到店或切换档位</view>
+      <view class="form-item mt-16">
+        <view class="form-label">取送地址（上门时必填）</view>
+        <input class="input" placeholder="请输入详细地址" value="{{address}}" bindinput="onAddressInput" />
+      </view>
+      <view class="form-item">
+        <view class="form-label">联系手机（11 位中国大陆手机号）</view>
+        <input class="input" type="number" maxlength="11" placeholder="请输入手机号" value="{{phone}}" bindinput="onPhoneInput" />
+      </view>
+    </view>
+
+    <!-- 增值项目 -->
+    <view class="card">
+      <view class="card-title"><text>增值项目</text><text class="muted">最多 {{maxAddons}} 项 · 已选 {{addonCount}}</text></view>
+      <view class="addon-row {{item.checked ? 'on' : ''}}" wx:for="{{addons}}" wx:key="key" data-key="{{item.key}}" bindtap="onAddonTap">
+        <view class="check {{item.checked ? 'checked' : ''}}">{{item.checked ? '✓' : ''}}</view>
+        <text class="grow">{{item.name}}</text>
+        <text class="price addon-price">{{item.priceText}}</text>
+      </view>
+    </view>
+
+    <!-- 保险 -->
+    <view class="card">
+      <view class="card-title"><text>保险保障</text></view>
+      <view class="ins-row ins-locked">
+        <view class="ins-icon">🔒</view>
+        <view class="grow">
+          <view class="ins-name">{{l1.name}} <text class="tag tag-danger">强制</text></view>
+          <view class="muted">{{l1.desc}}</view>
+        </view>
+        <text class="ins-price">¥0</text>
+      </view>
+      <view class="hint">L1 为平台强制保障，已锁定，不可取消</view>
+      <view class="divider"></view>
+      <view class="ins-row {{l2Checked ? 'on' : ''}}" bindtap="onL2Tap">
+        <view class="check {{l2Checked ? 'checked' : ''}}">{{l2Checked ? '✓' : ''}}</view>
+        <view class="grow">
+          <view class="ins-name">{{l2.name}} <text class="tag tag-primary">可选</text></view>
+          <view class="muted">{{l2.desc}}</view>
+        </view>
+        <text class="price ins-price">{{l2.priceText}}</text>
+      </view>
+    </view>
+
+    <!-- 优惠券 -->
+    <view class="card">
+      <view class="card-title"><text>优惠券</text></view>
+      <view class="ins-row {{couponOn ? 'on' : ''}}" bindtap="onCouponTap">
+        <view class="check {{couponOn ? 'checked' : ''}}">{{couponOn ? '✓' : ''}}</view>
+        <text class="grow">新客立减券（示例）</text>
+        <text class="price coupon-price">-{{couponText}}</text>
+      </view>
+    </view>
+
+    <!-- 金额汇总（内部计算单位：分） -->
+    <view class="card summary">
+      <view class="row between"><text>服务费</text><text class="price">{{baseText}}</text></view>
+      <view class="row between"><text>增值项目</text><text class="price">{{addonSumText}}</text></view>
+      <view class="row between"><text>L2 增值保险</text><text class="price">{{l2SumText}}</text></view>
+      <view class="row between"><text>优惠券</text><text class="price">-{{couponText}}</text></view>
+      <view class="divider"></view>
+      <view class="row between total">
+        <text>合计（示例）</text>
+        <text class="price total-price">{{totalText}}</text>
+      </view>
+      <view class="price-example center mt-8">金额以「分」传给后端，此处展示为元</view>
+    </view>
+  </view>
+
+  <view class="paybar">
+    <view class="paybar-left">
+      <view class="muted">应付</view>
+      <view class="price total-price">{{totalText}}</view>
+    </view>
+    <button class="btn btn-sim grow" bindtap="onSubmit">模拟支付并提交</button>
+  </view>
+</view>

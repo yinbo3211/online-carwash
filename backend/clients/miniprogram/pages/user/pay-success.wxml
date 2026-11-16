@@ -1,0 +1,31 @@
+<!-- 车主端 · 模拟支付成功页（橙色，严禁绿色「支付成功」） -->
+<view class="page pay-success">
+  <view class="sim-banner">
+    <text class="sim-icon">⚠</text>
+    <text>测试环境 · 模拟支付 · 不产生真实资金收付</text>
+  </view>
+
+  <view class="container success-wrap">
+    <view class="success-icon sim-success">✓</view>
+    <view class="success-title sim-success">模拟支付成功</view>
+    <view class="success-desc sim-success-desc">测试数据，不产生真实资金收付</view>
+
+    <view class="card info-card">
+      <view class="row between"><text>订单编号</text><text class="mono">{{orderNo}}</text></view>
+      <view class="divider"></view>
+      <view class="row between"><text>服务项目</text><text>{{serviceName}}</text></view>
+      <view class="divider"></view>
+      <view class="row between"><text>模拟支付金额</text><text class="price pay-amount">{{amountText}}</text></view>
+      <view class="divider"></view>
+      <view class="row between"><text>保险</text><text><text class="tag tag-danger">L1 强制</text></text></view>
+    </view>
+
+    <view class="sim-banner sim-banner--inline">
+      <text class="sim-icon">🔒</text>
+      <text>本页为 V1 测试版模拟结果，未发生任何真实扣款或资金结算。</text>
+    </view>
+
+    <button class="btn btn-primary btn-block" bindtap="goProgress">查看订单进度</button>
+    <button class="btn btn-ghost btn-block mt-16" bindtap="goHome">返回首页</button>
+  </view>
+</view>

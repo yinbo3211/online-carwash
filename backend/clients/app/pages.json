@@ -1,0 +1,31 @@
+{
+  "pages": [
+    { "path": "pages/user/index", "style": { "navigationBarTitleText": "车主服务" } },
+    { "path": "pages/user/order-create", "style": { "navigationBarTitleText": "确认下单" } },
+    { "path": "pages/user/order-progress", "style": { "navigationBarTitleText": "订单进度" } },
+    { "path": "pages/user/pay-success", "style": { "navigationBarTitleText": "支付结果" } },
+    { "path": "pages/worker/hall", "style": { "navigationBarTitleText": "抢单大厅" } },
+    { "path": "pages/worker/exam", "style": { "navigationBarTitleText": "在线考试" } },
+    { "path": "pages/worker/income", "style": { "navigationBarTitleText": "收入钱包" } },
+    { "path": "pages/store/workbench", "style": { "navigationBarTitleText": "门店工作台" } },
+    { "path": "pages/store/review", "style": { "navigationBarTitleText": "服务评价" } }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarBackgroundColor": "#1668E3",
+    "backgroundColor": "#F7F9FC",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#97A3B6",
+    "selectedColor": "#1668E3",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/user/index", "text": "车主服务" },
+      { "pagePath": "pages/worker/hall", "text": "抢单大厅" },
+      { "pagePath": "pages/store/workbench", "text": "门店工作台" }
+    ]
+  },
+  "condition": {}
+}

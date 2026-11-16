@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.worker.dao.WorkerMapper">
+    <resultMap id="WorkerResultMap" type="com.xiche.worker.entity.Worker">
+        <id column="id" property="id"/>
+        <result column="real_name" property="realName"/>
+        <result column="phone" property="phone"/>
+        <result column="id_card_no" property="idCardNo"/>
+        <result column="city" property="city"/>
+        <result column="rating" property="rating"/>
+        <result column="completed_orders" property="completedOrders"/>
+        <result column="daily_capacity" property="dailyCapacity"/>
+        <result column="today_orders" property="todayOrders"/>
+        <result column="banned" property="banned"/>
+        <result column="status" property="status"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted_at" property="deletedAt"/>
+    </resultMap>
+
+    <resultMap id="CertResultMap" type="com.xiche.worker.entity.Certification">
+        <id column="id" property="id"/>
+        <result column="worker_id" property="workerId"/>
+        <result column="cert_code" property="certCode"/>
+        <result column="exam_score" property="examScore"/>
+        <result column="status" property="status"/>
+        <result column="passed_at" property="passedAt"/>
+    </resultMap>
+
+    <sql id="WorkerColumns">
+        id, real_name, phone, id_card_no, city, rating, completed_orders,
+        daily_capacity, today_orders, banned, status, created_at, updated_at, deleted_at
+    </sql>
+
+    <select id="selectById" resultMap="WorkerResultMap">
+        SELECT <include refid="WorkerColumns"/> FROM t_worker
+        WHERE id = #{id} AND deleted_at IS NULL
+    </select>
+
+    <select id="selectByIds" resultMap="WorkerResultMap">
+        SELECT <include refid="WorkerColumns"/> FROM t_worker
+        WHERE deleted_at IS NULL AND id IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">#{item}</foreach>
+    </select>
+
+    <select id="selectCerts" resultMap="CertResultMap">
+        SELECT id, worker_id, cert_code, exam_score, status, passed_at
+        FROM t_certification
+        WHERE worker_id = #{workerId} AND deleted_at IS NULL
+    </select>
+
+    <select id="selectList" resultMap="WorkerResultMap">
+        SELECT <include refid="WorkerColumns"/> FROM t_worker
+        <where>
+            deleted_at IS NULL
+            <if test="city != null and city != ''">AND city = #{city}</if>
+            <if test="minRating != null">AND rating &gt;= #{minRating}</if>
+            <if test="banned != null">AND banned = #{banned}</if>
+        </where>
+        ORDER BY rating DESC, id ASC
+        <if test="limit != null">LIMIT #{offset}, #{limit}</if>
+    </select>
+
+    <insert id="insert" parameterType="com.xiche.worker.entity.Worker" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_worker (real_name, phone, id_card_no, city, rating, completed_orders,
+                              daily_capacity, today_orders, banned, status, created_at, updated_at)
+        VALUES (#{realName}, #{phone}, #{idCardNo}, #{city}, #{rating}, #{completedOrders},
+                #{dailyCapacity}, #{todayOrders}, #{banned}, #{status}, NOW(), NOW())
+    </insert>
+
+    <update id="incrementTodayOrders">
+        UPDATE t_worker SET today_orders = today_orders + 1, updated_at = NOW()
+        WHERE id = #{workerId} AND deleted_at IS NULL
+    </update>
+</mapper>

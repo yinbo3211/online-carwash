@@ -1,0 +1,8 @@
+.store-review { padding-bottom: 60rpx; }
+.dim { padding: 24rpx 28rpx; }
+.dim-name { font-size: 30rpx; font-weight: 600; }
+.stars { display: flex; gap: 10rpx; }
+.star { font-size: 44rpx; color: #CBD3E0; line-height: 1; }
+.star.on { color: #F5901B; }
+.score-text { margin-top: 10rpx; font-size: 22rpx; }
+.reason-wrap { margin-top: 16rpx; }
