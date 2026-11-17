@@ -16,4 +16,14 @@
     <select id="countFree" resultType="int">
         SELECT COUNT(1) FROM t_store_bay WHERE store_id=#{storeId} AND status=0 AND deleted_at IS NULL
     </select>
+
+    <!-- P0-19/P1-22：工位 CAS 锁位/释放 -->
+    <update id="lockBay">
+        UPDATE t_store_bay SET status = 1, updated_at = NOW()
+        WHERE id = #{param1} AND store_id = #{param2} AND status = 0 AND deleted_at IS NULL
+    </update>
+    <update id="releaseBay">
+        UPDATE t_store_bay SET status = 0, updated_at = NOW()
+        WHERE id = #{param1} AND store_id = #{param2} AND status = 1 AND deleted_at IS NULL
+    </update>
 </mapper>

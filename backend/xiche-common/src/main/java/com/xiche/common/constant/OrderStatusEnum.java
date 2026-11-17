@@ -17,7 +17,13 @@ public enum OrderStatusEnum {
     WASHING(50, "洗车中"),
     DELIVERING(60, "配送中"),
     WAITING_INSPECTION(70, "待验收"),
-    COMPLETED(80, "完成");
+    COMPLETED(80, "完成"),
+    /* P1-17：逆向/异常状态，取消不再用裸值 90 */
+    CANCELLED(90, "已取消"),
+    REFUNDING(91, "退款中"),
+    REFUNDED(92, "已退款"),
+    EXCEPTION(93, "异常待处理"),
+    DISPUTE(94, "争议处理中");
 
     private final int code;
     private final String desc;
@@ -43,8 +49,12 @@ public enum OrderStatusEnum {
         for (OrderStatusEnum s : values) {
             BY_CODE.put(s.code, s);
         }
+        // 只链接主链 10..80，逆向/异常状态不进入正向流转链
         for (int i = 0; i < values.length - 1; i++) {
-            NEXT_CODE.put(values[i].code, values[i + 1].code);
+            if (values[i].code >= PENDING_PAYMENT.code && values[i].code < COMPLETED.code
+                    && values[i + 1].code == values[i].code + 10) {
+                NEXT_CODE.put(values[i].code, values[i + 1].code);
+            }
         }
     }
 
@@ -56,14 +66,21 @@ public enum OrderStatusEnum {
         return s;
     }
 
+    /** P1-17：未知码安全降级为"未知状态"，不再抛异常 */
     public static String descOf(int code) {
-        return ofCode(code).getDesc();
+        OrderStatusEnum s = BY_CODE.get(code);
+        return s == null ? "未知状态(" + code + ")" : s.getDesc();
     }
 
     /** 合法流转：只能按顺序推进到 next，或一次性前进多段（不可回退） */
     public static boolean canTransit(int from, int to) {
         Integer next = NEXT_CODE.get(from);
         return next != null && to >= next && to <= COMPLETED.code;
+    }
+
+    /** P0-09/P1-17：仅待支付、待接单的订单允许取消；已完成/退款/争议不可取消 */
+    public static boolean canCancel(int from) {
+        return from == PENDING_PAYMENT.code || from == WAITING_ACCEPT.code;
     }
 
     public static void assertTransit(int from, int to) {

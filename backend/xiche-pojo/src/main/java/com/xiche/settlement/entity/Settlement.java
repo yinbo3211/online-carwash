@@ -18,6 +18,8 @@ public class Settlement {
     private BigDecimal platformSubsidy;
     private BigDecimal storeBayFee;
     private BigDecimal passThroughCost;
+    /* P0-08：代垫款独立科目，便于逐笔对账（洗车工垫付需返还） */
+    private BigDecimal advanceAmount;
     private BigDecimal laborIncome;
     private BigDecimal commissionRate;
     private BigDecimal platformFee;
@@ -49,6 +51,8 @@ public class Settlement {
     public void setStoreBayFee(BigDecimal storeBayFee) { this.storeBayFee = storeBayFee; }
     public BigDecimal getPassThroughCost() { return passThroughCost; }
     public void setPassThroughCost(BigDecimal passThroughCost) { this.passThroughCost = passThroughCost; }
+    public BigDecimal getAdvanceAmount() { return advanceAmount; }
+    public void setAdvanceAmount(BigDecimal advanceAmount) { this.advanceAmount = advanceAmount; }
     public BigDecimal getLaborIncome() { return laborIncome; }
     public void setLaborIncome(BigDecimal laborIncome) { this.laborIncome = laborIncome; }
     public BigDecimal getCommissionRate() { return commissionRate; }

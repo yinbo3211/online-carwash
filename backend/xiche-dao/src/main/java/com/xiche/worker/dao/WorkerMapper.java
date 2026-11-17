@@ -19,4 +19,7 @@ public interface WorkerMapper {
 
     /** 接单后原子递增今日产能；产能属于 C 级禁止缓存数据 */
     int incrementTodayOrders(Long workerId);
+
+    /** P0-07：跨日首次接单前原子重置今日产能（updated_at 非今日则归零） */
+    int resetTodayOrdersIfStale(Long workerId);
 }

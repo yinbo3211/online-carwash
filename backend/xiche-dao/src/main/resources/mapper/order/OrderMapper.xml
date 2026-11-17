@@ -26,6 +26,10 @@
         <result column="rating" property="rating"/>
         <result column="env_flag" property="envFlag"/>
         <result column="remark" property="remark"/>
+        <result column="price_snapshot" property="priceSnapshot"/>
+        <result column="rate_snapshot" property="rateSnapshot"/>
+        <result column="card_snapshot" property="cardSnapshot"/>
+        <result column="address_id" property="addressId"/>
         <result column="created_at" property="createdAt"/>
         <result column="updated_at" property="updatedAt"/>
         <result column="deleted_at" property="deletedAt"/>
@@ -35,7 +39,7 @@
         id, order_no, user_id, store_id, worker_id, service_sku_id, service_level,
         service_mode, fulfill_mode, status, paid_amount, platform_subsidy, store_bay_fee,
         insurance_fee, advance_amount, labor_income, pass_through_cost, platform_fee,
-        worker_net, store_net, rating, env_flag, remark, created_at, updated_at, deleted_at
+        worker_net, store_net, rating, env_flag, remark, price_snapshot, rate_snapshot, card_snapshot, address_id, created_at, updated_at, deleted_at
     </sql>
 
     <select id="selectById" resultMap="BaseResultMap">
@@ -79,16 +83,24 @@
         INSERT INTO t_order (order_no, user_id, store_id, service_sku_id, service_level,
                              service_mode, fulfill_mode, status, paid_amount, platform_subsidy,
                              store_bay_fee, insurance_fee, advance_amount, env_flag, remark,
+                             price_snapshot, rate_snapshot, card_snapshot, address_id,
                              created_at, updated_at)
         VALUES (#{orderNo}, #{userId}, #{storeId}, #{serviceSkuId}, #{serviceLevel},
                 #{serviceMode}, #{fulfillMode}, #{status}, #{paidAmount}, #{platformSubsidy},
                 #{storeBayFee}, #{insuranceFee}, #{advanceAmount}, #{envFlag}, #{remark},
+                #{priceSnapshot}, #{rateSnapshot}, #{cardSnapshot}, #{addressId},
                 NOW(), NOW())
     </insert>
 
     <update id="updateStatus">
         UPDATE t_order SET status = #{status}, updated_at = NOW()
         WHERE id = #{id} AND deleted_at IS NULL
+    </update>
+
+    <!-- P0-10/P1-22：状态 CAS -->
+    <update id="updateStatusCas">
+        UPDATE t_order SET status = #{param3}, updated_at = NOW()
+        WHERE id = #{param1} AND status = #{param2} AND deleted_at IS NULL
     </update>
 
     <update id="assignWorker">

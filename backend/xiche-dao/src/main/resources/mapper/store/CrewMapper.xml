@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.store.dao.CrewMapper">
+    <sql id="Cols">id, store_id AS storeId, worker_id AS workerId, role, joined_at AS joinedAt, status</sql>
+    <select id="selectById" resultType="com.xiche.store.entity.Crew">
+        SELECT <include refid="Cols"/> FROM t_crew WHERE id = #{id} AND deleted_at IS NULL
+    </select>
+    <select id="selectByStore" resultType="com.xiche.store.entity.Crew">
+        SELECT <include refid="Cols"/> FROM t_crew WHERE store_id = #{storeId} AND status = 1 AND deleted_at IS NULL
+    </select>
+    <select id="countMembers" resultType="int">
+        SELECT COUNT(1) FROM t_crew WHERE store_id = #{storeId} AND status = 1 AND deleted_at IS NULL
+    </select>
+    <insert id="insert" parameterType="com.xiche.store.entity.Crew" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_crew (store_id, worker_id, role, joined_at, status, created_at, updated_at)
+        VALUES (#{storeId}, #{workerId}, #{role}, NOW(), #{status}, NOW(), NOW())
+    </insert>
+</mapper>

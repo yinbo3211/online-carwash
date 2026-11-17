@@ -52,7 +52,7 @@
             com.xiche.order.dao,com.xiche.catalog.dao,com.xiche.payment.dao,
             com.xiche.insurance.dao,com.xiche.settlement.dao,com.xiche.governance.dao,
             com.xiche.learning.dao,com.xiche.coupon.dao,com.xiche.commission.dao,
-            com.xiche.auth.dao,com.xiche.cache.dao"/>
+            com.xiche.auth.dao"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
 

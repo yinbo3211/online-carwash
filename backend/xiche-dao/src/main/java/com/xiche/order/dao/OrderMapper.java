@@ -19,6 +19,9 @@ public interface OrderMapper {
 
     int updateStatus(Long id, Integer status);
 
+    /** P0-10/P1-22：门店接单状态 CAS，仅 fromStatus 可推进到 toStatus */
+    int updateStatusCas(Long id, Integer fromStatus, Integer toStatus);
+
     /** 派单成功：写入 workerId 并推进状态，同时校验旧状态防止并发重复接单 */
     int assignWorker(Long id, Long workerId, Integer fromStatus, Integer toStatus);
 

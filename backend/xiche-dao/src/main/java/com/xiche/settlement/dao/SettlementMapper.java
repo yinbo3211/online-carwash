@@ -13,4 +13,7 @@ public interface SettlementMapper {
     List<Settlement> selectList(Map<String, Object> params);
 
     int insert(Settlement settlement);
+
+    /** P0-20：按洗车工过滤结算单（关联 t_order.worker_id），杜绝越权拉取全平台数据 */
+    List<Settlement> selectByWorker(Map<String, Object> params);
 }

@@ -12,6 +12,7 @@
         <result column="platform_subsidy" property="platformSubsidy"/>
         <result column="store_bay_fee" property="storeBayFee"/>
         <result column="pass_through_cost" property="passThroughCost"/>
+        <result column="advance_amount" property="advanceAmount"/>
         <result column="labor_income" property="laborIncome"/>
         <result column="commission_rate" property="commissionRate"/>
         <result column="platform_fee" property="platformFee"/>
@@ -25,7 +26,7 @@
 
     <sql id="Columns">
         id, settlement_no, order_id, order_no, service_mode, paid_amount, platform_subsidy,
-        store_bay_fee, pass_through_cost, labor_income, commission_rate, platform_fee,
+        store_bay_fee, pass_through_cost, advance_amount, labor_income, commission_rate, platform_fee,
         worker_net, store_net, total, status, env_flag, settled_at
     </sql>
 
@@ -51,12 +52,20 @@
 
     <insert id="insert" parameterType="com.xiche.settlement.entity.Settlement" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO t_settlement (settlement_no, order_id, order_no, service_mode, paid_amount,
-                                  platform_subsidy, store_bay_fee, pass_through_cost, labor_income,
+                                  platform_subsidy, store_bay_fee, pass_through_cost, advance_amount, labor_income,
                                   commission_rate, platform_fee, worker_net, store_net, total,
                                   status, env_flag, settled_at, created_at, updated_at)
         VALUES (#{settlementNo}, #{orderId}, #{orderNo}, #{serviceMode}, #{paidAmount},
-                #{platformSubsidy}, #{storeBayFee}, #{passThroughCost}, #{laborIncome},
+                #{platformSubsidy}, #{storeBayFee}, #{passThroughCost}, #{advanceAmount}, #{laborIncome},
                 #{commissionRate}, #{platformFee}, #{workerNet}, #{storeNet}, #{total},
                 #{status}, #{envFlag}, NOW(), NOW(), NOW())
     </insert>
+
+    <!-- P0-20：按洗车工过滤（关联订单归属） -->
+    <select id="selectByWorker" resultMap="BaseResultMap">
+        SELECT s.<include refid="Columns"/>
+        FROM t_settlement s JOIN t_order o ON s.order_id = o.id
+        WHERE s.deleted_at IS NULL AND o.worker_id = #{workerId}
+        ORDER BY s.id DESC LIMIT #{offset}, #{limit}
+    </select>
 </mapper>

@@ -28,7 +28,7 @@
 
 | 组件 | 推荐版本 | 工程约束 | 下载地址 |
 |------|----------|----------|----------|
-| JDK | 1.8（8u202 及以上） | 父 `pom.xml` 中 `maven.compiler.source/target = 1.8`，**不要用 JDK 11/17 编译本工程** | https://adoptium.net/temurin/releases/?version=8 |
+| JDK | 1.8（8u202 及以上，推荐） | 父 `pom.xml` 中 `maven.compiler.source/target = 1.8`；**JDK 11/17/20 亦可编译**（已实测 BUILD SUCCESS），但生产运行时 Tomcat 9 需匹配 JDK 8 以规避 `javax` 模块差异 | https://adoptium.net/temurin/releases/?version=8 |
 | Maven | 3.6.3 及以上 | 需支持 `maven-war-plugin 3.4.0` | https://maven.apache.org/download.cgi |
 | Tomcat | 9.0.x（64-bit Windows zip） | Servlet 4.0.1；**不要用 Tomcat 10**（包名从 `javax` 改为 `jakarta`，会 ClassNotFound） | https://tomcat.apache.org/download-90.cgi |
 | MySQL | 8.0.x | `mysql-connector-j 8.0.33`；驱动类 `com.mysql.cj.jdbc.Driver`；字符集 utf8mb4 | https://dev.mysql.com/downloads/installer/ |
@@ -427,7 +427,7 @@ taskkill /PID <java进程PID> /F
 
 **现象**：`BUILD FAILURE` / 依赖下载超时。
 
-- 确认 `java -version` 是 1.8（JDK 11/17 会导致编译目标不兼容）；
+- 确认 `java -version`（推荐 1.8；JDK 11/17/20 编译本工程已实测通过，生产运行建议仍用 JDK 8 + Tomcat 9）；
 - 按 1.3 节配置阿里云镜像；
 - 看具体 `ERROR` 行定位缺失依赖，必要时删除 `~/.m2/repository` 中损坏的目录后重试。
 

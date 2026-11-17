@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.coupon.dao.UserCouponMapper">
+    <select id="selectById" resultType="com.xiche.coupon.entity.UserCoupon">
+        SELECT id, user_id AS userId, coupon_id AS couponId, status, order_id AS orderId, used_at AS usedAt
+        FROM t_user_coupon WHERE id = #{id} AND deleted_at IS NULL
+    </select>
+    <select id="selectByUser" resultType="com.xiche.coupon.entity.UserCoupon">
+        SELECT id, user_id AS userId, coupon_id AS couponId, status, order_id AS orderId, used_at AS usedAt
+        FROM t_user_coupon WHERE user_id = #{userId} AND deleted_at IS NULL ORDER BY id DESC
+    </select>
+    <update id="consume">
+        UPDATE t_user_coupon SET status = 'USED', order_id = #{orderId}, used_at = NOW()
+        WHERE id = #{id} AND status = 'UNUSED' AND deleted_at IS NULL
+    </update>
+    <insert id="insert" parameterType="com.xiche.coupon.entity.UserCoupon" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_user_coupon (user_id, coupon_id, status, created_at, updated_at)
+        VALUES (#{userId}, #{couponId}, 'UNUSED', NOW(), NOW())
+    </insert>
+</mapper>

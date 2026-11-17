@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.coupon.dao.CouponMapper">
+    <select id="selectById" resultType="com.xiche.coupon.entity.Coupon">
+        SELECT id, coupon_code AS couponCode, coupon_name AS couponName, discount_amount AS discountAmount,
+               min_order_amount AS minOrderAmount, borne_by AS borneBy, total_count AS totalCount,
+               used_count AS usedCount, valid_from AS validFrom, valid_to AS validTo, status
+        FROM t_coupon WHERE id = #{id} AND deleted_at IS NULL
+    </select>
+    <select id="selectByCode" resultType="com.xiche.coupon.entity.Coupon">
+        SELECT id, coupon_code AS couponCode, coupon_name AS couponName, discount_amount AS discountAmount,
+               min_order_amount AS minOrderAmount, borne_by AS borneBy, total_count AS totalCount,
+               used_count AS usedCount, valid_from AS validFrom, valid_to AS validTo, status
+        FROM t_coupon WHERE coupon_code = #{code} AND deleted_at IS NULL
+    </select>
+    <select id="selectAvailable" resultType="com.xiche.coupon.entity.Coupon">
+        SELECT id, coupon_code AS couponCode, coupon_name AS couponName, discount_amount AS discountAmount,
+               min_order_amount AS minOrderAmount, borne_by AS borneBy, total_count AS totalCount,
+               used_count AS usedCount, valid_from AS validFrom, valid_to AS validTo, status
+        FROM t_coupon WHERE status = 1 AND deleted_at IS NULL
+          AND (valid_from IS NULL OR valid_from &lt;= #{now})
+          AND (valid_to IS NULL OR valid_to &gt;= #{now})
+          AND used_count &lt; total_count
+    </select>
+    <insert id="insert" parameterType="com.xiche.coupon.entity.Coupon" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_coupon (coupon_code, coupon_name, discount_amount, min_order_amount, borne_by,
+                              total_count, used_count, valid_from, valid_to, status, created_at, updated_at)
+        VALUES (#{couponCode}, #{couponName}, #{discountAmount}, #{minOrderAmount}, #{borneBy},
+                #{totalCount}, 0, #{validFrom}, #{validTo}, #{status}, NOW(), NOW())
+    </insert>
+    <update id="incrementUsed">
+        UPDATE t_coupon SET used_count = used_count + 1, updated_at = NOW() WHERE id = #{id}
+    </update>
+</mapper>

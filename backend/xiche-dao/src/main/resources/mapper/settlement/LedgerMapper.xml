@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.settlement.dao.LedgerMapper">
+    <insert id="insert" parameterType="com.xiche.settlement.entity.Ledger" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_ledger (ledger_no, settlement_id, account_type, account_id, subject, direction,
+                              amount, env_flag, created_at, updated_at)
+        VALUES (#{ledgerNo}, #{settlementId}, #{accountType}, #{accountId}, #{subject}, #{direction},
+                #{amount}, #{envFlag}, NOW(), NOW())
+    </insert>
+    <select id="selectList" resultType="com.xiche.settlement.entity.Ledger">
+        SELECT id, ledger_no AS ledgerNo, settlement_id AS settlementId, account_type AS accountType,
+               account_id AS accountId, subject, direction, amount, env_flag AS envFlag, created_at AS createdAt
+        FROM t_ledger WHERE deleted_at IS NULL
+        <if test="accountType != null and accountType != ''">AND account_type = #{accountType}</if>
+        <if test="accountId != null">AND account_id = #{accountId}</if>
+        <if test="settlementId != null">AND settlement_id = #{settlementId}</if>
+        ORDER BY id DESC LIMIT 0, 200
+    </select>
+    <select id="reconcileBySettlement" resultType="java.util.Map">
+        SELECT account_type AS accountType, direction, SUM(amount) AS total
+        FROM t_ledger WHERE settlement_id = #{settlementId} AND deleted_at IS NULL
+        GROUP BY account_type, direction
+    </select>
+</mapper>

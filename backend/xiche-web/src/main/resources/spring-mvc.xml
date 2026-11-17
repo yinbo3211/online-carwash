@@ -36,6 +36,17 @@
         </mvc:message-converters>
     </mvc:annotation-driven>
 
+    <!-- P0-01/P0-02/P1-23：鉴权拦截器（身份注入 + RBAC + 职责分离SoD） -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/api/**"/>
+            <bean class="com.xiche.common.interceptor.AuthInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!-- 证据图上传：StandardServletMultipartResolver（P2-06） -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
+
     <!-- 静态资源由容器默认 Servlet 处理 -->
     <mvc:default-servlet-handler/>
 

@@ -11,6 +11,8 @@ public class AuditLog {
     private String targetType;
     private String targetId;
     private String detail;
+    private String beforeVal;
+    private String afterVal;
     private String clientIp;
     private Date createdAt;
     private Date updatedAt;
@@ -30,6 +32,10 @@ public class AuditLog {
     public void setTargetId(String targetId) { this.targetId = targetId; }
     public String getDetail() { return detail; }
     public void setDetail(String detail) { this.detail = detail; }
+    public String getBeforeVal() { return beforeVal; }
+    public void setBeforeVal(String beforeVal) { this.beforeVal = beforeVal; }
+    public String getAfterVal() { return afterVal; }
+    public void setAfterVal(String afterVal) { this.afterVal = afterVal; }
     public String getClientIp() { return clientIp; }
     public void setClientIp(String clientIp) { this.clientIp = clientIp; }
     public Date getCreatedAt() { return createdAt; }

@@ -42,18 +42,18 @@
             <param-value>classpath:spring-mvc.xml</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
+        <!-- P1-01：multipart-config 必须是 servlet 的子元素（Servlet 4.0 规范），
+             放在 web-app 直接子级不生效，导致证据图上传报错。 -->
+        <multipart-config>
+            <max-file-size>5242880</max-file-size>
+            <max-request-size>10485760</max-request-size>
+            <file-size-threshold>0</file-size-threshold>
+        </multipart-config>
     </servlet>
     <servlet-mapping>
         <servlet-name>springmvc</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-
-    <!-- 证据图上传：StandardServletMultipartResolver 依赖此配置 -->
-    <multipart-config>
-        <max-file-size>5242880</max-file-size>
-        <max-request-size>10485760</max-request-size>
-        <file-size-threshold>0</file-size-threshold>
-    </multipart-config>
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

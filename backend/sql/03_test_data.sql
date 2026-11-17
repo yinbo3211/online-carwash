@@ -68,9 +68,9 @@ INSERT INTO `t_payment_order` (`payment_no`,`order_id`,`order_no`,`user_id`,`amo
 
 -- ---------- 模拟保单（每单必须有保险；V1模拟台账） ----------
 INSERT INTO `t_policy` (`policy_no`,`order_id`,`product_id`,`level`,`premium`,`status`,`effective_from`,`effective_to`) VALUES
-('POL-TEST-001',1,1,'L1',2.00,'SIMULATED',NOW(),DATE_ADD(NOW(),INTERVAL 1 DAY)),
-('POL-TEST-002',2,1,'L1',2.00,'SIMULATED',NOW(),DATE_ADD(NOW(),INTERVAL 1 DAY)),
-('POL-TEST-003',3,1,'L1',2.00,'SIMULATED',NOW(),DATE_ADD(NOW(),INTERVAL 1 DAY));
+('POL-TEST-001',1,1,'L1',2.00,'ACTIVE',NOW(),DATE_ADD(NOW(),INTERVAL 3 DAY)),
+('POL-TEST-002',2,1,'L1',2.00,'ACTIVE',NOW(),DATE_ADD(NOW(),INTERVAL 3 DAY)),
+('POL-TEST-003',3,1,'L1',2.00,'ACTIVE',NOW(),DATE_ADD(NOW(),INTERVAL 3 DAY));
 
 -- ---------- 结算单与台账（订单1已结算） ----------
 INSERT INTO `t_settlement` (`settlement_no`,`order_id`,`order_no`,`service_mode`,`paid_amount`,`platform_subsidy`,`store_bay_fee`,`pass_through_cost`,`labor_income`,`commission_rate`,`platform_fee`,`worker_net`,`store_net`,`total`,`status`,`env_flag`,`settled_at`) VALUES

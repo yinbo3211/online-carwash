@@ -9,22 +9,24 @@
         <result column="exam_score" property="examScore"/>
         <result column="status" property="status"/>
         <result column="passed_at" property="passedAt"/>
+        <result column="expire_at" property="expireAt"/>
     </resultMap>
 
     <select id="selectByWorkerAndCode" resultMap="BaseResultMap">
-        SELECT id, worker_id, cert_code, exam_score, status, passed_at
+        SELECT id, worker_id, cert_code, exam_score, status, passed_at, expire_at
         FROM t_certification
         WHERE worker_id = #{param1} AND cert_code = #{param2} AND deleted_at IS NULL LIMIT 1
     </select>
 
     <insert id="upsert" parameterType="com.xiche.worker.entity.Certification">
-        INSERT INTO t_certification (worker_id, cert_code, exam_score, status, passed_at,
+        INSERT INTO t_certification (worker_id, cert_code, exam_score, status, passed_at, expire_at,
                                      created_at, updated_at)
-        VALUES (#{workerId}, #{certCode}, #{examScore}, #{status}, #{passedAt}, NOW(), NOW())
+        VALUES (#{workerId}, #{certCode}, #{examScore}, #{status}, #{passedAt}, #{expireAt}, NOW(), NOW())
         ON DUPLICATE KEY UPDATE
             exam_score = VALUES(exam_score),
             status = VALUES(status),
             passed_at = VALUES(passed_at),
+            expire_at = VALUES(expire_at),
             updated_at = NOW()
     </insert>
 </mapper>

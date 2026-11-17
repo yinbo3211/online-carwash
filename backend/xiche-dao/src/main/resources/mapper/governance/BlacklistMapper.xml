@@ -11,4 +11,22 @@
           AND (effective_to IS NULL OR effective_to &gt;= #{param3})
           AND deleted_at IS NULL
     </select>
+
+    <!-- P0-15：门店局部拉黑，必须带 store_id 匹配，避免退化为全平台拉黑 -->
+    <select id="countActiveByStore" resultType="int">
+        SELECT COUNT(1) FROM t_blacklist
+        WHERE subject_type = #{param1}
+          AND subject_id = #{param2}
+          AND store_id = #{param3}
+          AND status = 1
+          AND effective_from &lt;= #{param4}
+          AND (effective_to IS NULL OR effective_to &gt;= #{param4})
+          AND deleted_at IS NULL
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_blacklist (store_id, subject_type, subject_id, reason,
+                                 effective_from, effective_to, status, created_at, updated_at)
+        VALUES (#{param1}, #{param2}, #{param3}, #{param4}, #{param5}, #{param6}, 1, NOW(), NOW())
+    </insert>
 </mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.commission.dao.CommissionCardMapper">
+    <select id="selectById" resultType="com.xiche.commission.entity.CommissionCard">
+        SELECT id, worker_id AS workerId, card_no AS cardNo, quota, used_quota AS usedQuota,
+               discount_rate AS discountRate, valid_from AS validFrom, valid_to AS validTo, status
+        FROM t_commission_card WHERE id = #{id} AND deleted_at IS NULL
+    </select>
+    <select id="selectActiveByWorker" resultType="com.xiche.commission.entity.CommissionCard">
+        SELECT id, worker_id AS workerId, card_no AS cardNo, quota, used_quota AS usedQuota,
+               discount_rate AS discountRate, valid_from AS validFrom, valid_to AS validTo, status
+        FROM t_commission_card WHERE worker_id = #{workerId} AND status = 'ACTIVE' AND deleted_at IS NULL
+          AND (valid_from IS NULL OR valid_from &lt;= #{now})
+          AND (valid_to IS NULL OR valid_to &gt;= #{now})
+    </select>
+    <insert id="insert" parameterType="com.xiche.commission.entity.CommissionCard" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_commission_card (worker_id, card_no, quota, used_quota, discount_rate,
+                                       valid_from, valid_to, status, created_at, updated_at)
+        VALUES (#{workerId}, #{cardNo}, #{quota}, 0, #{discountRate},
+                #{validFrom}, #{validTo}, #{status}, NOW(), NOW())
+    </insert>
+</mapper>

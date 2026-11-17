@@ -36,6 +36,12 @@ public class Order {
     private BigDecimal rating;
     private String envFlag;
     private String remark;
+    /* P0-11：三级快照，锁定下单当时口径，防止追溯改价 */
+    private String priceSnapshot;
+    private String rateSnapshot;
+    private String cardSnapshot;
+    /* P1-20：上门地址 */
+    private Long addressId;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
@@ -86,6 +92,14 @@ public class Order {
     public void setEnvFlag(String envFlag) { this.envFlag = envFlag; }
     public String getRemark() { return remark; }
     public void setRemark(String remark) { this.remark = remark; }
+    public String getPriceSnapshot() { return priceSnapshot; }
+    public void setPriceSnapshot(String priceSnapshot) { this.priceSnapshot = priceSnapshot; }
+    public String getRateSnapshot() { return rateSnapshot; }
+    public void setRateSnapshot(String rateSnapshot) { this.rateSnapshot = rateSnapshot; }
+    public String getCardSnapshot() { return cardSnapshot; }
+    public void setCardSnapshot(String cardSnapshot) { this.cardSnapshot = cardSnapshot; }
+    public Long getAddressId() { return addressId; }
+    public void setAddressId(Long addressId) { this.addressId = addressId; }
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
     public Date getUpdatedAt() { return updatedAt; }

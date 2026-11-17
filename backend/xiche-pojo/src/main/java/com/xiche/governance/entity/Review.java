@@ -10,6 +10,9 @@ public class Review {
     private Long workerId;
     private Integer rating;
     private String content;
+    /* P1-13：五维评价明细（JSON）与低分原因 */
+    private String dimScores;
+    private String reason;
     private Integer status;
     private Date createdAt;
     private Date updatedAt;
@@ -27,6 +30,10 @@ public class Review {
     public void setRating(Integer rating) { this.rating = rating; }
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
+    public String getDimScores() { return dimScores; }
+    public void setDimScores(String dimScores) { this.dimScores = dimScores; }
+    public String getReason() { return reason; }
+    public void setReason(String reason) { this.reason = reason; }
     public Integer getStatus() { return status; }
     public void setStatus(Integer status) { this.status = status; }
     public Date getCreatedAt() { return createdAt; }

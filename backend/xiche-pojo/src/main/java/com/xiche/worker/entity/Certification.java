@@ -13,6 +13,7 @@ public class Certification {
     private Integer examScore;
     private String status;
     private Date passedAt;
+    private Date expireAt;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
@@ -29,6 +30,8 @@ public class Certification {
     public void setStatus(String status) { this.status = status; }
     public Date getPassedAt() { return passedAt; }
     public void setPassedAt(Date passedAt) { this.passedAt = passedAt; }
+    public Date getExpireAt() { return expireAt; }
+    public void setExpireAt(Date expireAt) { this.expireAt = expireAt; }
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
     public Date getUpdatedAt() { return updatedAt; }

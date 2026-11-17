@@ -29,4 +29,12 @@
           AND effective_to &gt;= #{now}
           AND deleted_at IS NULL
     </select>
+
+    <!-- P0-03：支付后出单。V1 模拟出单，状态 ACTIVE，覆盖 T1去程+T2作业+T3返程全窗口 -->
+    <insert id="insert" parameterType="com.xiche.insurance.entity.Policy" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_policy (policy_no, order_id, product_id, level, premium, status,
+                              effective_from, effective_to, created_at, updated_at)
+        VALUES (#{policyNo}, #{orderId}, #{productId}, #{level}, #{premium}, #{status},
+                #{effectiveFrom}, #{effectiveTo}, NOW(), NOW())
+    </insert>
 </mapper>

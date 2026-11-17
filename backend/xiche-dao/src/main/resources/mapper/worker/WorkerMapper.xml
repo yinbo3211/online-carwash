@@ -26,6 +26,7 @@
         <result column="exam_score" property="examScore"/>
         <result column="status" property="status"/>
         <result column="passed_at" property="passedAt"/>
+        <result column="expire_at" property="expireAt"/>
     </resultMap>
 
     <sql id="WorkerColumns">
@@ -45,7 +46,7 @@
     </select>
 
     <select id="selectCerts" resultMap="CertResultMap">
-        SELECT id, worker_id, cert_code, exam_score, status, passed_at
+        SELECT id, worker_id, cert_code, exam_score, status, passed_at, expire_at
         FROM t_certification
         WHERE worker_id = #{workerId} AND deleted_at IS NULL
     </select>
@@ -72,5 +73,12 @@
     <update id="incrementTodayOrders">
         UPDATE t_worker SET today_orders = today_orders + 1, updated_at = NOW()
         WHERE id = #{workerId} AND deleted_at IS NULL
+    </update>
+
+    <!-- P0-07：跨日重置今日产能（updated_at 不是今天则归零后+1的基数；此处仅归零） -->
+    <update id="resetTodayOrdersIfStale">
+        UPDATE t_worker SET today_orders = 0, updated_at = NOW()
+        WHERE id = #{workerId} AND deleted_at IS NULL
+          AND DATE(updated_at) &lt; CURDATE()
     </update>
 </mapper>
