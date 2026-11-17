@@ -43,7 +43,7 @@ INSERT INTO `t_crew` (`store_id`,`worker_id`,`role`,`status`) VALUES
 INSERT INTO `t_order` (`order_no`,`user_id`,`store_id`,`worker_id`,`service_sku_id`,`service_level`,`service_mode`,`fulfill_mode`,`status`,
   `paid_amount`,`platform_subsidy`,`store_bay_fee`,`insurance_fee`,`advance_amount`,`labor_income`,`pass_through_cost`,
   `platform_fee`,`worker_net`,`store_net`,`env_flag`,`remark`) VALUES
-('XC202611160001',2,1,1,2,2,'STORE','PICKUP',30,133.00,0.00,24.00,2.00,0.00,107.00,2.00,42.80,64.20,24.00,'TEST-ENV-V1','标准清洁到店-测试中');
+('XC202611160001',2,1,1,2,2,'STORE','STORE',30,133.00,0.00,24.00,2.00,0.00,107.00,2.00,42.80,64.20,24.00,'TEST-ENV-V1','标准清洁到店-测试中');
 -- 订单2：外观清洁上门，P=95，工位费M=0（上门无门店工位），包干组织费经G口径另记；保险2，代垫0
 -- 上门抽成35%：L=95-0-2=93；platform_fee=93*0.35=32.55；worker_net=60.45
 INSERT INTO `t_order` (`order_no`,`user_id`,`store_id`,`worker_id`,`service_sku_id`,`service_level`,`service_mode`,`fulfill_mode`,`status`,
@@ -55,7 +55,7 @@ INSERT INTO `t_order` (`order_no`,`user_id`,`store_id`,`worker_id`,`service_sku_
 INSERT INTO `t_order` (`order_no`,`user_id`,`store_id`,`worker_id`,`service_sku_id`,`service_level`,`service_mode`,`fulfill_mode`,`status`,
   `paid_amount`,`platform_subsidy`,`store_bay_fee`,`insurance_fee`,`advance_amount`,`labor_income`,`pass_through_cost`,
   `platform_fee`,`worker_net`,`store_net`,`env_flag`,`remark`) VALUES
-('XC202611160003',2,1,NULL,3,3,'STORE','PICKUP',10,243.00,0.00,54.00,2.00,0.00,187.00,2.00,74.80,112.20,54.00,'TEST-ENV-V1','精细清洁到店-待支付');
+('XC202611160003',2,1,NULL,3,3,'STORE','STORE',10,243.00,0.00,54.00,2.00,0.00,187.00,2.00,74.80,112.20,54.00,'TEST-ENV-V1','精细清洁到店-待支付');
 
 INSERT INTO `t_order_item` (`order_id`,`sku_id`,`item_name`,`quantity`,`unit_price`,`amount`,`item_type`) VALUES
 (1,2,'标准清洁',1,133.00,133.00,'PACKAGE'),

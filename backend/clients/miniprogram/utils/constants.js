@@ -5,7 +5,9 @@
  * 【支付口径】V1 测试版模拟支付，成功文案为橙色「模拟支付成功」，严禁绿色「支付成功」。
  */
 
-const BASE_URL = '/api/';
+// P1-12：小程序不支持相对路径，必须配置绝对地址（开发环境替换为实际域名/HTTPS）。
+// 可在 app.globalData.baseURL 覆盖；此处为 V1 测试环境占位。
+const BASE_URL = 'https://api.example.com/xiche-platform/api/';
 
 // 统一响应体 { code, msg, data }：code 为这些值表示业务成功（兼容 0/200）
 const SUCCESS_CODES = [0, 200];

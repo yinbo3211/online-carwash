@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.auth.dao.CertReviewMapper">
+    <insert id="insert">
+        INSERT INTO t_cert_review (worker_id, cert_code, exam_record_id, status, created_at)
+        VALUES (#{workerId}, #{certCode}, #{examRecordId}, 'PENDING', NOW())
+    </insert>
+    <select id="selectPending" resultType="java.util.Map">
+        SELECT id, worker_id AS workerId, cert_code AS certCode, exam_record_id AS examRecordId,
+               status, created_at AS createdAt
+        FROM t_cert_review WHERE status = 'PENDING'
+        ORDER BY id ASC LIMIT #{offset}, #{limit}
+    </select>
+    <select id="selectById" resultType="java.util.Map">
+        SELECT id, worker_id AS workerId, cert_code AS certCode, exam_record_id AS examRecordId,
+               status, reviewer_id AS reviewerId, review_note AS reviewNote, created_at AS createdAt, reviewed_at AS reviewedAt
+        FROM t_cert_review WHERE id = #{id}
+    </select>
+    <update id="review">
+        UPDATE t_cert_review SET status = #{status}, reviewer_id = #{reviewerId},
+               review_note = #{note}, reviewed_at = NOW() WHERE id = #{id}
+    </update>
+</mapper>

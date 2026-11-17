@@ -1,6 +1,9 @@
 package com.xiche.order.service.impl;
 
 import com.xiche.governance.dao.BlacklistMapper;
+import com.xiche.governance.dao.ReviewMapper;
+import com.xiche.store.dao.StoreBayMapper;
+import com.xiche.settlement.service.SettlementService;
 import com.xiche.common.BizException;
 import com.xiche.common.constant.BusinessConstants;
 import com.xiche.common.constant.CertConstants;
@@ -51,6 +54,9 @@ public class OrderServiceImpl implements OrderService {
     @Resource private WorkerMapper workerMapper;
     @Resource private PolicyMapper policyMapper;
     @Resource private BlacklistMapper blacklistMapper;
+    @Resource private SettlementService settlementService;
+    @Resource private StoreBayMapper storeBayMapper;
+    @Resource private ReviewMapper reviewMapper;
 
     @Override
     public Order getById(Long id) { return orderMapper.selectById(id); }
@@ -151,10 +157,13 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal capHours = new BigDecimal(cap).multiply(hoursOf(BusinessConstants.LEVEL_STANDARD));
         if (usedHours.compareTo(capHours) >= 0) fails.add("当日工时产能已满");
 
-        // ④ 未拉黑：P0-15 门店局部拉黑，按订单归属门店判断
+        // ④ 未拉黑：门店局部拉黑 + 平台级拉黑（P1-08）
         if (order.getStoreId() != null
                 && blacklistMapper.countActiveByStore("WORKER", workerId, order.getStoreId(), now) > 0) {
             fails.add("被本门店拉黑");
+        }
+        if (blacklistMapper.countActive("WORKER", workerId, now) > 0) {
+            fails.add("被平台拉黑");
         }
         // ⑤ 未封禁
         if (worker.getBanned() != null && worker.getBanned() == 1) fails.add("账号已封禁");
@@ -184,5 +193,56 @@ public class OrderServiceImpl implements OrderService {
         workerMapper.incrementTodayOrders(workerId);
         log.info("[{}] 接单成功 orderId={} workerId={}", BusinessConstants.ENV_FLAG, orderId, workerId);
         return orderId;
+    }
+
+    /**
+     * BUG-P0-07：履约节点推进。按状态机 canTransit 校验（不可回退），仅承接人可推进。
+     * 推进到完成(80)时，同一本地事务内：触发分账结算 + 释放工位 + 按评价重算洗车工评分/完单数。
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Order progress(Long orderId, Long workerId, int toStatus) {
+        Order order = orderMapper.selectById(orderId);
+        if (order == null) throw new BizException("订单不存在");
+        if (order.getWorkerId() == null || !order.getWorkerId().equals(workerId)) {
+            throw new BizException(40300, "非本人接单，无权推进");
+        }
+        int from = order.getStatus() == null ? 0 : order.getStatus();
+        if (from == toStatus) return order; // 幂等
+        if (!OrderStatusEnum.canTransit(from, toStatus)) {
+            throw new BizException(40900, "非法状态流转：" + OrderStatusEnum.descOf(from)
+                    + " -> " + OrderStatusEnum.descOf(toStatus));
+        }
+        int rows = orderMapper.updateStatus(orderId, toStatus);
+        if (rows != 1) throw new BizException(40900, "状态推进并发冲突，请重试");
+        order.setStatus(toStatus);
+        log.info("[{}] 履约推进 orderId={} {}->{}", BusinessConstants.ENV_FLAG,
+                orderId, OrderStatusEnum.descOf(from), OrderStatusEnum.descOf(toStatus));
+
+        // 完成节点：触发资金分账闭环
+        if (toStatus == OrderStatusEnum.COMPLETED.getCode()) {
+            settlementService.settle(order); // 幂等：已有结算单直接返回
+            // 释放占用工位（P1-09）
+            if (order.getBayId() != null) {
+                storeBayMapper.releaseBay(order.getBayId(), order.getStoreId());
+            }
+            // 按评价重算评分与完单数（P1-09 差评降权）
+            recomputeWorkerStats(order.getWorkerId());
+        }
+        return orderMapper.selectById(orderId);
+    }
+
+    /** 按评价表均分重算洗车工评分；完单数按已完成订单数累计 */
+    private void recomputeWorkerStats(Long workerId) {
+        Worker worker = workerMapper.selectById(workerId);
+        if (worker == null) return;
+        Map<String, Object> stat = reviewMapper.statByWorker(workerId);
+        java.math.BigDecimal rating = worker.getRating() == null ? new java.math.BigDecimal("5.00") : worker.getRating();
+        int completed = worker.getCompletedOrders() == null ? 0 : worker.getCompletedOrders();
+        if (stat != null && stat.get("cnt") != null && ((Number) stat.get("cnt")).intValue() > 0) {
+            Object avg = stat.get("avgRating");
+            if (avg != null) rating = new java.math.BigDecimal(avg.toString());
+        }
+        workerMapper.updateStats(workerId, rating, completed + 1);
     }
 }

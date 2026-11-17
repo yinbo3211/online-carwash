@@ -46,6 +46,10 @@ public class PaymentServiceImpl implements PaymentService {
         if (order == null) {
             throw new BizException("订单不存在，无法模拟支付");
         }
+        // BUG-P0-05/B1：仅订单本人可支付，杜绝越权支付他人订单
+        if (userId != null && !userId.equals(order.getUserId())) {
+            throw new BizException(40300, "无权支付他人订单");
+        }
         if (order.getStatus() == null || order.getStatus().intValue() != OrderStatusEnum.PENDING_PAYMENT.getCode()) {
             throw new BizException("仅待支付订单可支付，当前状态："
                     + OrderStatusEnum.descOf(order.getStatus()));

@@ -80,13 +80,14 @@ const put = (url, data, opt) => request(Object.assign({ url, method: 'PUT', data
 const del = (url, data, opt) => request(Object.assign({ url, method: 'DELETE', data }, opt));
 
 /** 上传证据图（现场拍摄，返回后端文件访问 URL） */
-function uploadEvidence(filePath, orderId, stage) {
+function uploadEvidence(filePath, orderNo, stage) {
   return new Promise((resolve, reject) => {
     wx.uploadFile({
       url: buildUrl('/common/upload'),
       filePath,
       name: 'file',
-      formData: { orderId: String(orderId || ''), stage: stage || '' },
+      // P1-12：后端 CommonController 接收 orderNo（非 orderId）
+      formData: { orderNo: String(orderNo || ''), stage: stage || '' },
       header: getToken() ? { Authorization: 'Bearer ' + getToken() } : {},
       success(res) {
         let body = {};
@@ -101,6 +102,11 @@ function uploadEvidence(filePath, orderId, stage) {
 
 module.exports = {
   request, get, post, put, del, uploadEvidence,
+  // P0-05/P1-12：统一登录端点，换取服务端签名令牌
+  auth: {
+    login: (data) => post('/auth/login', data, { needAuth: false }),
+    ping: () => get('/auth/ping', {}, { needAuth: false })
+  },
   user: {
     getHome: () => get('/user/home'),
     createOrder: (data) => post('/user/orders', data),
@@ -114,7 +120,7 @@ module.exports = {
     grabOrder: (orderId) => post('/worker/orders/' + orderId + '/grab'),
     getTask: (orderId) => get('/worker/orders/' + orderId),
     submitEvidence: (data) => post('/worker/evidence', data),
-    getExams: () => get('/worker/exams'),
+    getExams: (cert) => get('/worker/exams', cert ? { cert } : {}),
     submitExam: (data) => post('/worker/exams/submit', data),
     getIncome: (params) => get('/worker/income', params),
     getCerts: () => get('/worker/certs')

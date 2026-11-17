@@ -436,4 +436,4 @@ CREATE TABLE `t_cache_policy` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='缓存分级策略表';
 
 SET FOREIGN_KEY_CHECKS = 1;
--- 建表完成：共 30 张表，覆盖 14 业务域
+-- 建表完成：34 张表（14 业务域），另有 04/05 迁移增量校验；累计 37 张（含 t_account/t_sys_role_permission/t_cert_review）

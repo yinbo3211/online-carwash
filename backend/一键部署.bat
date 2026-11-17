@@ -150,14 +150,14 @@ goto :fail
 :after_mysql
 
 REM --- 校验 SQL 脚本 ---
-for %%F in (01_schema.sql 02_init_data.sql 03_test_data.sql) do (
+for %%F in (01_schema.sql 02_init_data.sql 03_test_data.sql 04_bugfix_migration.sql 05_auth_fix.sql) do (
   if not exist "%PROJECT_DIR%sql\%%~F" (
     echo       [错误] 缺少 SQL 脚本：%PROJECT_DIR%sql\%%~F
     echo              请确认工程目录完整，SQL 脚本由后端工程师提供。
     goto :fail
   )
 )
-echo       [OK] SQL 脚本 : 01_schema.sql / 02_init_data.sql / 03_test_data.sql
+echo       [OK] SQL 脚本 : 01_schema.sql / 02_init_data.sql / 03_test_data.sql / 04_bugfix_migration.sql / 05_auth_fix.sql
 
 REM --- 连通性检查 ---
 "%MYSQL_EXE%" -h%DB_HOST% -P%DB_PORT% -u%DB_ROOT_USER% %ROOT_PWD_ARG% -e "SELECT 1" >nul 2>&1
@@ -198,7 +198,7 @@ if errorlevel 1 (
 del /q "%INIT_DB_SQL%" >nul 2>&1
 echo       [OK] 数据库 %DB_NAME% 已就绪，用户 %DB_USER% 已授权
 
-for %%F in (01_schema.sql 02_init_data.sql 03_test_data.sql) do (
+for %%F in (01_schema.sql 02_init_data.sql 03_test_data.sql 04_bugfix_migration.sql 05_auth_fix.sql) do (
   echo       导入 %%~F ...
   "%MYSQL_EXE%" -h%DB_HOST% -P%DB_PORT% -u%DB_USER% %APP_PWD_ARG% %DB_NAME% < "%PROJECT_DIR%sql\%%~F"
   if errorlevel 1 (

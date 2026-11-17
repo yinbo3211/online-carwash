@@ -52,23 +52,24 @@ public class CoreLogicTest {
 
     @Test
     public void testSettlementOnsiteStandard() throws Exception {
+        // BUG-P1-01：ONSITE 扣包干组织费 G=18，L=155-18-2=135
         Settlement s = newCalculator().calculate(order(155, 0, 0, 2, 0, "ONSITE", null));
-        Assert.assertEquals(new BigDecimal("153.00"), s.getLaborIncome());
-        Assert.assertEquals(new BigDecimal("53.55"), s.getPlatformFee());      // 153*0.35
-        Assert.assertEquals(new BigDecimal("99.45"), s.getWorkerNet());
+        Assert.assertEquals(new BigDecimal("135.00"), s.getLaborIncome());
+        Assert.assertEquals(new BigDecimal("47.25"), s.getPlatformFee());      // 135*0.35
+        Assert.assertEquals(new BigDecimal("87.75"), s.getWorkerNet());
+        Assert.assertEquals("组织费G归门店", new BigDecimal("18.00"), s.getStoreNet());
     }
 
-    /** P0-08 代垫款返还：方案口径 L=117，fee=46.8，worker到手=80.2 */
+    /** BUG-P1-01：代垫款 D 与组织费均不进抽成基数；L=143-24-2-10=107，fee=42.8，worker到手=74.2 */
     @Test
     public void testAdvanceRefund() throws Exception {
         Settlement s = newCalculator().calculate(order(143, 0, 24, 2, 10, "STORE", null));
-        Assert.assertEquals("代垫款不进L，L应为117", new BigDecimal("117.00"), s.getLaborIncome());
-        Assert.assertEquals("平台费=117*0.4", new BigDecimal("46.80"), s.getPlatformFee());
-        Assert.assertEquals("洗车工到手=70.2+10=80.2", new BigDecimal("80.20"), s.getWorkerNet());
+        Assert.assertEquals("代垫款不进L，L应为107", new BigDecimal("107.00"), s.getLaborIncome());
+        Assert.assertEquals("平台费=107*0.4", new BigDecimal("42.80"), s.getPlatformFee());
+        Assert.assertEquals("洗车工到手=64.2+10=74.2", new BigDecimal("74.20"), s.getWorkerNet());
         Assert.assertEquals("代垫款独立科目=10", new BigDecimal("10.00"), s.getAdvanceAmount());
-        // 恒等式用劳务净额（70.2）+M+B+fee = 143
-        BigDecimal laborNet = s.getLaborIncome().subtract(s.getPlatformFee());
-        BigDecimal right = laborNet.add(s.getStoreNet())
+        // 恒等式用实收 workerNet（74.2）+M+B+fee = 143
+        BigDecimal right = s.getWorkerNet().add(s.getStoreNet())
                 .add(s.getPassThroughCost()).add(s.getPlatformFee());
         Assert.assertEquals(new BigDecimal("143.00"), right);
     }

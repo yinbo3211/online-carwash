@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 title 线上洗车平台 v6.0 - 数据库初始化
 
 REM ==============================================================================
-REM  仅做：建库 -> 建用户授权 -> 依次导入 sql\01_schema.sql / 02_init_data.sql / 03_test_data.sql
+REM  仅做：建库 -> 建用户授权 -> 依次导入 sql\01_schema.sql / 02_init_data.sql / 03_test_data.sql / 04_bugfix_migration.sql / 05_auth_fix.sql
 REM  不打包、不部署 Tomcat。可独立运行，也可在一键部署失败时单独排障。
 REM  建议"以管理员身份运行"。
 REM  重要约定：密码请使用字母/数字/@/_ 等，不要含 空格、%%、!、"' 等 cmd 特殊字符
@@ -65,7 +65,7 @@ goto :fail
 REM ============================== 2. 检查 SQL 脚本 ==============================
 echo.
 echo [2/4] 检查 SQL 脚本 ...
-for %%F in (01_schema.sql 02_init_data.sql 03_test_data.sql) do (
+for %%F in (01_schema.sql 02_init_data.sql 03_test_data.sql 04_bugfix_migration.sql 05_auth_fix.sql) do (
   if not exist "%PROJECT_DIR%sql\%%~F" (
     echo       [错误] 缺少：%PROJECT_DIR%sql\%%~F
     goto :fail
@@ -107,7 +107,7 @@ echo       [OK] 库 %DB_NAME% 就绪，用户 %DB_USER% 已授权
 REM ============================== 4. 导入三个 SQL ==============================
 echo.
 echo [4/4] 导入 SQL 脚本 ...
-for %%F in (01_schema.sql 02_init_data.sql 03_test_data.sql) do (
+for %%F in (01_schema.sql 02_init_data.sql 03_test_data.sql 04_bugfix_migration.sql 05_auth_fix.sql) do (
   echo       导入 %%~F ...
   "%MYSQL_EXE%" -h%DB_HOST% -P%DB_PORT% -u%DB_USER% %APP_PWD_ARG% %DB_NAME% < "%PROJECT_DIR%sql\%%~F"
   if errorlevel 1 (

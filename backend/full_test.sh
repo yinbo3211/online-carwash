@@ -65,16 +65,25 @@ ok=True
 if len(tables)<34: ok=False; print("表数不足:",len(tables))
 # 括号配对
 if s.count('(')!=s.count(')'): ok=False; print("01_schema括号不配对")
-for f in ['02_init_data.sql','03_test_data.sql','04_bugfix_migration.sql']:
+for f in ['02_init_data.sql','03_test_data.sql','04_bugfix_migration.sql','05_auth_fix.sql']:
     t=open('sql/'+f,encoding='utf-8').read()
     if t.count('(')!=t.count(')'): ok=False; print(f,"括号不配对")
+# 表数含新增鉴权/复核表
+tabs=set(re.findall(r'CREATE TABLE\s+(?:IF NOT EXISTS\s+)?`?(\w+)`?', ''.join(open('sql/'+f,encoding='utf-8').read() for f in ['01_schema.sql','05_auth_fix.sql'])))
+for must in ['t_account','t_sys_role_permission','t_cert_review']:
+    if must not in tabs: ok=False; print("缺少表:",must)
 sys.exit(0 if ok else 1)
 PY
-[ $? -eq 0 ] && ok "34张表 + 4个SQL脚本括号配对正常" || no "SQL脚本异常"
+[ $? -eq 0 ] && ok "34+表 + 5个SQL脚本括号配对正常" || no "SQL脚本异常"
 
 echo "【7】前端 JS 语法"
 node --check ../frontend/js/app.js >/dev/null 2>&1 && ok "app.js 语法正确" || no "app.js 语法错误"
 node --check ../frontend/js/api.js >/dev/null 2>&1 && ok "api.js 语法正确" || no "api.js 语法错误"
+node --check clients/miniprogram/utils/api.js >/dev/null 2>&1 && ok "小程序 api.js 语法正确" || no "小程序 api.js 语法错误"
+node --check clients/miniprogram/utils/constants.js >/dev/null 2>&1 && ok "小程序 constants.js 语法正确" || no "小程序 constants.js 语法错误"
+
+echo "【8】集成测试用例存在性"
+[ -f it_test.py ] && grep -q 'ALL TESTS PASSED' it_test.py && ok "端到端集成测试 it_test.py 就绪(55用例)" || no "it_test.py 缺失"
 
 echo "========== 测试结果: 通过 $PASS / 失败 $FAIL =========="
 [ $FAIL -eq 0 ]

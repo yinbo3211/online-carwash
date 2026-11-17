@@ -22,13 +22,13 @@ import java.math.BigDecimal;
 /**
  * 平台撮合分账（业务口径 4，不得改动）：
  *   STORE 抽成 40% / ONSITE 抽成 35%
- *   抽成基数只含劳务收入 L；工位费 M、保险费、代垫款不抽成
- *   B = 保险费（P0-08：代垫款 D 从过账成本中拆出）
- *   L = P + C - M - B（D 不进 L）
+ *   抽成基数只含劳务收入 L；工位费 M、包干组织费 G、保险费 B、代垫款 D 均不抽成
+ *   STORE: storeNet = M(工位费)；ONSITE: storeNet = G(包干组织费18)
+ *   L = P + C - storeNet - B - D（BUG-P1-01：代垫 D 与组织费 G 均不进抽成基数）
  *   platformFee = L × r
- *   workerLaborNet = L - platformFee（恒等式校验用此值）
- *   workerNet(到手) = workerLaborNet + D（代垫款全额返还洗车工）
- *   恒等式：P + C = workerLaborNet + storeNet + B + platformFee
+ *   workerLaborNet = L - platformFee
+ *   workerNet(实收) = workerLaborNet + D（代垫款全额返还洗车工）
+ *   恒等式：P + C = workerNet + storeNet + B + platformFee（BUG-P1-01：用实收 workerNet 校验）
  */
 @Service
 public class SettlementServiceImpl implements SettlementService {
@@ -62,33 +62,37 @@ public class SettlementServiceImpl implements SettlementService {
 
         BigDecimal p = MoneyUtil.scale2(order.getPaidAmount());
         BigDecimal c = MoneyUtil.scale2(order.getPlatformSubsidy());
-        BigDecimal m = MoneyUtil.scale2(order.getStoreBayFee());
         BigDecimal insuranceFee = MoneyUtil.scale2(order.getInsuranceFee());
         BigDecimal advance = MoneyUtil.scale2(order.getAdvanceAmount()); // D 代垫款
-        BigDecimal b = insuranceFee; // P0-08：过账成本只含保险，代垫款拆出单列
+        BigDecimal b = insuranceFee; // 过账成本只含保险，代垫款拆出单列
 
-        // L 劳务收入：唯一抽成基数（D 不进 L）
-        BigDecimal l = MoneyUtil.scale2(p.add(c).subtract(m).subtract(b));
+        // BUG-P1-01：门店侧净收入 STORE=工位费M；ONSITE=包干组织费G(18)，二者均不抽成
+        BigDecimal storeNet = BusinessConstants.MODE_ONSITE.equals(mode)
+                ? BusinessConstants.ONSITE_ORG_FEE : MoneyUtil.scale2(order.getStoreBayFee());
+
+        // L 劳务收入：唯一抽成基数（D 与 storeNet 均不进 L）
+        // BUG-P1-01：L = P + C - storeNet - B - D
+        BigDecimal l = MoneyUtil.scale2(p.add(c).subtract(storeNet).subtract(b).subtract(advance));
         if (MoneyUtil.isNegative(l)) {
             throw new BizException("劳务收入 L 为负，拒绝结算：" + l.toPlainString());
         }
 
-        // P0-12：免佣卡减免抽成；快照固定当时口径
+        // 免佣卡减免抽成；快照固定当时口径（下单已不接受客户端快照，恒为 NONE）
         BigDecimal baseRate = BusinessConstants.commissionRateOf(mode);
         BigDecimal discount = cardDiscountOf(order.getCardSnapshot());
         BigDecimal rate = baseRate.multiply(BigDecimal.ONE.subtract(discount))
                 .setScale(4, BusinessConstants.MONEY_ROUNDING);
         BigDecimal platformFee = MoneyUtil.multiplyRate(l, rate);        // 平台抽成
-        BigDecimal workerLaborNet = MoneyUtil.sub(l, platformFee);        // 劳务净额（恒等式用）
-        BigDecimal workerNet = MoneyUtil.add(workerLaborNet, advance);    // 到手额 = 劳务净额 + 代垫返还
-        BigDecimal storeNet = m;                                          // 门店净收入 = 工位费
+        BigDecimal workerLaborNet = MoneyUtil.sub(l, platformFee);        // 劳务净额
+        BigDecimal workerNet = MoneyUtil.add(workerLaborNet, advance);    // 实收 = 劳务净额 + 代垫返还
 
-        // P1-18：显式校验替代 assert
+        // BUG-P1-01：恒等式用实收 workerNet 校验（此前用 workerLaborNet 掩盖 D>0 时资金错位）
+        // P + C = workerNet + storeNet + B + platformFee
         BigDecimal left = MoneyUtil.scale2(p.add(c));
-        BigDecimal right = MoneyUtil.scale2(workerLaborNet.add(storeNet).add(b).add(platformFee));
+        BigDecimal right = MoneyUtil.scale2(workerNet.add(storeNet).add(b).add(platformFee));
         if (left.compareTo(right) != 0) {
             throw new BizException("分账恒等式不成立：P+C=" + left.toPlainString()
-                    + "，workerLaborNet+storeNet+B+platformFee=" + right.toPlainString());
+                    + "，workerNet+storeNet+B+platformFee=" + right.toPlainString());
         }
 
         Settlement s = new Settlement();
@@ -97,7 +101,7 @@ public class SettlementServiceImpl implements SettlementService {
         s.setServiceMode(mode);
         s.setPaidAmount(p);
         s.setPlatformSubsidy(c);
-        s.setStoreBayFee(m);
+        s.setStoreBayFee(MoneyUtil.scale2(order.getStoreBayFee()));
         s.setPassThroughCost(b);
         s.setAdvanceAmount(advance);       // P0-08：代垫款独立科目
         s.setLaborIncome(l);

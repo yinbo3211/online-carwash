@@ -10,4 +10,8 @@
                created_at AS createdAt, updated_at AS updatedAt, deleted_at AS deletedAt
         FROM t_review WHERE deleted_at IS NULL ORDER BY id DESC LIMIT #{offset}, #{limit}
     </select>
+    <select id="statByWorker" resultType="java.util.Map">
+        SELECT ROUND(AVG(rating), 2) AS avgRating, COUNT(1) AS cnt
+        FROM t_review WHERE worker_id = #{workerId} AND deleted_at IS NULL AND status = 1
+    </select>
 </mapper>

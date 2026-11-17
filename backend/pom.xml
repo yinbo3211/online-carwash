@@ -160,6 +160,9 @@
                         <source>1.8</source>
                         <target>1.8</target>
                         <encoding>UTF-8</encoding>
+                        <!-- P0-01~04 根治：保留方法参数名，使 MyBatis 具名参数(#{orderId})可直接解析，
+                             避免 BindingException: Parameter not found。仍建议接口显式 @Param 双保险。 -->
+                        <parameters>true</parameters>
                     </configuration>
                 </plugin>
                 <plugin>

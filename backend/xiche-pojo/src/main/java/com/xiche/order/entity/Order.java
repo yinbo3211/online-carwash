@@ -15,8 +15,12 @@ import java.util.Date;
 public class Order {
     private Long id;
     private String orderNo;
+    /* BUG-P0-06：客户端幂等键（与 userId 联合唯一），不参与订单号生成 */
+    private String requestId;
     private Long userId;
     private Long storeId;
+    /* P0-07：本单占用的工位，完工时释放 */
+    private Long bayId;
     private Long workerId;
     private Long serviceSkuId;
     private Integer serviceLevel;
@@ -50,10 +54,14 @@ public class Order {
     public void setId(Long id) { this.id = id; }
     public String getOrderNo() { return orderNo; }
     public void setOrderNo(String orderNo) { this.orderNo = orderNo; }
+    public String getRequestId() { return requestId; }
+    public void setRequestId(String requestId) { this.requestId = requestId; }
     public Long getUserId() { return userId; }
     public void setUserId(Long userId) { this.userId = userId; }
     public Long getStoreId() { return storeId; }
     public void setStoreId(Long storeId) { this.storeId = storeId; }
+    public Long getBayId() { return bayId; }
+    public void setBayId(Long bayId) { this.bayId = bayId; }
     public Long getWorkerId() { return workerId; }
     public void setWorkerId(Long workerId) { this.workerId = workerId; }
     public Long getServiceSkuId() { return serviceSkuId; }

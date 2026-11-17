@@ -7,6 +7,7 @@ import com.xiche.common.constant.OrderStatusEnum;
 import com.xiche.common.context.LoginContext;
 import com.xiche.common.util.PageUtil;
 import com.xiche.learning.dao.ExamRecordMapper;
+import com.xiche.auth.dao.CertReviewMapper;
 import com.xiche.learning.entity.Exam;
 import com.xiche.learning.entity.ExamRecord;
 import com.xiche.learning.entity.Question;
@@ -35,6 +36,7 @@ public class WorkerController {
     @Resource private OrderService orderService;
     @Resource private OrderEvidenceMapper evidenceMapper;
     @Resource private ExamRecordMapper examRecordMapper;
+    @Resource private CertReviewMapper certReviewMapper;
     @Resource private SettlementMapper settlementMapper;
 
     private Long currentWorker() { return LoginContext.workerId(); } // P0-01：来自登录上下文
@@ -138,7 +140,25 @@ public class WorkerController {
         e.setImageUrl("/mock/evidence/" + orderNo + "_" + stage + ".jpg");
         e.setOperatorId(currentWorker());
         evidenceMapper.insert(e);
-        Map<String, Object> data = new HashMap<String, Object>(); data.put("saved", true); data.put("stage", stage);
+        // BUG-P0-07：E4 完成确认后推进订单至完成(80)，事务内触发结算/释放工位/重算评分
+        Integer newStatus = null;
+        if ("E4".equals(stage)) {
+            Order done = orderService.progress(o.getId(), currentWorker(), OrderStatusEnum.COMPLETED.getCode());
+            newStatus = done.getStatus();
+        }
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("saved", true); data.put("stage", stage); data.put("orderStatus", newStatus);
+        return Result.success(data);
+    }
+
+    /** BUG-P0-07：履约节点上报（取车/到店/开工/完工），按状态机推进，不可回退 */
+    @PostMapping("/orders/{id}/progress")
+    public Result<Map<String, Object>> progress(@PathVariable Long id, @RequestBody Map<String, Object> body) {
+        int toStatus = body.get("status") == null ? 0 : Integer.parseInt(String.valueOf(body.get("status")));
+        Order o = orderService.progress(id, currentWorker(), toStatus);
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("orderId", o.getId()); data.put("status", o.getStatus());
+        data.put("statusDesc", OrderStatusEnum.descOf(o.getStatus()));
         return Result.success(data);
     }
 
@@ -178,47 +198,79 @@ public class WorkerController {
     @PostMapping("/exams/submit")
     public Result<Map<String, Object>> submitExam(@RequestBody Map<String, Object> body) {
         String cert = body.get("cert") == null ? "C1" : String.valueOf(body.get("cert")).toUpperCase();
+        Long workerId = currentWorker();
         Long examId = examIdOf(cert);
         Exam exam = examRecordMapper.selectExamById(examId);
         if (exam == null) return Result.fail(40000, "考试不存在：" + cert);
+        String certCode = exam.getCertCode();
         int passScore = exam.getPassScore() == null ? CertConstants.PASS_SCORE : exam.getPassScore();
+
+        // P1-10：递进校验——考 C2 须先持 C1，考 C3 须先持 C2（未通过高级认证不可跳级）
+        String prerequisite = "C2".equals(certCode) ? "C1" : "C3".equals(certCode) ? "C2" : null;
+        if (prerequisite != null) {
+            Certification pre = certificationMapper.selectByWorkerAndCode(workerId, prerequisite);
+            Date now = new Date();
+            if (pre == null || !"PASSED".equalsIgnoreCase(pre.getStatus())
+                    || (pre.getExpireAt() != null && pre.getExpireAt().before(now))) {
+                return Result.fail(40300, "须先通过" + prerequisite + "认证方可报考" + certCode);
+            }
+        }
+
+        // P1-10：24h 补考冷却 + 每期最多 3 次（服务端判定，不信任客户端）
+        Date last = examRecordMapper.selectLastSubmitted(workerId, certCode);
+        if (last != null && System.currentTimeMillis() - last.getTime() < 24L * 3600 * 1000) {
+            return Result.fail(40900, "补考需间隔 24 小时");
+        }
+        int attempts = examRecordMapper.countByWorkerAndCert(workerId, certCode);
+        if (attempts >= 3) {
+            return Result.fail(40900, "本期考试次数已达上限（3 次）");
+        }
 
         Map<String, Object> answers;
         Object raw = body.get("answers");
         if (!(raw instanceof Map)) return Result.fail(40000, "answers 必须为 {题号:选项} 对象");
-        answers = (Map<String, Object>) raw; // P2-05：强转前类型校验
+        answers = (Map<String, Object>) raw;
 
         List<Question> qs = examRecordMapper.selectQuestions(examId);
         int score = 0;
+        StringBuilder snapshot = new StringBuilder();
         for (Question q : qs) {
             String ans = String.valueOf(answers.get(String.valueOf(q.getId())));
+            // 试卷快照：题号 + 提交答案（可回溯卷版本与作答，不存正确答案明文）
+            snapshot.append(q.getId()).append(':').append(ans).append(';');
             if (q.getCorrectOption() != null && q.getCorrectOption().equalsIgnoreCase(ans)) {
                 score += q.getScore() == null ? 0 : q.getScore();
             }
         }
-        boolean passed = score >= passScore; // P2-04
+        boolean passed = score >= passScore;
+        int switchCount = body.get("switchCount") == null ? 0
+                : Integer.parseInt(String.valueOf(body.get("switchCount")));
 
         ExamRecord rec = new ExamRecord();
-        rec.setWorkerId(currentWorker()); rec.setExamId(examId); rec.setCertCode(exam.getCertCode());
+        rec.setWorkerId(workerId); rec.setExamId(examId); rec.setCertCode(certCode);
         rec.setScore(score); rec.setResult(passed ? "PASS" : "FAIL"); rec.setSubmittedAt(new Date());
+        rec.setSwitchCount(switchCount); rec.setPaperSnapshot(snapshot.toString());
         examRecordMapper.insert(rec);
 
-        // P0-04：考试通过写认证表（此前只写 exam_record，认证永远拿不到）
+        // 考试通过写认证表；认证等级来自 exam，忽略请求体 cert，防止越级
         if (passed) {
             Certification c = new Certification();
-            c.setWorkerId(currentWorker());
-            c.setCertCode(exam.getCertCode()); // P0-06：来自 exam，不取请求体，防止越级
+            c.setWorkerId(workerId);
+            c.setCertCode(certCode);
             c.setExamScore(score);
             c.setStatus(CertConstants.EXAM_PASSED);
             c.setPassedAt(new Date());
             Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.MONTH, 12); // P0-16：12个月有效期
+            cal.add(Calendar.MONTH, 12);
             c.setExpireAt(cal.getTime());
             certificationMapper.upsert(c);
+            // P1-11：写入人工复核队列（48h 内复核；复核接口可撤销认证）
+            certReviewMapper.insert(workerId, certCode, rec.getId());
         }
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("score", score); data.put("passed", passed); data.put("passScore", passScore);
-        data.put("certUnlocked", passed); data.put("cert", exam.getCertCode());
+        data.put("certUnlocked", passed); data.put("cert", certCode);
+        data.put("attempts", attempts + 1); data.put("switchCount", switchCount);
         return Result.success(data);
     }
 

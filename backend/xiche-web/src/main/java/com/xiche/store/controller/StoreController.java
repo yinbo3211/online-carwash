@@ -1,10 +1,12 @@
 package com.xiche.store.controller;
 
 import com.xiche.common.Result;
+import com.xiche.common.annotation.RequireRole;
 import com.xiche.common.constant.OrderStatusEnum;
 import com.xiche.common.context.LoginContext;
 import com.xiche.common.util.PageUtil;
 import com.xiche.governance.dao.ReviewMapper;
+import com.xiche.governance.dao.BlacklistMapper;
 import com.xiche.governance.entity.Review;
 import com.xiche.order.dao.OrderMapper;
 import com.xiche.order.entity.Order;
@@ -19,12 +21,31 @@ import java.util.*;
 /** 门店端 REST API（/api/store/）。 */
 @RestController
 @RequestMapping("/api/store")
+@RequireRole({"STORE", "ADMIN"}) // BUG-P1-07：门店端接口强制门店角色，杜绝车主越权操作
 public class StoreController {
     @Resource private StoreBayMapper bayMapper;
     @Resource private OrderMapper orderMapper;
     @Resource private ReviewMapper reviewMapper;
+    @Resource private BlacklistMapper blacklistMapper;
 
     private Long currentStore() { return LoginContext.storeId(); } // P0-01
+
+    /** P1-08：门店拉黑洗车工（局部拉黑，仅对本门店订单生效） */
+    @PostMapping("/blacklist")
+    public Result<Map<String, Object>> blacklist(@RequestBody Map<String, Object> body) {
+        Long workerId = body.get("workerId") == null ? null : Long.valueOf(String.valueOf(body.get("workerId")));
+        String reason = body.get("reason") == null ? "" : String.valueOf(body.get("reason"));
+        if (workerId == null || reason.trim().isEmpty()) {
+            return Result.fail(40000, "workerId 与 reason 必填");
+        }
+        Date from = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_YEAR, 30); // 冷静期 30 天
+        blacklistMapper.insert(currentStore(), "WORKER", workerId, reason, from, cal.getTime());
+        Map<String, Object> d = new HashMap<String, Object>();
+        d.put("blacklisted", true); d.put("workerId", workerId); d.put("cooldownDays", 30);
+        return Result.success(d);
+    }
 
     /** 工位三态看板：0有空位free / 1已满full / 2暂停paused */
     @GetMapping("/bays")
@@ -79,6 +100,8 @@ public class StoreController {
         int rows = orderMapper.updateStatusCas(id,
                 OrderStatusEnum.WAITING_ACCEPT.getCode(), OrderStatusEnum.ACCEPTED.getCode());
         if (rows != 1) throw new RuntimeException("接单并发冲突，事务回滚");
+        // P0-07：记录占用工位，完工时据此释放
+        orderMapper.updateBayId(id, bayId);
         Map<String, Object> data = new HashMap<String, Object>(); data.put("accepted", true); data.put("bayStatus", "full");
         return Result.success(data);
     }

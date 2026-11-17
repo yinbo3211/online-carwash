@@ -19,4 +19,7 @@ public interface OrderService {
 
     /** 接单：先校验资格，再用状态 CAS 防止并发抢单 */
     Long acceptOrder(Long orderId, Long workerId);
+
+    /** BUG-P0-07：履约节点推进；推进到完成(80)时事务内触发结算/释放工位/重算评分 */
+    Order progress(Long orderId, Long workerId, int toStatus);
 }

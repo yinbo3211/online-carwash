@@ -36,11 +36,15 @@
         </mvc:message-converters>
     </mvc:annotation-driven>
 
-    <!-- P0-01/P0-02/P1-23：鉴权拦截器（身份注入 + RBAC + 职责分离SoD） -->
+    <!-- BUG-P0-05：鉴权拦截器（令牌校验 + RBAC + 职责分离SoD + 越权审计）。
+         身份唯一可信源为 X-Token 签名令牌，不再信任请求头角色。
+         demo-mode=false：所有非白名单 /api 接口必须携带有效 token。 -->
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/api/**"/>
-            <bean class="com.xiche.common.interceptor.AuthInterceptor"/>
+            <bean class="com.xiche.common.interceptor.AuthInterceptor">
+                <property name="demoMode" value="false"/>
+            </bean>
         </mvc:interceptor>
     </mvc:interceptors>
 

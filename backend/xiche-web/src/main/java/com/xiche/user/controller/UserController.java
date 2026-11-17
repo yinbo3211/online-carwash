@@ -4,6 +4,7 @@ import com.xiche.common.BizException;
 import com.xiche.common.Result;
 import com.xiche.common.constant.BusinessConstants;
 import com.xiche.common.constant.OrderStatusEnum;
+import com.xiche.common.cache.LocalCacheService;
 import com.xiche.common.context.LoginContext;
 import com.xiche.common.util.PageUtil;
 import com.xiche.auth.service.AuditService;
@@ -27,9 +28,14 @@ public class UserController {
     @Resource private PaymentService paymentService;
     @Resource private SettlementService settlementService;
     @Resource private AuditService auditService;
+    @Resource private LocalCacheService cacheService;
 
     @GetMapping("/home")
     public Result<Map<String, Object>> home() {
+        // P1-05：A 级目录数据接入本地缓存（L1），miss 才构建；C 级资金/订单不缓存
+        String ck = "home:tiers:v1";
+        Object cached = cacheService.get("catalog", ck);
+        if (cached instanceof Map) return Result.success((Map<String, Object>) cached);
         List<Map<String, Object>> tiers = new ArrayList<Map<String, Object>>();
         tiers.add(tier("basic", "外观清洁", BusinessConstants.PRICE_STORE_APPEARANCE, "车身/轮毂外侧/玻璃外表面", false));
         tiers.add(tier("standard", "标准清洁", BusinessConstants.PRICE_STORE_STANDARD, "外观+内饰吸尘/脚垫/中控", true));
@@ -38,7 +44,19 @@ public class UserController {
         data.put("tiers", tiers);
         data.put("banners", Collections.emptyList());
         data.put("envFlag", BusinessConstants.ENV_FLAG);
+        cacheService.put("catalog", ck, data);
         return Result.success(data);
+    }
+
+    /** BUG-P0-06：服务端生成订单号 XC-<yyMMdd>-<userId哈希2位><时间戳后6位><3位随机>，不含 requestId */
+    private static java.util.concurrent.atomic.AtomicLong SEQ = new java.util.concurrent.atomic.AtomicLong();
+    private String generateOrderNo() {
+        String date = new java.text.SimpleDateFormat("yyMMdd").format(new Date());
+        long uid = LoginContext.userId() == null ? 0L : LoginContext.userId();
+        String uidPart = String.format("%02d", Math.abs(uid % 100));
+        long seq = Math.abs(SEQ.incrementAndGet() % 1000000);
+        int rnd = new java.util.Random().nextInt(1000);
+        return "XC-" + date + "-" + uidPart + String.format("%06d", seq) + String.format("%03d", rnd);
     }
 
     private Map<String, Object> tier(String key, String name, java.math.BigDecimal yuan, String desc, boolean rec) {
@@ -54,6 +72,11 @@ public class UserController {
     public Result<Map<String, Object>> createOrder(@RequestBody Map<String, Object> body) {
         String tier = String.valueOf(body.get("tier"));
         String mode = body.get("serviceMode") == null ? "STORE" : String.valueOf(body.get("serviceMode"));
+        // BUG-P1-02：serviceMode 白名单校验，拒绝 FAKE-MODE 等非法形态
+        if (!(BusinessConstants.MODE_STORE.equals(mode) || BusinessConstants.MODE_ONSITE.equals(mode)
+                || BusinessConstants.MODE_DELIVERY.equals(mode))) {
+            return Result.fail(40000, "非法服务形态：" + mode);
+        }
         Object ridObj = body.get("requestId");
         if (ridObj == null || String.valueOf(ridObj).trim().isEmpty() || "null".equals(String.valueOf(ridObj))) {
             throw new BizException(40000, "requestId 幂等键必填，防止重复下单");
@@ -62,13 +85,16 @@ public class UserController {
         int level = "basic".equals(tier) ? 1 : "premium".equals(tier) ? 3 : 2;
         java.math.BigDecimal price = BusinessConstants.priceOf(level, mode);
         if (price == null) return Result.fail(40000, "该档位不支持当前服务形态");
-        String orderNo = "XC-T-" + requestId;
-        if (orderMapper.selectByOrderNo(orderNo) != null) {
-            return Result.success(orderResp(orderMapper.selectByOrderNo(orderNo)));
-        }
 
-        // P0-01：身份来自登录上下文，不再硬编码
+        // BUG-P0-06：身份来自登录令牌（不再由请求头伪造）
         Long userId = LoginContext.userId();
+        // BUG-P0-06：幂等查询按 (userId, requestId) 限定归属，跨用户复用 requestId 不再命中他人订单
+        Order existing = orderMapper.selectByUserRequestId(userId, requestId);
+        if (existing != null) {
+            return Result.success(orderResp(existing));
+        }
+        // BUG-P0-06：orderNo 服务端生成，绝不使用客户端 requestId 拼接（杜绝探测/劫持）
+        String orderNo = generateOrderNo();
         // P1-20：ONSITE 需地址
         Object addrObj = body.get("addressId");
         Long addressId = addrObj == null ? null : Long.valueOf(String.valueOf(addrObj));
@@ -79,7 +105,7 @@ public class UserController {
 
         java.math.BigDecimal l1 = BusinessConstants.INSURANCE_L1_PREMIUM;
         Order o = new Order();
-        o.setOrderNo(orderNo); o.setUserId(userId); o.setStoreId(1L); o.setServiceSkuId((long) level);
+        o.setOrderNo(orderNo); o.setRequestId(requestId); o.setUserId(userId); o.setStoreId(1L); o.setServiceSkuId((long) level);
         o.setServiceLevel(level); o.setServiceMode(mode); o.setFulfillMode(mode);
         o.setStatus(OrderStatusEnum.PENDING_PAYMENT.getCode());
         o.setPaidAmount(price); o.setPlatformSubsidy(java.math.BigDecimal.ZERO);
@@ -90,8 +116,10 @@ public class UserController {
         // P0-11：固化三级快照（价格/费率/卡状态）+ 免佣卡 card_snapshot
         o.setPriceSnapshot("PV-V1-20261101|L" + level + "|" + mode + "|" + price.toPlainString());
         o.setRateSnapshot(BusinessConstants.commissionRateOf(mode).toPlainString());
-        Object cardObj = body.get("cardSnapshot");
-        o.setCardSnapshot(cardObj == null ? "NONE" : String.valueOf(cardObj));
+        // BUG-P1-04：免佣卡快照不接受客户端提交，统一置 NONE；
+        // 服务端结算时按 workerId 查 t_commission_card 决定是否减免（见 SettlementServiceImpl），
+        // 杜绝客户端传 DISCOUNT:1.0 任意改小抽成。
+        o.setCardSnapshot("NONE");
         orderMapper.insert(o);
         auditService.record("USER", userId, "ORDER_CREATE", "ORDER", orderNo, "下单 tier=" + tier + " mode=" + mode, null);
         return Result.success(orderResp(o));
@@ -107,7 +135,8 @@ public class UserController {
     }
 
     private int statusIndex(int code) {
-        int[] codes = {10,20,30,40,50,60,70,80};
+        // P2-02：补齐逆向/异常状态映射，避免取消单(90)与待支付(10)同值为 0
+        int[] codes = {10,20,30,40,50,60,70,80,90,91,92,93,94};
         for (int i = 0; i < codes.length; i++) if (codes[i] == code) return i;
         return 0;
     }

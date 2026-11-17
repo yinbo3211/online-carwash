@@ -15,7 +15,7 @@
     <select id="selectByWorkerAndCode" resultMap="BaseResultMap">
         SELECT id, worker_id, cert_code, exam_score, status, passed_at, expire_at
         FROM t_certification
-        WHERE worker_id = #{param1} AND cert_code = #{param2} AND deleted_at IS NULL LIMIT 1
+        WHERE worker_id = #{workerId} AND cert_code = #{certCode} AND deleted_at IS NULL LIMIT 1
     </select>
 
     <insert id="upsert" parameterType="com.xiche.worker.entity.Certification">
@@ -29,4 +29,9 @@
             expire_at = VALUES(expire_at),
             updated_at = NOW()
     </insert>
+
+    <update id="revoke">
+        UPDATE t_certification SET status = 'REVOKED', updated_at = NOW()
+        WHERE worker_id = #{workerId} AND cert_code = #{certCode} AND deleted_at IS NULL
+    </update>
 </mapper>

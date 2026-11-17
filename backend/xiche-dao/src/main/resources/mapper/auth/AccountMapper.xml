@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiche.auth.dao.AccountMapper">
+    <select id="selectByUsername" resultType="com.xiche.auth.entity.Account">
+        SELECT id, username, password_hash AS passwordHash, salt, subject_type AS subjectType,
+               subject_id AS subjectId, roles, status, created_at AS createdAt, updated_at AS updatedAt
+        FROM t_account
+        WHERE username = #{username} AND deleted_at IS NULL LIMIT 1
+    </select>
+
+    <select id="selectRoleCodes" resultType="string">
+        SELECT r.role_code
+        FROM t_sys_user_role ur
+        JOIN t_sys_role r ON r.id = ur.role_id
+        WHERE ur.subject_id = #{subjectId}
+          AND ur.subject_type = #{subjectType}
+          AND ur.deleted_at IS NULL
+          AND r.status = 1
+          AND r.deleted_at IS NULL
+    </select>
+</mapper>

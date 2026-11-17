@@ -39,6 +39,9 @@ public final class BusinessConstants {
     public static final BigDecimal RATE_STORE = new BigDecimal("0.40");
     public static final BigDecimal RATE_ONSITE = new BigDecimal("0.35");
 
+    /** P1-01：ONSITE 上门包干组织费 G（归门店/组织，不参与抽成，抽成基数须扣除） */
+    public static final BigDecimal ONSITE_ORG_FEE = new BigDecimal("18.00");
+
     /** 保险：L1 基础保障每单强制，不可取消；L2 增值保障自愿加购 */
     public static final String INSURANCE_L1 = "L1";
     public static final String INSURANCE_L2 = "L2";

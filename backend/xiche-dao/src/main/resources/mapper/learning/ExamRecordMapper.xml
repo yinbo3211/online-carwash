@@ -54,10 +54,19 @@
         FROM t_exam_record WHERE worker_id = #{workerId} AND deleted_at IS NULL ORDER BY id DESC
     </select>
 
+    <select id="selectLastSubmitted" resultType="java.util.Date">
+        SELECT MAX(submitted_at) FROM t_exam_record
+        WHERE worker_id = #{workerId} AND cert_code = #{certCode} AND deleted_at IS NULL
+    </select>
+    <select id="countByWorkerAndCert" resultType="int">
+        SELECT COUNT(1) FROM t_exam_record
+        WHERE worker_id = #{workerId} AND cert_code = #{certCode} AND deleted_at IS NULL
+    </select>
+
     <insert id="insert" parameterType="com.xiche.learning.entity.ExamRecord" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO t_exam_record (worker_id, exam_id, cert_code, score, result,
+        INSERT INTO t_exam_record (worker_id, exam_id, cert_code, score, result, switch_count, paper_snapshot,
                                    submitted_at, created_at, updated_at)
-        VALUES (#{workerId}, #{examId}, #{certCode}, #{score}, #{result},
+        VALUES (#{workerId}, #{examId}, #{certCode}, #{score}, #{result}, #{switchCount}, #{paperSnapshot},
                 NOW(), NOW(), NOW())
     </insert>
 </mapper>

@@ -81,4 +81,10 @@
         WHERE id = #{workerId} AND deleted_at IS NULL
           AND DATE(updated_at) &lt; CURDATE()
     </update>
+
+    <!-- P1-09：完工后重算评分与完单数（差评降权） -->
+    <update id="updateStats">
+        UPDATE t_worker SET rating = #{rating}, completed_orders = #{completedOrders}, updated_at = NOW()
+        WHERE id = #{workerId} AND deleted_at IS NULL
+    </update>
 </mapper>

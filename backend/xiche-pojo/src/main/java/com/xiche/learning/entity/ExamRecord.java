@@ -10,6 +10,9 @@ public class ExamRecord {
     private String certCode;
     private Integer score;
     private String result;
+    /* P1-10：切屏计数与试卷快照（可回溯卷版本） */
+    private Integer switchCount;
+    private String paperSnapshot;
     private Date submittedAt;
     private Date createdAt;
     private Date updatedAt;
@@ -27,6 +30,10 @@ public class ExamRecord {
     public void setScore(Integer score) { this.score = score; }
     public String getResult() { return result; }
     public void setResult(String result) { this.result = result; }
+    public Integer getSwitchCount() { return switchCount; }
+    public void setSwitchCount(Integer switchCount) { this.switchCount = switchCount; }
+    public String getPaperSnapshot() { return paperSnapshot; }
+    public void setPaperSnapshot(String paperSnapshot) { this.paperSnapshot = paperSnapshot; }
     public Date getSubmittedAt() { return submittedAt; }
     public void setSubmittedAt(Date submittedAt) { this.submittedAt = submittedAt; }
     public Date getCreatedAt() { return createdAt; }

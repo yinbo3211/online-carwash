@@ -20,9 +20,11 @@
 │   ├── app\                       App（用户 / 洗车工 / 门店）
 │   └── h5\                        H5
 ├── sql\
-│   ├── 01_schema.sql              建表结构
+│   ├── 01_schema.sql              建表结构（34 张核心表）
 │   ├── 02_init_data.sql           初始化基础数据
-│   └── 03_test_data.sql           V1 测试数据（禁止用于生产）
+│   ├── 03_test_data.sql           V1 测试数据（禁止用于生产）
+│   ├── 04_bugfix_migration.sql    首轮代码审计缺陷修复增量迁移
+│   └── 05_auth_fix.sql            全量测试报告 P0/P1 修复迁移（账号/角色权限/复核/幂等/工位）
 ├── docs\
 │   ├── 模块清单.md                工程模块树、14 个业务域、各端目录
 │   └── 架构说明.md                SSM 分层、请求链路、模拟支付/缓存/认证
@@ -42,7 +44,7 @@
 
 **① 改配置**：用记事本打开 `一键部署.bat`，修改顶部「变量配置区」的 `JAVA_HOME`、`MAVEN_HOME`、`CATALINA_HOME`、`MYSQL_HOME`、`DB_ROOT_PWD`（MySQL root 密码）。
 
-**② 一键部署**：右键 `一键部署.bat` → **以管理员身份运行**。脚本自动完成：环境检测 → 建库授权 → 导入 3 个 SQL → 改写 `jdbc.properties` → `mvn clean package -DskipTests` → 复制 war 到 Tomcat → 启动。
+**② 一键部署**：右键 `一键部署.bat` → **以管理员身份运行**。脚本自动完成：环境检测 → 建库授权 → 导入 5 个 SQL（含 04/05 增量迁移）→ 改写 `jdbc.properties` → `mvn clean package -DskipTests` → 复制 war 到 Tomcat → 启动。
 
 **③ 验证**：等待 10~60 秒后访问 `http://localhost:8080/`，用 `admin / admin123` 登录。
 
@@ -60,13 +62,28 @@
 
 ---
 
-## 4. 测试账号
+## 4. 登录鉴权与测试账号
 
-| 角色 | 账号 | 密码 | 来源 |
+所有 `/api/**` 接口（除登录/探活/首页）必须携带服务端签名令牌。先调用登录端点换取 token，再以 `X-Token: <token>` 访问：
+
+```
+POST /api/auth/login   {"username":"13800000001","password":"test1234","subjectType":"USER"}
+→ {"code":0,"data":{"token":"...","subjectType":"USER","roles":"USER",...}}
+```
+
+V1 测试账号（均由 `sql\05_auth_fix.sql` 初始化，密码统一 `test1234`，管理员为 `admin123`）：
+
+| 终端/角色 | 账号 | 密码 | subjectType |
 |------|------|------|------|
-| 平台管理员 | `admin` | `admin123` | `sql\03_test_data.sql`（V1 测试数据） |
+| 车主甲 | `13800000001` | `test1234` | USER |
+| 车主乙 | `13800000002` | `test1234` | USER |
+| 洗车工王师傅 | `13900000001` | `test1234` | WORKER |
+| 洗车工赵师傅 | `13900000002` | `test1234` | WORKER |
+| 合作门店 | `store001` | `test1234` | STORE |
+| 超级管理员 | `admin` | `admin123` | ADMIN |
+| 审计员 / 财务 / 合规 / SoD冲突用户 | `auditor` / `finance` / `compliance` / `soduser` | `test1234` | ADMIN |
 
-其他账号（洗车工 / 门店 / 车主）以 `sql\03_test_data.sql` 实际数据为准。
+> 身份唯一可信源为服务端签名令牌（HMAC-SHA256），**不再信任 `X-Role`/`X-User-Id` 等请求头**；角色从库加载，职责分离（SoD）互斥校验生效。
 
 ---
 
@@ -74,6 +91,6 @@
 
 1. **V1 为内部测试版（TEST-ENV-V1）**，用于功能验证与联调演示，**不得对外经营、不得向真实用户收费**。
 2. **所有支付均为模拟支付**：仅产生测试流水与状态变更，**不产生真实资金收付**；前端成功文案固定为橙色「模拟支付成功」，严禁伪装成真实支付。
-3. `03_test_data.sql` 中的账号与 `admin/admin123` 均为**模拟数据**，密码为示例明文，禁止带入生产。
+3. `03_test_data.sql` / `05_auth_fix.sql` 中的账号均为**模拟数据**，口令以 `SHA-256(盐+明文)` 哈希存储（示例盐 `xiche2026`），密钥 `xiche.auth.secret` 为测试默认值，禁止带入生产。
 4. **生产上架仍需**：持牌支付与分账、持牌保险合作、ICP 备案、微信小程序认证与类目资质、App 审核合规（隐私清单/权限用途/虚拟商品 IAP）、全站 HTTPS 与接口鉴权等安全基线。详见 `DEPLOY.md` 第 10 节与 `docs/架构说明.md`。
 5. 禁止将本测试版直接部署到公网或接入真实支付渠道；违反上述约束产生的责任由部署方自行承担。

@@ -1,6 +1,7 @@
 package com.xiche.payment.dao;
 
 import com.xiche.payment.entity.PaymentOrder;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.Map;
 
@@ -14,5 +15,6 @@ public interface PaymentOrderMapper {
 
     int insert(PaymentOrder paymentOrder);
 
-    int updateSuccess(Long id, String status, String message, String color);
+    int updateSuccess(@Param("id") Long id, @Param("status") String status,
+                      @Param("message") String message, @Param("color") String color);
 }

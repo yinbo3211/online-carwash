@@ -5,8 +5,10 @@
     <resultMap id="BaseResultMap" type="com.xiche.order.entity.Order">
         <id column="id" property="id"/>
         <result column="order_no" property="orderNo"/>
+        <result column="request_id" property="requestId"/>
         <result column="user_id" property="userId"/>
         <result column="store_id" property="storeId"/>
+        <result column="bay_id" property="bayId"/>
         <result column="worker_id" property="workerId"/>
         <result column="service_sku_id" property="serviceSkuId"/>
         <result column="service_level" property="serviceLevel"/>
@@ -36,7 +38,7 @@
     </resultMap>
 
     <sql id="Columns">
-        id, order_no, user_id, store_id, worker_id, service_sku_id, service_level,
+        id, order_no, request_id, user_id, store_id, bay_id, worker_id, service_sku_id, service_level,
         service_mode, fulfill_mode, status, paid_amount, platform_subsidy, store_bay_fee,
         insurance_fee, advance_amount, labor_income, pass_through_cost, platform_fee,
         worker_net, store_net, rating, env_flag, remark, price_snapshot, rate_snapshot, card_snapshot, address_id, created_at, updated_at, deleted_at
@@ -49,6 +51,13 @@
     <select id="selectByOrderNo" resultMap="BaseResultMap">
         SELECT <include refid="Columns"/> FROM t_order
         WHERE order_no = #{orderNo} AND deleted_at IS NULL
+    </select>
+
+    <!-- BUG-P0-06：幂等查询必须带 userId，避免跨用户复用 requestId 劫持他人订单 -->
+    <select id="selectByUserRequestId" resultMap="BaseResultMap">
+        SELECT <include refid="Columns"/> FROM t_order
+        WHERE user_id = #{userId} AND request_id = #{requestId} AND deleted_at IS NULL
+        ORDER BY id DESC LIMIT 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap">
@@ -80,12 +89,12 @@
     </select>
 
     <insert id="insert" parameterType="com.xiche.order.entity.Order" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO t_order (order_no, user_id, store_id, service_sku_id, service_level,
+        INSERT INTO t_order (order_no, request_id, user_id, store_id, bay_id, service_sku_id, service_level,
                              service_mode, fulfill_mode, status, paid_amount, platform_subsidy,
                              store_bay_fee, insurance_fee, advance_amount, env_flag, remark,
                              price_snapshot, rate_snapshot, card_snapshot, address_id,
                              created_at, updated_at)
-        VALUES (#{orderNo}, #{userId}, #{storeId}, #{serviceSkuId}, #{serviceLevel},
+        VALUES (#{orderNo}, #{requestId}, #{userId}, #{storeId}, #{bayId}, #{serviceSkuId}, #{serviceLevel},
                 #{serviceMode}, #{fulfillMode}, #{status}, #{paidAmount}, #{platformSubsidy},
                 #{storeBayFee}, #{insuranceFee}, #{advanceAmount}, #{envFlag}, #{remark},
                 #{priceSnapshot}, #{rateSnapshot}, #{cardSnapshot}, #{addressId},
@@ -97,10 +106,14 @@
         WHERE id = #{id} AND deleted_at IS NULL
     </update>
 
+    <update id="updateBayId">
+        UPDATE t_order SET bay_id = #{bayId}, updated_at = NOW() WHERE id = #{id} AND deleted_at IS NULL
+    </update>
+
     <!-- P0-10/P1-22：状态 CAS -->
     <update id="updateStatusCas">
-        UPDATE t_order SET status = #{param3}, updated_at = NOW()
-        WHERE id = #{param1} AND status = #{param2} AND deleted_at IS NULL
+        UPDATE t_order SET status = #{toStatus}, updated_at = NOW()
+        WHERE id = #{id} AND status = #{fromStatus} AND deleted_at IS NULL
     </update>
 
     <update id="assignWorker">

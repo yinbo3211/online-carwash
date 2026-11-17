@@ -62,8 +62,16 @@
     </insert>
 
     <!-- P0-20：按洗车工过滤（关联订单归属） -->
+    <!-- BUG-P0-04 修复：JOIN 查询所有列必须显式加表别名前缀，
+         原 `SELECT s.<include>` 仅首列带 s. 前缀，其余列(order_no等)无前缀导致 Column is ambiguous。 -->
     <select id="selectByWorker" resultMap="BaseResultMap">
-        SELECT s.<include refid="Columns"/>
+        SELECT s.id, s.settlement_no AS settlement_no, s.order_id AS order_id, s.order_no AS order_no,
+               s.service_mode AS service_mode, s.paid_amount AS paid_amount,
+               s.platform_subsidy AS platform_subsidy, s.store_bay_fee AS store_bay_fee,
+               s.pass_through_cost AS pass_through_cost, s.advance_amount AS advance_amount,
+               s.labor_income AS labor_income, s.commission_rate AS commission_rate,
+               s.platform_fee AS platform_fee, s.worker_net AS worker_net, s.store_net AS store_net,
+               s.total AS total, s.status AS status, s.env_flag AS env_flag, s.settled_at AS settled_at
         FROM t_settlement s JOIN t_order o ON s.order_id = o.id
         WHERE s.deleted_at IS NULL AND o.worker_id = #{workerId}
         ORDER BY s.id DESC LIMIT #{offset}, #{limit}

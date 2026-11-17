@@ -1,9 +1,12 @@
 package com.xiche.admin.controller;
 
 import com.xiche.auth.service.AuditService;
+import com.xiche.auth.dao.CertReviewMapper;
+import com.xiche.worker.dao.CertificationMapper;
 import com.xiche.common.Result;
 import com.xiche.common.annotation.RequireRole;
 import com.xiche.common.constant.BusinessConstants;
+import com.xiche.common.context.LoginContext;
 import com.xiche.common.util.SensitiveUtil;
 import com.xiche.order.dao.OrderMapper;
 import com.xiche.settlement.dao.LedgerMapper;
@@ -25,6 +28,8 @@ public class AdminController {
     @Resource private LedgerMapper ledgerMapper;
     @Resource private WorkerMapper workerMapper;
     @Resource private AuditService auditService;
+    @Resource private CertReviewMapper certReviewMapper;
+    @Resource private CertificationMapper certificationMapper;
 
     @RequestMapping("/admin/dashboard")
     public ModelAndView dashboardPage() { return new ModelAndView("admin/dashboard"); }
@@ -111,5 +116,51 @@ public class AdminController {
     @ResponseBody
     public Result<Map<String, Object>> auditLogs() {
         return Result.success(auditService.query(new HashMap<String, Object>()));
+    }
+
+    /** P1-11：待复核认证列表（人工复核 48h 内完成） */
+    @GetMapping("/api/admin/cert/reviews")
+    @RequireRole({"ADMIN", "AUDITOR"})
+    @ResponseBody
+    public Result<Map<String, Object>> certReviews() {
+        Map<String, Object> d = new HashMap<String, Object>();
+        d.put("list", certReviewMapper.selectPending(0, 200));
+        return Result.success(d);
+    }
+
+    /** P1-11：复核认证；APPROVED 保留认证，REJECTED 撤销认证并阻断派单 */
+    @PostMapping("/api/admin/cert/review/{id}")
+    @RequireRole({"ADMIN", "AUDITOR"})
+    @ResponseBody
+    public Result<Map<String, Object>> reviewCert(@PathVariable Long id, @RequestBody Map<String, Object> body) {
+        Map<String, Object> row = certReviewMapper.selectById(id);
+        if (row == null) return Result.fail(40000, "复核记录不存在");
+        String status = String.valueOf(body.get("status"));
+        if (!"APPROVED".equals(status) && !"REJECTED".equals(status)) {
+            return Result.fail(40000, "status 必须为 APPROVED 或 REJECTED");
+        }
+        String note = body.get("note") == null ? "" : String.valueOf(body.get("note"));
+        certReviewMapper.review(id, status, LoginContext.userId(), note);
+        if ("REJECTED".equals(status)) {
+            // 撤销认证：置为失效，派单谓词将拒绝
+            certificationMapper.revoke(
+                    ((Number) row.get("workerId")).longValue(),
+                    String.valueOf(row.get("certCode")));
+        }
+        auditService.record("ADMIN", LoginContext.userId(), "CERT_REVIEW", "CERT_REVIEW",
+                String.valueOf(id), "复核=" + status + " note=" + note, reqIp());
+        Map<String, Object> d = new HashMap<String, Object>();
+        d.put("reviewed", true); d.put("status", status);
+        return Result.success(d);
+    }
+
+    private String reqIp() {
+        org.springframework.web.context.request.RequestAttributes ra =
+                org.springframework.web.context.request.RequestContextHolder.getRequestAttributes();
+        if (ra instanceof org.springframework.web.context.request.ServletRequestAttributes) {
+            return ((org.springframework.web.context.request.ServletRequestAttributes) ra)
+                    .getRequest().getRemoteAddr();
+        }
+        return null;
     }
 }
